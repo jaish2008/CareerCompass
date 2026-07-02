@@ -141,6 +141,7 @@ nav{
 .hero-buttons{
     display:flex;
     gap:20px;
+    flex-direction:column;
 }
 
 .primary-btn{
@@ -181,7 +182,8 @@ nav{
 }
 
 .dashboard-card{
-    width:350px;
+    width:100%;
+    max-width:350px;
     background:white;
     border-radius:20px;
     padding:35px;
@@ -220,7 +222,7 @@ nav{
 }
 
 .why-header h2{
-    font-size:2.8rem;
+    font-size:2rem;
     color:#1e293b;
     margin-bottom:20px;
 }
@@ -241,7 +243,7 @@ nav{
 .comparison-card{
     flex:1;
     background:#ffffff;
-    padding:35px;
+    padding:22px;
     border-radius:20px;
     box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
@@ -289,7 +291,7 @@ nav{
 
 .section-title h2{
 
-    font-size:2.8rem;
+    font-size:2rem;
 
     margin-bottom:20px;
 }
@@ -318,7 +320,7 @@ nav{
 
     background:white;
 
-    padding:30px;
+    padding: 22px;
 
     border-radius:18px;
 
@@ -381,7 +383,7 @@ nav{
 
     border-radius:20px;
 
-    padding:35px;
+    padding:22px;
 
     text-align:center;
 
@@ -462,7 +464,7 @@ nav{
 
     background:white;
 
-    padding:35px;
+    padding:22px;
 
     border-radius:20px;
 
@@ -548,3 +550,150 @@ footer hr{
 
     color:#94a3b8;
 }
+
+/* ===================================
+   RESPONSIVE DESIGN
+=================================== */
+
+@media (max-width: 992px){
+
+    nav{
+        flex-direction:column;
+        gap:20px;
+        padding:20px;
+    }
+
+    .hero{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .comparison-container{
+        flex-direction:column;
+    }
+
+    .feature-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .steps-container{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .testimonial-grid{
+        grid-template-columns:1fr;
+    }
+
+    .footer-content{
+        flex-direction:column;
+        text-align:center;
+    }
+
+}
+
+@media (max-width:768px){
+
+    .feature-grid{
+        grid-template-columns:1fr;
+    }
+    
+    .comparison-container{
+        flex-direction:column;
+    }
+
+    .comparison-card{
+        padding:22px;
+    }
+    
+    .steps-container{
+        grid-template-columns:1fr;
+    }
+    
+    .step-card{
+        padding: 22px;
+    }
+    .nav-links ul{
+        flex-direction:column;
+        align-items:center;
+        gap:15px;
+    }
+
+    .nav-actions{
+        flex-direction:column;
+        width:100%;
+    }
+
+    .nav-actions a{
+        width:100%;
+        text-align:center;
+    }
+
+    .hero h2{
+        font-size:2.2rem;
+    }
+
+    .logo-text{
+    font-size:1.5rem;
+}
+
+    .logo-icon{
+    font-size:1.8rem;
+}
+
+    .hero{
+    padding:40px 20px;
+    text-align:center;
+    flex-direction:column;
+}
+
+    .footer-content{
+    flex-direction:column;
+    text-align:center;
+}
+    
+    .footer-content div{
+        text-align:center;
+    }
+
+    .features{
+    padding:0 20px;}
+
+    .feature-card{
+    padding:22px;
+    }
+
+    .why{
+    padding:0 20px;
+}
+    
+    .why-header h2{
+    font-size:2rem;
+    }
+    .how-it-works{
+    padding:0 20px;
+}
+
+    .testimonials{
+    padding:0 20px;
+
+}
+
+    .testimonial-grid{
+    grid-template-columns:1fr;
+}
+
+    .testimonial-card{
+    padding:22px;
+    }
+    .dashboard-card{
+    width:100%;
+    max-width:350px;
+}
+
+    .hero-buttons{
+    flex-direction:column;      
+    gap:15px;
+}
+
+    .section-title h2{
+    font-size:2rem;
