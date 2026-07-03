@@ -1,0 +1,383 @@
+/* ===========================
+   Global Reset
+=========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f8fafc;
+    color:#1e293b;
+}
+
+/* ===========================
+   Dashboard Layout
+=========================== */
+
+.dashboard-container{
+    display:flex;
+    min-height:100vh;
+}
+
+/* ===========================
+   Sidebar
+=========================== */
+
+.sidebar{
+    width:260px;
+    background:#1e293b;
+    color:white;
+    padding:30px 20px;
+}
+
+/* Logo */
+
+.sidebar-logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:40px;
+}
+
+.sidebar-logo span{
+    font-size:2rem;
+}
+
+.sidebar-logo h2{
+    font-size:1.4rem;
+}
+
+/* Menu */
+
+.sidebar-menu{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.sidebar-menu a{
+    text-decoration:none;
+    color:#cbd5e1;
+    padding:14px 18px;
+    border-radius:10px;
+    transition:.3s ease;
+}
+
+.sidebar-menu a:hover{
+    background:#2563eb;
+    color:white;
+    padding-left:28px;
+}
+
+.sidebar-menu .active{
+    background:#2563eb;
+    color:white;
+}
+
+/* ===========================
+   Main Content
+=========================== */
+
+.main-content{
+    flex:1;
+    padding:40px;
+}
+
+/* ===========================
+   TOPBAR
+=========================== */
+
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:40px;
+
+}
+
+.welcome h1{
+
+    font-size:2rem;
+
+    color:#1e293b;
+
+}
+
+.welcome p{
+
+    color:#64748b;
+
+    margin-top:8px;
+
+}
+
+.topbar-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.topbar-actions input{
+
+    width:250px;
+
+    padding:12px 18px;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:10px;
+
+    background:white;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+.notification-btn{
+
+    border:none;
+
+    background:white;
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+    font-size:1.2rem;
+
+    transition:.3s ease;
+
+}
+
+.notification-btn:hover{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+.profile{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:1.3rem;
+
+    cursor:pointer;
+
+    trabnsition:.3s ease;
+
+}
+
+.profile:hover{
+
+    transform:scale(1.1);
+
+}
+
+/* ===========================
+   Statistics Cards
+=========================== */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:25px;
+
+    margin-bottom:40px;
+
+}
+
+.stat-card{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s ease;
+
+}
+
+.stat-card:hover{
+
+    
+    transform:translateY(-8px) scale(1.03);
+
+}
+
+.stat-card h3{
+
+    color:#64748b;
+
+    margin-bottom:15px;
+
+    font-size:1rem;
+
+}
+
+.stat-card h2{
+
+    font-size:2rem;
+
+    color:#2563eb;
+
+    margin-bottom:10px;
+
+}
+
+.stat-card p{
+
+    color:#22c55e;
+
+    font-weight:600;
+
+}
+
+/* ===========================
+   Dashboard Bottom
+=========================== */
+
+.dashboard-bottom{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:30px;
+
+}
+
+.tasks,
+.activity{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.tasks h2,
+.activity h2{
+
+    margin-bottom:20px;
+
+    color:#2563eb;
+
+}
+
+.tasks ul,
+.activity ul{
+
+    list-style:none;
+
+}
+
+.tasks li,
+.activity li{
+
+    padding:15px 0;
+
+    border-bottom:1px solid #e5e7eb;
+
+    color:#475569;
+
+}
+
+/* ===========================
+   Progress Section
+=========================== */
+
+.progress-section{
+
+    margin-top:35px;
+
+}
+
+.progress-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.progress-card h2{
+
+    color:#2563eb;
+
+    margin-bottom:25px;
+
+}
+
+.progress-item{
+
+    margin-bottom:22px;
+
+}
+
+.progress-item span{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+}
+
+progress{
+
+    width:100%;
+
+    height:12px;
+
+}

@@ -604,7 +604,7 @@ footer hr{
     .comparison-card{
         padding:22px;
     }
-    
+
     .steps-container{
         grid-template-columns:1fr;
     }
@@ -697,3 +697,4 @@ footer hr{
 
     .section-title h2{
     font-size:2rem;
+    }}
