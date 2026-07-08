@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerCompass Dashboard</title>
+
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+         <aside class="sidebar">
+
+    <div class="sidebar-logo">
+        <span>🧭</span>
+        <h2>CareerCompass</h2>
+    </div>
+
+    <nav class="sidebar-menu">
+
+        <a href="pages/dashboard.html" class="active"><i class="fa-solid fa-house"></i> Dashboard</a>
+
+        <a href="#"><i class="fa-solid fa-bullseye"></i> Career Assessment</a>
+
+        <a href="#"><i class="fa-solid fa-file-lines"></i> Resume Builder</a>
+
+        <a href="#"><i class="fa-brands fa-github"></i> GitHub Analyzer</a>
+
+        <a href="pages/roadmap.html"><i class="fa-solid fa-road"></i> Skill Roadmap</a>
+
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> Learning Planner</a>
+
+        <a href="#"><i class="fa-solid fa-briefcase"></i> Internship Tracker</a>
+
+        <a href="#"><i class="fa-solid fa-robot"></i> AI Assistant</a>
+
+        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+
+    </nav>
+
+</aside>
+    
+
+        <!-- Main Content -->
+        <main class="main-content">
+        
+
+    <!-- Top Navigation -->
+
+    <header class="topbar">
+
+        <div class="welcome">
+
+            <h1>Welcome Back, Jaish 👋</h1>
+
+            <p>Let's continue building your career today.</p>
+
+        </div>
+
+        <div class="topbar-actions">
+
+            <input
+                type="text"
+                placeholder="Search..."
+            >
+
+            <button class="notification-btn">
+                🔔
+            </button>
+
+            <div class="profile">
+
+                👤
+
+            </div>
+
+        </div>
+
+    </header>
+
+<!-- Statistics -->
+
+<section class="stats">
+
+    <div class="stat-card">
+
+        <h3>Placement Readiness</h3>
+
+        <h2>78%</h2>
+
+        <p>+8% this month</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Resume Score</h3>
+
+        <h2>84%</h2>
+
+        <p>ATS Friendly</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>GitHub Health</h3>
+
+        <h2>91%</h2>
+
+        <p>Excellent Profile</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Today's Goal</h3>
+
+        <h2>4 / 6</h2>
+
+        <p>Tasks Completed</p>
+
+    </div>
+
+</section>
+
+<!-- chart section-->
+ <section class="analytics">
+
+    <div class="chart-card">
+
+        <h2>Weekly Progress</h2>
+
+        <canvas id="progressChart"></canvas>
+    </div>
+
+    <div class="calendar-card">
+
+        <h2>Upcoming Goals</h2>
+
+        <ul>
+
+            <li>📅 Complete JavaScript - Monday</li>
+
+            <li>📄 Update Resume - Tuesday</li>
+
+            <li>💼 Internship Application - Wednesday</li>
+
+            <li>🎯 Mock Interview - Friday</li>
+
+        </ul>
+
+    </div>
+
+</section>
+
+    <!-- Dashboard Bottom -->
+
+<section class="dashboard-bottom">
+
+    <!-- Today's Tasks -->
+
+    <div class="tasks">
+
+        <h2>Today's Tasks</h2>
+
+        <ul>
+
+            <li>☐ Complete JavaScript Module</li>
+
+            <li>☐ Solve 2 DSA Problems</li>
+
+            <li>☐ Upload Resume</li>
+
+            <li>☐ Apply for Internship</li>
+
+        </ul>
+
+    </div>
+
+    <!-- Recent Activity -->
+
+    <div class="activity">
+
+        <h2>Recent Activity</h2>
+
+        <ul>
+
+            <li>✅ Resume Updated</li>
+
+            <li>✅ GitHub Profile Synced</li>
+
+            <li>✅ Roadmap Generated</li>
+
+            <li>✅ Career Assessment Completed</li>
+
+        </ul>
+
+    </div>
+
+</section>
+        
+     <!-- Progress Section -->
+
+<section class="progress-section">
+
+    <div class="progress-card">
+
+        <h2>Skill Progress</h2>
+
+        <div class="progress-item">
+            <span>HTML</span>
+            <progress value="90" max="100"></progress>
+        </div>
+
+        <div class="progress-item">
+            <span>CSS</span>
+            <progress value="80" max="100"></progress>
+        </div>
+
+        <div class="progress-item">
+            <span>JavaScript</span>
+            <progress value="45" max="100"></progress>
+        </div>
+
+        <div class="progress-item">
+            <span>DSA</span>
+            <progress value="30" max="100"></progress>
+        </div>
+
+    </div>
+
+</section>
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/dashboard.js"></script>
+
+</body>
+</html>
