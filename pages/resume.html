@@ -30,6 +30,15 @@
     <div class="resume-form">
 
         <h2>Resume Builder</h2>
+
+<div class="photo-section">
+
+    <h3>Profile Photo</h3>
+
+    <input type="file" id="profilePhoto" accept="image/*">
+
+</div>
+
         <label>Full Name</label>
         <input type="text" id="name" placeholder="Enter your full name">
 
@@ -45,7 +54,7 @@
         <label>Skills</label>
         <textarea id="skills" placeholder="Enter your skills"></textarea>
 
-        <div class="button-group">
+        <div class="education-section">
 
             <h3>Education</h3>
 
@@ -60,22 +69,85 @@
 
 <label>CGPA / Percentage</label>
 <input type="text" id="cgpa" placeholder="8.5 CGPA">
+        </div>
 
-    <button type="button" class="save-btn">
-        Save Resume
-    </button>
+<div class="project-section">
 
-    <button type="reset" class="reset-btn">
-        Reset
-    </button>
+<h3>Projects</h3>
+
+<label>Project Title</label>
+<input type="text" id="projectTitle" placeholder="CareerCompass">
+
+<label>Technology Used</label>
+<input type="text" id="projectTech" placeholder="HTML, CSS, JavaScript">
+
+<label>Description</label>
+<textarea id="projectDescription" placeholder="Describe your project"></textarea>
 
 </div>
 
+<div class="experience-section">
+
+    <h3>Experience</h3>
+
+    <label>Company Name</label>
+    <input type="text" id="company" placeholder="Google">
+
+    <label>Job Role</label>
+    <input type="text" id="role" placeholder="Frontend Developer Intern">
+
+    <label>Duration</label>
+    <input type="text" id="duration" placeholder="Jan 2026 - Mar 2026">
+
+    <label>Description</label>
+    <textarea id="experienceDescription"
+        placeholder="Describe your responsibilities"></textarea>
+
+</div>
+
+<div class="certificates-section">
+
+    <h3>Certificates</h3>
+
+    <label>Certificate Name</label>
+    <input type="text" id="certificateName" placeholder="Python for Everybody">
+
+    <label>Issued By</label>
+    <input type="text" id="certificateIssuer" placeholder="Coursera">
+
+    <label>Year</label>
+    <input type="text" id="certificateYear" placeholder="2026">
+
+</div>
+
+<div class="button-group">
+
+    <button type="button" class="save-btn" id="saveBtn">
+        Save Resume
+    </button>
+
+    <button type="button" class="reset-btn" id="resetBtn">
+        Reset
+    </button>
+
+    <button type="button" class="download-btn" id="downloadBtn">
+        Download PDF
+    </button>
+
+ </div>
     </div>
 
     <!-- Right Side -->
 
     <div class="resume-preview">
+
+        <div class="photo-preview">
+
+    <img id="previewPhoto"
+         src="https://via.placeholder.com/140"
+         alt="Profile Photo">
+
+</div>
 
         <h1 id="previewName">Your Name</h1>
 
@@ -103,9 +175,39 @@
 
 <p><strong>CGPA:</strong> <span id="previewCGPA"></span></p>
 
+   <h3>Projects</h3>
+
+<h4 id="previewProjectTitle"></h4>
+
+<p id="previewProjectTech"></p>
+
+<p id="previewProjectDescription"></p>
+
+<h3>Experience</h3>
+
+<h4 id="previewCompany"></h4>
+
+<p><strong>Role:</strong> <span id="previewRole"></span></p>
+
+<p><strong>Duration:</strong> <span id="previewDuration"></span></p>
+
+<p id="previewExperienceDescription"></p>
+
+<h3>Certificates</h3>
+
+<p><strong id="previewCertificateName"></strong></p>
+
+<p>
+    <span id="previewCertificateIssuer"></span>
+
+    <span id="previewCertificateYear"></span>
+</p>
+
     </div>
 
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script src="../js/resume.js"></script>
 
