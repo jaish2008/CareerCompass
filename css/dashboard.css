@@ -462,3 +462,72 @@ progress{
     border-bottom:1px solid #e5e7eb;
 
 }
+
+
+/* ===========================
+   AI RECOMMENDATIONS
+=========================== */
+
+.recommendations{
+
+    margin-top:40px;
+
+}
+
+.recommendations h2{
+
+    font-size:28px;
+
+    color:#1e293b;
+
+    margin-bottom:25px;
+
+}
+
+.recommendation-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+    gap:25px;
+
+}
+
+.recommendation-card{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    border-left:5px solid #2563eb;
+
+    transition:.3s;
+
+}
+
+.recommendation-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.recommendation-card h3{
+
+    color:#2563eb;
+
+    margin-bottom:12px;
+
+}
+
+.recommendation-card p{
+
+    color:#555;
+
+    line-height:1.7;
+
+}

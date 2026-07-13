@@ -30,3 +30,24 @@ new Chart(ctx, {
         }
     }
 });
+
+const notifications = [
+    "🎉 Resume Score improved to 84%",
+    "💼 New Frontend Internship available.",
+    "📚 JavaScript Roadmap updated.",
+    "🤖 AI recommends learning React.js next."
+];
+
+const notificationList = document.querySelector(".notification-list");
+
+notifications.forEach(notification => {
+
+    const div = document.createElement("div");
+
+    div.className = "notification-item";
+
+    div.innerHTML = notification;
+
+    notificationList.appendChild(div);
+
+});

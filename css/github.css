@@ -1,0 +1,1257 @@
+
+/* ===========================================
+   CareerCompass - GitHub Analyzer V2
+   PART 1
+=========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+
+    background:#f4f7fc;
+
+    color:#222;
+
+}
+
+/* ===========================
+   HEADER
+=========================== */
+
+.github-header{
+
+    width:100%;
+
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+
+    color:white;
+
+    padding:60px 10%;
+
+}
+
+.header-content{
+
+    max-width:1200px;
+
+    margin:auto;
+
+}
+
+.header-content h1{
+
+    font-size:45px;
+
+    margin-bottom:15px;
+
+    font-weight:700;
+
+}
+
+.header-content p{
+
+    font-size:18px;
+
+    line-height:1.7;
+
+    max-width:700px;
+
+}
+
+/* ===========================
+   MAIN CONTAINER
+=========================== */
+
+.github-container{
+
+    width:90%;
+
+    max-width:1400px;
+
+    margin:40px auto;
+
+}
+
+/* ===========================
+   COMMON SECTION TITLE
+=========================== */
+
+.section-title{
+
+    margin-bottom:25px;
+
+}
+
+.section-title h2{
+
+    font-size:30px;
+
+    color:#1e3a8a;
+
+    margin-bottom:8px;
+
+}
+
+.section-title p{
+
+    color:#666;
+
+    font-size:16px;
+
+}
+
+/* ===========================
+   SEARCH SECTION
+=========================== */
+
+.search-section{
+
+    margin-bottom:40px;
+
+}
+
+.search-box{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    display:flex;
+
+    gap:20px;
+
+}
+
+.search-box input{
+
+    flex:1;
+
+    padding:16px;
+
+    border:2px solid #dbeafe;
+
+    border-radius:12px;
+
+    font-size:17px;
+
+    transition:.3s;
+
+}
+
+.search-box input:focus{
+
+    outline:none;
+
+    border-color:#2563eb;
+
+}
+
+.search-box button{
+
+    padding:16px 35px;
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    font-weight:600;
+
+}
+
+.search-box button:hover{
+
+    background:#1d4ed8;
+
+    transform:translateY(-2px);
+
+}
+
+/* ===========================
+   PROFILE SECTION
+=========================== */
+
+.profile-section{
+
+    margin-bottom:40px;
+
+}
+
+.profile-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:40px;
+
+    background:white;
+
+    padding:35px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    
+    transition:.3s;
+
+}
+
+.profile-left{
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+}
+
+.profile-left img{
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:6px solid #2563eb;
+
+}
+
+.profile-right{
+
+    flex:3;
+
+}
+
+.profile-right h2{
+
+    font-size:34px;
+
+    color:#1e3a8a;
+
+    margin-bottom:8px;
+
+}
+
+.profile-right p{
+
+    color:#555;
+
+    margin-bottom:10px;
+
+}
+
+.profile-details{
+
+    margin-top:25px;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+}
+
+.profile-details div{
+
+    background:#f8fbff;
+
+    padding:15px;
+
+    border-radius:12px;
+
+}
+
+.profile-details strong{
+
+    display:block;
+
+    color:#2563eb;
+
+    margin-bottom:6px;
+
+}
+
+/* ===========================
+   PROFESSIONAL SCORE
+=========================== */
+
+.score-section{
+
+    margin-bottom:40px;
+
+}
+
+.score-card{
+
+    background:white;
+
+    padding:40px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    text-align:center;
+
+    transition:.35s;
+
+}
+
+.score-card h2{
+
+    color:#1e3a8a;
+
+    margin-bottom:30px;
+
+}
+
+.score-circle{
+
+    width:220px;
+
+    height:220px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    border:12px solid #2563eb;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:50px;
+
+    font-weight:bold;
+
+    color:#2563eb;
+
+    margin-bottom:25px;
+
+}
+
+.score-card h3{
+
+    font-size:28px;
+
+    color:#16a34a;
+
+    margin-bottom:15px;
+
+}
+
+.score-card p{
+
+    color:#666;
+
+    line-height:1.8;
+
+}
+
+/* ===========================
+   QUICK STATISTICS
+=========================== */
+
+.stats-section{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:25px;
+
+    margin-bottom:50px;
+
+}
+
+.stat-card{
+
+    background:white;
+
+    padding:30px;
+
+    text-align:center;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.stat-card h3{
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.stat-card h2{
+
+    font-size:38px;
+
+    color:#111827;
+}
+
+/* ===========================================
+   PART 2
+   LANGUAGE DISTRIBUTION
+   REPOSITORY ANALYSIS
+   REPOSITORY TABLE
+===========================================*/
+
+/* ===========================
+   LANGUAGE SECTION
+=========================== */
+
+.languages-section{
+
+    margin-bottom:50px;
+
+}
+
+.language-container{
+
+    display:grid;
+
+    grid-template-columns:1.5fr 1fr;
+
+    gap:30px;
+
+}
+
+.chart-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.chart-card canvas{
+
+    width:100% !important;
+
+    max-height:420px;
+
+}
+
+.language-summary{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.language-item{
+
+    background:white;
+
+    padding:18px 22px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    font-weight:600;
+
+}
+
+.language-item:hover{
+
+    transform:translateX(8px);
+
+}
+
+.language-item span:first-child{
+
+    color:#2563eb;
+
+}
+
+/* ===========================
+   REPOSITORY ANALYSIS
+=========================== */
+
+.repository-analysis{
+
+    margin-bottom:50px;
+
+}
+
+.analysis-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:30px;
+
+}
+
+.analysis-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.analysis-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.analysis-card h2{
+
+    margin-bottom:20px;
+
+}
+
+.analysis-card h3{
+
+    color:#1e3a8a;
+
+    margin-bottom:18px;
+
+    font-size:28px;
+
+}
+
+.analysis-card p{
+
+    margin-bottom:12px;
+
+    color:#555;
+
+}
+
+.analysis-card h4{
+
+    margin-top:20px;
+
+    margin-bottom:10px;
+
+}
+
+.analysis-card ul{
+
+    padding-left:20px;
+
+}
+
+.analysis-card li{
+
+    margin-bottom:8px;
+
+    color:#444;
+
+}
+
+/* Best Repository */
+
+.best-project{
+
+    border-left:8px solid #16a34a;
+
+}
+
+/* Weak Repository */
+
+.weak-project{
+
+    border-left:8px solid #dc2626;
+
+}
+
+/* ===========================
+   REPOSITORY TABLE
+=========================== */
+
+.repository-table{
+
+    margin-bottom:60px;
+
+}
+
+.repository-table table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    background:white;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.repository-table thead{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+.repository-table th{
+
+    padding:18px;
+
+    text-align:left;
+
+    font-size:16px;
+
+}
+
+.repository-table td{
+
+    padding:18px;
+
+    border-bottom:1px solid #edf2f7;
+
+}
+
+.repository-table tbody tr{
+
+    transition:.25s;
+
+}
+
+.repository-table tbody tr:hover{
+
+    background:#f4f8ff;
+
+}
+
+/* Quality Score Badge */
+
+.score-badge{
+
+    display:inline-block;
+
+    padding:6px 14px;
+
+    border-radius:30px;
+
+    color:white;
+
+    font-weight:600;
+
+    font-size:14px;
+
+}
+
+.score-high{
+
+    background:#22c55e;
+
+    color:white;
+
+}
+
+.score-medium{
+
+    background:#f59e0b;
+
+    color:white;
+
+}
+
+.score-low{
+
+    background:#ef4444;
+
+    color:white;
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:992px){
+
+.language-container{
+
+grid-template-columns:1fr;
+
+}
+
+.analysis-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.repository-table{
+
+overflow-x:auto;
+
+}
+
+.repository-table table{
+
+min-width:700px;
+
+}
+
+}
+
+
+/* ===========================================
+   PART 3
+   AI REPORT
+   CAREER READINESS
+   RECOMMENDATIONS
+   RECRUITER VIEW
+   RESUME SECTION
+===========================================*/
+
+/* ===========================
+   AI CAREER REPORT
+=========================== */
+
+.career-report{
+
+    margin-bottom:60px;
+
+}
+
+.report-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+
+    gap:25px;
+
+}
+
+.report-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.report-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.report-card h3{
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.report-card h2{
+
+    font-size:30px;
+
+    color:#1e293b;
+
+    margin-bottom:15px;
+
+}
+
+.report-card p{
+
+    color:#555;
+
+    line-height:1.7;
+
+}
+
+/* ===========================
+   CAREER READINESS
+=========================== */
+
+.career-readiness{
+
+    margin-bottom:60px;
+
+}
+
+.readiness-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+    gap:25px;
+
+}
+
+.readiness-card{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.readiness-card h3{
+
+    margin-bottom:20px;
+
+    color:#1e3a8a;
+
+}
+
+.readiness-card progress{
+
+    width:100%;
+
+    height:18px;
+
+    margin-bottom:15px;
+
+}
+
+.readiness-card span{
+
+    font-weight:bold;
+
+    color:#2563eb;
+
+    font-size:18px;
+
+}
+
+/* Progress Color */
+
+progress::-webkit-progress-bar{
+
+    background:#e5e7eb;
+
+    border-radius:30px;
+
+}
+
+progress::-webkit-progress-value{
+
+    background:#2563eb;
+
+    border-radius:30px;
+
+}
+
+/* ===========================
+   AI RECOMMENDATIONS
+=========================== */
+
+.recommendation-section{
+
+    margin-bottom:60px;
+
+}
+
+.recommendation-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.recommendation-item{
+
+    background:white;
+
+    padding:20px 25px;
+
+    border-left:6px solid #16a34a;
+
+    border-radius:12px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    font-weight:500;
+
+}
+
+.recommendation-item:hover{
+
+    transform:translateX(10px);
+
+}
+
+/* ===========================
+   RECRUITER VIEW
+=========================== */
+
+.recruiter-view{
+
+    margin-bottom:60px;
+
+}
+
+.recruiter-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+    gap:25px;
+
+}
+
+.review-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.review-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.review-card h3{
+
+    color:#2563eb;
+
+    margin-bottom:20px;
+
+}
+
+.review-card h2{
+
+    font-size:30px;
+
+    color:#111827;
+
+}
+
+/* ===========================
+   RESUME SECTION
+=========================== */
+
+.resume-projects{
+
+    margin-bottom:80px;
+
+}
+
+.resume-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:30px;
+
+}
+
+.resume-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.resume-card h3{
+
+    margin-bottom:20px;
+
+    color:#2563eb;
+
+}
+
+.resume-card ul{
+
+    padding-left:20px;
+
+}
+
+.resume-card li{
+
+    margin-bottom:12px;
+
+    color:#444;
+
+}
+
+/* ===========================
+   SMOOTH ANIMATION
+=========================== */
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(40px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+.github-container section{
+
+    animation:fadeUp .8s ease;
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:900px){
+
+.profile-card{
+
+flex-direction:column;
+
+text-align:center;
+
+transition:.35s;
+
+}
+
+.resume-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:600px){
+
+.github-header{
+
+padding:40px 20px;
+
+}
+
+.header-content h1{
+
+font-size:34px;
+
+}
+
+.search-box{
+
+flex-direction:column;
+
+}
+
+.score-circle{
+
+width:170px;
+
+height:170px;
+
+font-size:38px;
+
+}
+
+.stats-section{
+
+grid-template-columns:1fr;
+
+}
+
+.report-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.readiness-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.recruiter-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+#avatar{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid #2563eb;
+    box-shadow:0 8px 20px rgba(37,99,235,.25);
+    transition:.3s ;
+}
+
+#avatar:hover{
+    transform:scale(1.05);
+}
+
+.ai-card{
+
+    transition:.35s;
+}
+
+.profile-card:hover,
+.score-card:hover,
+.stat-card:hover,
+.repo-card:hover,
+.ai-card:hover,
+.recruiter-card:hover,
+.resume-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+
+}
+
+.progress{
+
+    width:0;
+
+    animation:fillBar 2s forwards;
+
+}
+
+@keyframes fillBar{
+
+    from{
+
+        width:0;
+
+    }
+
+}
+
+.repo-link{
+
+    color:#2563eb;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.repo-link:hover{
+
+    color:#1d4ed8;
+
+    text-decoration:underline;
+
+}
