@@ -29,11 +29,16 @@
 
 <main class="github-container">
     <!-- ================= SEARCH SECTION ================= --> 
-     <section class="search-section"> 
+    <section class="search-section"> 
         <div class="search-box">
              <input type="text" id="username" placeholder="Enter GitHub Username"> 
              <button id="analyzeBtn"> Analyze Portfolio </button> 
         </div> 
+        <div id="loadingSpinner" class="loading-spinner">
+
+    Analyzing GitHub Portfolio...
+
+</div>
      </section> 
 <!-- ================= PROFILE SECTION ================= --> 
     <section class="profile-section"> 
@@ -66,14 +71,50 @@
     </section>
  <!-- ================= PROFESSIONAL SCORE ================= -->
     <section class="score-section"> 
-        <div class="score-card">
-                    <h2> GitHub Professional Score </h2>
-                <div class="score-circle">
-                    <span id="professionalScore"> 0% </span> 
-                </div>
-                    <h3 id="scoreLevel"> Beginner </h3> 
-                    <p> Calculated using repositories, stars, languages, documentation, activity and profile quality. </p>
-                </div>
+       <div class="professional-score-card">
+
+    <div class="progress-ring">
+
+        <svg width="180" height="180">
+
+            <circle
+                class="bg-circle"
+                cx="90"
+                cy="90"
+                r="75">
+            </circle>
+
+            <circle
+                class="progress-circle"
+                id="progressCircle"
+                cx="90"
+                cy="90"
+                r="75">
+            </circle>
+
+        </svg>
+
+        <div class="progress-text">
+
+            <h2 id="professionalScore">
+
+                0%
+
+            </h2>
+
+            <p>Professional Score</p>
+
+        </div>
+
+    </div>
+
+    <h3 id="scoreLevel">
+
+        Beginner
+
+    </h3>
+
+</div>
     </section>
 <!-- ================= QUICK STATS ================= -->
     <section class="stats-section"> 
@@ -118,50 +159,9 @@
 
                 <canvas id="languageChart"></canvas>
 
-            </div>
+         <div class="language-summary" id="languageSummary">
 
-            <div class="language-summary">
-
-                <div class="language-item">
-
-                    <span>HTML</span>
-
-                    <span id="htmlCount">0 Repositories</span>
-
-                </div>
-
-                <div class="language-item">
-
-                    <span>CSS</span>
-
-                    <span id="cssCount">0 Repositories</span>
-
-                </div>
-
-                <div class="language-item">
-
-                    <span>JavaScript</span>
-
-                    <span id="jsCount">0 Repositories</span>
-
-                </div>
-
-                <div class="language-item">
-
-                    <span>Python</span>
-
-                    <span id="pythonCount">0 Repositories</span>
-
-                </div>
-
-                <div class="language-item">
-
-                    <span>Java</span>
-
-                    <span id="javaCount">0 Repositories</span>
-
-                </div>
-
+         </div>
             </div>
 
         </div>
@@ -339,50 +339,17 @@
     <!-- =========================
          REPOSITORY TABLE
     ========================== -->
+<section class="repository-section">
 
-    <section class="repository-table">
+    <h2>Repository Insights</h2>
 
-        <div class="section-title">
+    <div
+        class="repository-grid"
+        id="repositoryGrid">
 
-            <h2>📊 Repository Quality Report</h2>
+    </div>
 
-            <p>
-
-                Every repository will receive a quality score.
-
-            </p>
-
-        </div>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Repository</th>
-
-                    <th>Language</th>
-
-                    <th>Stars</th>
-
-                    <th>Updated</th>
-
-                    <th>Quality Score</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody id="repositoryTableBody">
-
-                <!-- JavaScript will generate rows -->
-
-            </tbody>
-
-        </table>
-
-    </section>
+</section>
 
     <!-- =========================
          AI CAREER REPORT
@@ -698,8 +665,75 @@
 
     </section>
 
+    <section class="ai-recruiter-report">
+
+    <h2>🤖 AI Recruiter Report</h2>
+
+    <div class="report-grid">
+
+        <div class="report-card">
+            <h3>Frontend Skills</h3>
+            <p id="frontendSkill">★★★★★</p>
+        </div>
+
+        <div class="report-card">
+            <h3>Backend Skills</h3>
+            <p id="backendSkill">★★☆☆☆</p>
+        </div>
+
+        <div class="report-card">
+            <h3>Portfolio Quality</h3>
+            <p id="portfolioQuality">★★★★☆</p>
+        </div>
+
+        <div class="report-card">
+            <h3>GitHub Activity</h3>
+            <p id="githubActivity">★★★★☆</p>
+        </div>
+
+        <div class="report-card">
+            <h3>Recommended Career</h3>
+            <p id="careerSuggestion">Loading...</p>
+        </div>
+
+        <div class="report-card">
+            <h3>Hire Probability</h3>
+            <p id="hireProbability">0%</p>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="skill-gap-section">
+
+    <h2>🎯 AI Skill Gap Detector</h2>
+
+    <div class="skill-gap-card">
+
+        <h3>Detected Skills</h3>
+
+        <div id="detectedSkills" class="skill-list">
+
+        </div>
+
+        <h3>Recommended Skills</h3>
+
+        <div id="recommendedSkills" class="skill-list">
+
+        </div>
+
+        <h3>Next Career Step</h3>
+
+        <p id="nextStep"></p>
+
+    </div>
+
+</section>
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../js/github.js"></script>
-
+</body>
+</html>

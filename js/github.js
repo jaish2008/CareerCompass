@@ -158,7 +158,15 @@ function getLanguages(){
 
 async function analyzeGitHub(username){
 
-    try{
+    console.log("CareerCompass JS Version 14");
+
+        const spinner = document.getElementById("loadingSpinner");
+
+        try{
+
+if (spinner) {
+    spinner.style.display = "block";
+}
 
         const profileResponse = await fetch(
             `https://api.github.com/users/${username}`
@@ -176,27 +184,62 @@ async function analyzeGitHub(username){
 
         const repoResponse = await fetch(profile.repos_url);
 
-        repositories = await repoResponse.json();
+       repositories = await repoResponse.json();
 
-        updateProfile(profile);
+ updateProfile(profile);
 
 updateStatistics(profile);
 
-calculateProfessionalScore(profile);
+try{
+    updateLanguageSection();
+    console.log("✅ updateLanguageSection");
+}catch(e){console.error("❌ updateLanguageSection",e);}
 
-analyzeRepositories();
+try{
+    calculateProfessionalScore(profile);
 
-generateRepositoryTable();
+    generateCareerReadiness();
+    console.log("✅ calculateProfessionalScore");
+    console.log("✅ generateCareerReadiness");
+}catch(e){
+    console.error("❌ calculateProfessionalScore",e);
+}
 
-updateLanguageSection();
-    }
+try{
+    generateRecruiterReport(profile);
+    console.log("✅ generateRecruiterReport");
+}catch(e){console.error("❌ generateRecruiterReport",e);}
+
+try{
+    generateSkillGap();
+    console.log("✅ generateSkillGap");
+}catch(e){console.error("❌ generateSkillGap",e);}
+
+try{
+    analyzeRepositories();
+    console.log("✅ analyzeRepositories");
+}catch(e){console.error("❌ analyzeRepositories",e);}
+
+try{
+    generateRepositoryCards();
+    console.log("✅ generateRepositoryCards");
+}catch(e){console.error("❌ generateRepositoryCards",e);}
+
+}
 
     catch(error){
 
         console.error(error);
 
-        alert("Unable to connect to GitHub.");
+        alert("Unable to fetch GitHub data. Check your internet connection or GitHub username.");
 
+    }
+
+    finally{
+
+        if(spinner){
+            spinner.style.display = "none"; 
+        }
     }
 
 }
@@ -215,13 +258,9 @@ function calculateProfessionalScore(profile){
 
     score += Math.min(getTotalStars(),20);
 
-    let languageCount = Object.keys(getLanguages()).length;
+    score += Math.min(Object.keys(getLanguages()).length * 3,15);
 
-    score += Math.min(languageCount*3,15);
-
-    let activeRepos = repositories.filter(repo=>!repo.fork).length;
-
-    score += Math.min(activeRepos,15);
+    score += Math.min(repositories.length,15);
 
     if(score>100){
 
@@ -232,7 +271,7 @@ function calculateProfessionalScore(profile){
     document.getElementById("professionalScore").textContent =
         score + "%";
 
-    let level = "Beginner";
+    let level="Beginner";
 
     if(score>=85){
 
@@ -242,7 +281,7 @@ function calculateProfessionalScore(profile){
 
     else if(score>=70){
 
-        level="Advanced";
+        level="Advanced Developer";
 
     }
 
@@ -254,6 +293,27 @@ function calculateProfessionalScore(profile){
 
     document.getElementById("scoreLevel").textContent =
         level;
+
+    const circle =  document.getElementById("progressCircle");
+
+    console.log("Circle:", circle);
+
+    if(circle){
+
+        const radius = 75;
+
+    const circumference = 2 * Math.PI * radius;
+
+    const offset =
+        circumference - (score / 100) * circumference;
+
+        circle.style.strokeDasharray = circumference;
+
+        circle.style.strokeDashoffset = offset;
+    }
+
+
+    
 
 }
 
@@ -305,25 +365,43 @@ function repositoryScore(repo){
 
     let score = 0;
 
-    score += repo.stargazers_count*5;
+    score += repo.stargazers_count * 5;
 
-    score += repo.forks_count*3;
+    score += repo.forks_count * 4;
 
     if(repo.description){
 
-        score+=10;
+        score += 15;
 
     }
 
     if(repo.language){
 
-        score+=10;
+        score += 15;
 
     }
 
     if(repo.homepage){
 
-        score+=5;
+        score += 20;
+
+    }
+
+    if(repo.has_issues){
+
+        score += 5;
+
+    }
+
+    if(repo.license){
+
+        score += 10;
+
+    }
+
+    if(score > 100){
+
+        score = 100;
 
     }
 
@@ -375,65 +453,312 @@ function updateWeakRepository(repo){
    Repository Table
 ================================*/
 
-function generateRepositoryTable(){
+function generateRepositoryCards(){
 
-    const table =
-        document.getElementById("repositoryTableBody");
+    const grid =
+        document.getElementById("repositoryGrid");
 
-    table.innerHTML="";
+    grid.innerHTML="";
 
-    repositories.forEach(repo=>{
+    repositories
 
-        let score = repositoryScore(repo);
+    .sort((a,b)=>
+        repositoryScore(b)-repositoryScore(a))
 
-        let badge = "score-low";
+    .forEach(repo=>{
 
-        if(score>=40){
+        const score = repositoryScore(repo);
 
-            badge="score-high";
-
-        }
-
-        else if(score>=20){
-
-            badge="score-medium";
-
-        }
-
-        table.innerHTML +=
+        grid.innerHTML +=
 
         `
-        <tr>
+        <div class="repository-card">
 
-            <td>
-            <a href="${repo.html_url}" target="_blank" class="repo-link">
-             🔗 ${repo.name}
-            </a>
-            </td>
+            <h3>${repo.name}</h3>
 
-            <td>${repo.language || "-"}</td>
+            <div class="repository-info">
 
-            <td>${repo.stargazers_count}</td>
+                <span>💻 Language</span>
 
-            <td>${new Date(repo.updated_at).toLocaleDateString()}</td>
+                <strong>
 
-            <td>
+                ${repo.language || "-"}
 
-                <span class="score-badge ${badge}">
+                </strong>
 
-                    ${score}
+            </div>
 
-                </span>
+            <div class="repository-info">
 
-            </td>
+                <span>⭐ Stars</span>
 
-        </tr>
+                <strong>
+
+                ${repo.stargazers_count}
+
+                </strong>
+
+            </div>
+
+            <div class="repository-info">
+
+                <span>🍴 Forks</span>
+
+                <strong>
+
+                ${repo.forks_count}
+
+                </strong>
+
+            </div>
+
+            <div class="repository-info">
+
+                <span>📅 Updated</span>
+
+                <strong>
+
+                ${new Date(repo.updated_at)
+                .toLocaleDateString()}
+
+                </strong>
+
+            </div>
+
+          <div class="ai-analysis">
+
+    <h4>🤖 AI Analysis</h4>
+
+    <p>${generateAIReview(repo)}</p>
+
+</div>
+
+<div class="recruiter-review">
+
+    ${generateRecruiterVerdict(repo)}
+
+</div>
+
+<div class="repository-actions">
+
+    <div class="repository-score">
+
+        ${getRepositoryBadge(score)}
+
+    </div>
+
+    <a
+        href="${repo.html_url}"
+        target="_blank"
+        class="repository-link">
+
+        Open Repository
+
+    </a>
+
+</div>
+
+           
+        </div>
+
         `;
 
     });
 
+    document
+.querySelectorAll(".repository-card")
+.forEach((card,index)=>{
+
+card.style.animationDelay =
+(index*0.1)+"s";
+
+});
+
 }
 
+
+function generateAIReview(repo){
+
+    let review = [];
+
+    // Description
+    if(repo.description){
+
+        review.push("✅ Well documented repository");
+
+    }
+    else{
+
+        review.push("⚠ Add a repository description");
+
+    }
+
+    // Deployment
+    if(repo.homepage){
+
+        review.push("🌐 Live project deployed");
+
+    }
+    else{
+
+        review.push("🚀 Deploy this project online");
+
+    }
+
+    // Stars
+    if(repo.stargazers_count >= 10){
+
+        review.push("⭐ Strong community interest");
+
+    }
+    else if(repo.stargazers_count > 0){
+
+        review.push("⭐ Has received community appreciation");
+
+    }
+    else{
+
+        review.push("📢 Promote this repository to gain visibility");
+
+    }
+
+    // Forks
+    if(repo.forks_count >= 5){
+
+        review.push("🍴 Frequently forked by developers");
+
+    }
+
+    // Language
+    if(repo.language){
+
+        review.push(`💻 Primary language: ${repo.language}`);
+
+    }
+
+    // Last update
+    const days =
+        Math.floor(
+            (Date.now() - new Date(repo.updated_at))
+            / (1000 * 60 * 60 * 24)
+        );
+
+    if(days <= 30){
+
+        review.push("🟢 Actively maintained");
+
+    }
+    else{
+
+        review.push("🟡 Consider updating this repository");
+
+    }
+
+    return review.join("<br>");
+
+}
+
+function getRepositoryBadge(score){
+
+    if(score >= 80){
+
+        return "🏆 Excellent";
+
+    }
+
+    if(score >= 60){
+
+        return "🥇 Strong";
+
+    }
+
+    if(score >= 40){
+
+        return "🥈 Good";
+
+    }
+
+    if(score >= 20){
+
+        return "🥉 Average";
+
+    }
+
+    return "⚠ Needs Work";
+
+}
+
+/* ===========================================
+   Dynamic Recruiter Review
+===========================================*/
+
+function generateRecruiterVerdict(repo){
+
+    let verdict = [];
+
+    // ⭐ Repository Popularity
+    if(repo.stargazers_count >= 10){
+
+        verdict.push("🌟 Excellent community engagement");
+
+    }
+    else if(repo.stargazers_count >= 3){
+
+        verdict.push("⭐ Good repository popularity");
+
+    }
+    else{
+
+        verdict.push("⚠ Increase repository visibility");
+
+    }
+
+    // 📖 Documentation
+    if(repo.description){
+
+        verdict.push("📖 Repository is well documented");
+
+    }
+    else{
+
+        verdict.push("❌ Add a meaningful repository description");
+
+    }
+
+    // 🚀 Deployment
+    if(repo.homepage){
+
+        verdict.push("🚀 Live deployment available");
+
+    }
+    else{
+
+        verdict.push("⚠ Deploy this project online");
+
+    }
+
+    // 🍴 Collaboration
+    if(repo.forks_count >= 3){
+
+        verdict.push("🤝 Good collaboration potential");
+
+    }
+    else{
+
+        verdict.push("📌 Collaboration can be improved");
+
+    }
+
+    // 💻 Technology
+    if(repo.language){
+
+        verdict.push("💻 Built using " + repo.language);
+
+    }
+
+    return verdict.join("<br>");
+
+}
 
 /* ===========================================
    CareerCompass
@@ -464,22 +789,75 @@ function updateLanguageSection(){
 
     const languages = getLanguages();
 
-    document.getElementById("htmlCount").textContent =
-        (languages.HTML || 0) + " Repositories";
+    const summary = document.getElementById("languageSummary");
 
-    document.getElementById("cssCount").textContent =
-        (languages.CSS || 0) + " Repositories";
+    summary.innerHTML = "";
 
-    document.getElementById("jsCount").textContent =
-        (languages.JavaScript || 0) + " Repositories";
+    const totalRepos = repositories.length || 1;
 
-    document.getElementById("pythonCount").textContent =
-        (languages.Python || 0) + " Repositories";
+    Object.entries(languages)
 
-    document.getElementById("javaCount").textContent =
-        (languages.Java || 0) + " Repositories";
+    .sort((a,b)=>b[1]-a[1])
+
+    .forEach(([language,count])=>{
+
+        const percentage =
+
+            Math.round((count/totalRepos)*100);
+
+        summary.innerHTML +=
+
+        `
+        <div class="language-item">
+
+            <div class="language-header">
+
+                <span>${language}</span>
+
+                <span>${count} Repositories</span>
+
+            </div>
+
+            <div class="language-progress">
+
+                <div
+                    class="language-bar"
+                    style="width:${percentage}%;
+                    background:${getLanguageColor(language)};">
+                </div>
+
+            </div>
+
+            <small>${percentage}% of repositories</small>
+
+        </div>
+        `;
+
+    });
 
     drawLanguageChart(languages);
+
+}
+
+function getLanguageColor(language){
+
+    const colors = {
+
+        HTML:"#E34F26",
+        CSS:"#1572B6",
+        JavaScript:"#F7DF1E",
+        TypeScript:"#3178C6",
+        Python:"#3776AB",
+        Java:"#F89820",
+        "C++":"#00599C",
+        "C#":"#68217A",
+        PHP:"#777BB4",
+        Go:"#00ADD8",
+        Rust:"#DEA584"
+
+    };
+
+    return colors[language] || "#2563eb";
 
 }
 
@@ -546,5 +924,388 @@ function drawLanguageChart(languages){
         }
 
     });
+
+}
+
+/* ===========================================
+   AI GitHub Intelligence Engine
+===========================================*/
+
+function analyzeDeveloperProfile(){
+
+    const analysis = {
+
+        frontend:0,
+        backend:0,
+        aiml:0,
+        mobile:0,
+        devops:0,
+        cloud:0,
+        datascience:0,
+
+        skills:[],
+        missing:[],
+        career:"",
+        level:"Beginner"
+
+    };
+
+    repositories.forEach(repo=>{
+
+        const lang = (repo.language || "").toLowerCase();
+
+        switch(lang){
+
+            case "html":
+            case "css":
+            case "javascript":
+
+                analysis.frontend += 20;
+                break;
+
+            case "typescript":
+
+                analysis.frontend += 25;
+                break;
+
+            case "java":
+
+                analysis.backend += 20;
+                break;
+
+            case "python":
+
+                analysis.aiml += 15;
+                analysis.datascience += 15;
+                break;
+
+            case "c#":
+
+                analysis.backend += 20;
+                break;
+
+            case "php":
+
+                analysis.backend += 20;
+                break;
+
+            case "go":
+
+                analysis.backend += 25;
+                analysis.cloud += 15;
+                break;
+
+            case "dart":
+
+                analysis.mobile += 30;
+                break;
+
+            case "kotlin":
+
+                analysis.mobile += 30;
+                break;
+
+            case "swift":
+
+                analysis.mobile += 30;
+                break;
+
+        }
+
+    });
+
+    if(analysis.frontend>100) analysis.frontend=100;
+    if(analysis.backend>100) analysis.backend=100;
+    if(analysis.aiml>100) analysis.aiml=100;
+    if(analysis.mobile>100) analysis.mobile=100;
+    if(analysis.cloud>100) analysis.cloud=100;
+    if(analysis.datascience>100) analysis.datascience=100;
+
+    return analysis;
+
+}
+
+/* ===========================================
+   Career Readiness
+===========================================*/
+
+function generateCareerReadiness(){
+
+    const analysis = analyzeDeveloperProfile();
+
+    setProgress(
+        "frontendProgress",
+        analysis.frontend
+    );
+
+    setProgress(
+        "backendProgress",
+        analysis.backend
+    );
+
+    setProgress(
+        "fullstackProgress",
+        Math.min(
+            Math.round(
+                (analysis.frontend + analysis.backend) / 2
+            ),
+            100
+        )
+    );
+
+    setProgress(
+        "aiProgress",
+        Math.max(
+            analysis.aiml,
+            analysis.datascience
+        )
+    );
+
+}
+
+/* ===========================================
+   Progress Bar Helper
+===========================================*/
+
+function setProgress(id,value){
+
+    const bar = document.getElementById(id);
+
+    if(!bar) return;
+
+    bar.style.width = value + "%";
+
+    bar.textContent = value + "%";
+
+}
+
+/* ===========================================
+   Dynamic AI Career Report
+===========================================*/
+
+function generateRecruiterReport(profile){
+
+    const analysis = analyzeDeveloperProfile();
+
+    let career = "";
+    let activity = "";
+    let hire = 0;
+
+    // ---------- Career Suggestion ----------
+
+    if(analysis.frontend >= analysis.backend &&
+       analysis.frontend >= analysis.aiml){
+
+        career = "Frontend Developer";
+
+    }
+
+    else if(analysis.backend >= analysis.frontend &&
+            analysis.backend >= analysis.aiml){
+
+        career = "Backend Developer";
+
+    }
+
+    else if(analysis.aiml >= analysis.frontend &&
+            analysis.aiml >= analysis.backend){
+
+        career = "AI / Machine Learning Engineer";
+
+    }
+
+    else{
+
+        career = "Software Developer";
+
+    }
+
+    // ---------- GitHub Activity ----------
+
+    if(profile.public_repos >= 20){
+
+        activity = "★★★★★";
+
+    }
+
+    else if(profile.public_repos >= 10){
+
+        activity = "★★★★☆";
+
+    }
+
+    else if(profile.public_repos >= 5){
+
+        activity = "★★★☆☆";
+
+    }
+
+    else{
+
+        activity = "★★☆☆☆";
+
+    }
+
+    // ---------- Hire Probability ----------
+
+    hire = Math.round(
+
+        profile.followers * 0.4 +
+
+        getTotalStars() * 0.8 +
+
+        profile.public_repos * 2 +
+
+        calculateRepositoryHealth() * 0.3
+
+    );
+
+   
+
+    if(hire > 100){
+
+        hire = 100;
+
+    }
+
+    // ---------- Update HTML ----------
+
+    document.getElementById("careerSuggestion").textContent =
+        career;
+
+    document.getElementById("githubActivity").textContent =
+        activity;
+
+    document.getElementById("hireProbability").textContent =
+        hire + "%";
+
+}
+
+function generateSkillGap(){
+
+    const analysis = analyzeDeveloperProfile();
+
+    const detected = [];
+
+    const missing = [];
+
+    if(analysis.frontend>0){
+
+        detected.push("HTML");
+        detected.push("CSS");
+        detected.push("JavaScript");
+
+    }
+
+    if(analysis.backend>0){
+
+        detected.push("Backend Development");
+
+    }
+
+    if(analysis.aiml>0){
+
+        detected.push("Python");
+        detected.push("Machine Learning");
+
+    }
+
+    if(analysis.mobile>0){
+
+        detected.push("Mobile Development");
+
+    }
+
+    if(analysis.cloud>0){
+
+        detected.push("Cloud");
+
+    }
+
+    const suggestions = [
+
+        "React",
+
+        "Node.js",
+
+        "MongoDB",
+
+        "Docker",
+
+        "REST API",
+
+        "CI/CD",
+
+        "System Design"
+
+    ];
+
+    suggestions.forEach(skill=>{
+
+        if(!detected.includes(skill)){
+
+            missing.push(skill);
+
+        }
+
+    });
+
+    document.getElementById("detectedSkills").innerHTML =
+        detected.map(skill=>`<span class="skill-tag">${skill}</span>`).join("");
+
+    document.getElementById("recommendedSkills").innerHTML =
+        missing.map(skill=>`<span class="skill-tag missing">${skill}</span>`).join("");
+
+    if(analysis.frontend>=60){
+
+        document.getElementById("nextStep").textContent =
+        "Build large React projects and learn backend development.";
+
+    }
+
+    else if(analysis.backend>=60){
+
+        document.getElementById("nextStep").textContent =
+        "Learn Cloud, Docker and System Design.";
+
+    }
+
+    else if(analysis.aiml>=50){
+
+        document.getElementById("nextStep").textContent =
+        "Create Deep Learning and Computer Vision projects.";
+
+    }
+
+    else{
+
+        document.getElementById("nextStep").textContent =
+        "Increase project quality and diversify your GitHub portfolio.";
+
+    }
+
+}
+
+function calculateRepositoryHealth(){
+
+    let health = 0;
+
+    repositories.forEach(repo=>{
+
+        if(repo.description) health++;
+
+        if(repo.homepage) health++;
+
+        if(repo.stargazers_count>0) health++;
+
+        if(repo.language) health++;
+
+        if(repo.license) health++;
+
+    });
+
+    return Math.round(
+        (health/(repositories.length*5))*100
+    );
 
 }

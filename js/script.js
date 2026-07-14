@@ -19,3 +19,18 @@ menuToggle.addEventListener("click", () => {
     }
 
 });
+
+const navItems = document.querySelectorAll(".nav-links a");
+
+navItems.forEach(item => {
+
+    item.addEventListener("click", () => {
+
+        navLinks.classList.remove("active");
+
+        menuIcon.classList.remove("fa-xmark");
+        menuIcon.classList.add("fa-bars");
+
+    });
+
+});

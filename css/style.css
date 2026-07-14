@@ -10,6 +10,12 @@ body{
     color:#1e293b;
 }
 
+.section-container{
+    max-width:1200px;
+    margin:100px auto;
+    padding:0 40px;
+}
+
 header{
     width:100%;
     background:white;
@@ -26,8 +32,6 @@ nav{
     justify-content:space-between;
     align-items:center;
     padding:18px 40px;
-    position: sticky;
-    top: 0;
     z-index: 1000;
 }
 
@@ -77,6 +81,7 @@ nav{
     color:#2563eb;
     background:#eff6ff;
     padding-left:30px;
+    transform:translateY(-2px);
 }
 .nav-actions{
     display:flex;
@@ -111,16 +116,8 @@ nav{
     transition:0.3s ease;
 }
 
-.hamburger{
-    display:none;
-}
 
 .hero{
-
-    max-width:1200px;
-
-    margin:auto;
-
     display:flex;
 
     justify-content:space-between;
@@ -129,7 +126,6 @@ nav{
 
     gap: 35px;
 
-    padding:80px 40px;
 }
 
 .hero-left{
@@ -166,7 +162,7 @@ nav{
     padding:15px 30px;
     border-radius:10px;
     font-weight:bold;
-    transition:.3s ease;
+    transition:.3s;
 }
 
 .primary-btn:hover{
@@ -187,7 +183,7 @@ nav{
     border:2px solid #2563eb;
     border-radius:10px;
     font-weight:bold;
-    transition:.3s ease;
+    transition:.3s;
 }
 
 .hero-right{
@@ -225,11 +221,6 @@ nav{
     border-bottom:1px solid #e5e7eb;
 }
 /* Why CareerCompass Section */
-.why{
-     max-width:1200px;
-    margin:100px auto;
-    padding:0 40px;
-}
 
 .why-header{
     text-align:center;
@@ -287,15 +278,6 @@ nav{
 /* ===================================
    FEATURES
 =================================== */
-
-.features{
-
-    max-width:1200px;
-
-    margin:100px auto;
-
-    padding:0 40px;
-}
 
 .section-title{
 
@@ -374,14 +356,6 @@ nav{
    HOW IT WORKS
 =================================== */
 
-.how-it-works{
-
-    max-width:1200px;
-
-    margin:100px auto;
-
-    padding:0 40px;
-}
 
 .steps-container{
 
@@ -456,15 +430,6 @@ nav{
 /* ===================================
    TESTIMONIALS
 =================================== */
-
-.testimonials{
-
-    max-width:1200px;
-
-    margin:100px auto;
-
-    padding:0 40px;
-}
 
 .testimonial-grid{
 
