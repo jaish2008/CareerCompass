@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareerCompass | Interview Trainer</title>
+<link rel="stylesheet" href="interview.css">
+</head>
+<body>
+
+  <header class="page-header">
+    <div class="page-header-inner">
+      <span class="logo-icon">🧭</span>
+      <div>
+        <h1>CareerCompass Interview Trainer</h1>
+        <p>Practice real interview questions and get an instant performance report.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <!-- LEFT: Setup + Live Question -->
+    <section class="card main-card">
+
+      <!-- STEP 1: SETUP -->
+      <div id="setupPanel">
+        <h2 class="card-title">Start a Mock Interview</h2>
+
+        <label for="careerSelect">Career Track</label>
+        <select id="careerSelect">
+          <option value="Frontend Developer">Frontend Developer</option>
+          <option value="Backend Developer">Backend Developer</option>
+          <option value="Data Analyst / ML">Data Analyst / ML</option>
+        </select>
+        <p class="hint" id="autofillHint">Auto-filled from your Career Assessment. You can change it above.</p>
+
+        <label for="roundSelect">Round Type</label>
+        <select id="roundSelect">
+          <option value="HR">HR Round</option>
+          <option value="Technical">Technical Round</option>
+          <option value="Coding">Coding Round</option>
+        </select>
+
+        <label for="difficultySelect">Difficulty</label>
+        <select id="difficultySelect">
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+        </select>
+
+        <button id="startBtn" class="btn-primary">Start Interview</button>
+      </div>
+
+      <!-- STEP 2: LIVE QUESTION -->
+      <div id="questionPanel" class="hidden">
+        <div class="q-top-row">
+          <span id="qCounter">Question 1 of 5</span>
+          <span id="timer" class="timer">01:30</span>
+        </div>
+        <h2 id="questionText" class="question-text">—</h2>
+        <textarea id="answerBox" rows="6" placeholder="Type your answer here..."></textarea>
+        <button id="submitAnswerBtn" class="btn-primary">Submit Answer</button>
+
+        <div id="answerFeedback" class="feedback-box hidden"></div>
+      </div>
+
+      <!-- STEP 3: FINAL REPORT -->
+      <div id="reportPanel" class="hidden">
+        <h2 class="card-title">🎯 Interview Report</h2>
+
+        <div class="stat-grid">
+          <div class="stat-box">
+            <span class="stat-label">Communication</span>
+            <span class="stat-stars" id="starComm">★★★★★</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Technical Accuracy</span>
+            <span class="stat-stars" id="starTech">★★★★★</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Confidence</span>
+            <span class="stat-stars" id="starConf">★★★★★</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Hire Probability</span>
+            <span class="stat-big" id="hireProb">0%</span>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="list-box strengths">
+            <h3>✅ Strengths</h3>
+            <ul id="strengthsList"></ul>
+          </div>
+          <div class="list-box improve">
+            <h3>🎯 Focus Areas</h3>
+            <ul id="improveList"></ul>
+          </div>
+        </div>
+
+        <button id="retryBtn" class="btn-secondary">Practice Again</button>
+      </div>
+
+    </section>
+
+    <!-- RIGHT: Session summary + history -->
+    <aside class="card side-card">
+      <h2 class="card-title">Session Summary</h2>
+      <div class="summary-row"><span>Career Track</span><strong id="sumCareer">-</strong></div>
+      <div class="summary-row"><span>Round</span><strong id="sumRound">-</strong></div>
+      <div class="summary-row"><span>Progress</span><strong id="sumProgress">0 / 0</strong></div>
+
+      <h2 class="card-title mt">📈 Past Attempts</h2>
+      <div id="historyList" class="history-list">
+        <p class="hint">No attempts yet. Finish an interview to see your trend here.</p>
+      </div>
+    </aside>
+
+  </main>
+
+  <script src="questionBank.js"></script>
+  <script src="interview.js"></script>
+</body>
+</html>
