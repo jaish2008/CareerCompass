@@ -197,12 +197,22 @@ try{
 
 try{
     calculateProfessionalScore(profile);
-
-    generateCareerReadiness();
-    console.log("✅ calculateProfessionalScore");
-    console.log("✅ generateCareerReadiness");
+   console.log("✅ calculateProfessionalScore");
+   
 }catch(e){
     console.error("❌ calculateProfessionalScore",e);
+}
+
+try{
+
+    generateCareerReadiness();
+
+    console.log("✅ generateCareerReadiness");
+
+}catch(e){
+
+    console.error("❌ generateCareerReadiness",e);
+
 }
 
 try{
@@ -224,6 +234,44 @@ try{
     generateRepositoryCards();
     console.log("✅ generateRepositoryCards");
 }catch(e){console.error("❌ generateRepositoryCards",e);}
+
+try{
+
+    updatePortfolioHealth();
+    console.log("✅ updatePortfolioHealth");
+
+}catch(e){
+
+    console.error("❌ updatePortfolioHealth",e);
+
+}
+
+try{
+
+    generateActivityAnalytics();
+    console.log("✅ generateActivityAnalytics");
+
+}catch(e){
+
+    console.error("❌ generateActivityAnalytics",e);
+
+}
+
+try {
+    updateRepositoryInsights();
+    console.log("✅ updateRepositoryInsights");
+} 
+catch (error) 
+{
+    console.error("❌ updateRepositoryInsights", error);
+}
+
+try {
+    generatePortfolioSWOT();
+    console.log("✅ generatePortfolioSWOT");
+} catch (error) {
+    console.error("❌ generatePortfolioSWOT", error);
+}
 
 }
 
@@ -1308,4 +1356,306 @@ function calculateRepositoryHealth(){
         (health/(repositories.length*5))*100
     );
 
+}
+
+/* ===========================================
+   Portfolio Health Dashboard
+===========================================*/
+
+function updatePortfolioHealth(){
+
+    const documentation =
+        Math.round(
+            repositories.filter(r=>r.description).length
+            / repositories.length * 100
+        ) || 0;
+
+    const deployment =
+        Math.round(
+            repositories.filter(r=>r.homepage).length
+            / repositories.length * 100
+        ) || 0;
+
+    const quality =
+        calculateRepositoryHealth();
+
+    const community =
+        Math.min(
+            Math.round(
+                (getTotalStars() +
+                repositories.reduce(
+                    (sum,r)=>sum+r.forks_count,0
+                )) * 2
+            ),
+            100
+        );
+
+    const diversity =
+        Math.min(
+            Object.keys(getLanguages()).length * 20,
+            100
+        );
+
+    setHealth("docHealth",documentation);
+
+    setHealth("deployHealth",deployment);
+
+    setHealth("qualityHealth",quality);
+
+    setHealth("communityHealth",community);
+
+    setHealth("diversityHealth",diversity);
+
+}
+
+function generateActivityAnalytics(){
+
+    
+    if(repositories.length===0){
+
+        return;
+
+    }
+
+    const latestRepo = repositories.reduce((a,b)=>
+
+        new Date(a.updated_at) >
+        new Date(b.updated_at)
+
+        ? a : b
+
+    );
+
+    
+
+    const mostActive = repositories.reduce((a, b) =>
+    new Date(a.pushed_at) > new Date(b.pushed_at) ? a : b
+);
+    
+
+    const languages = getLanguages();
+
+    let primary = "-";
+
+    let max = 0;
+
+    Object.entries(languages).forEach(([lang,count])=>{
+
+        if(count>max){
+
+            max=count;
+
+            primary=lang;
+
+        }
+
+    });
+
+    const activityScore = Math.min(
+
+        repositories.length*5 +
+
+        getTotalStars()*2 +
+
+        Object.keys(languages).length*5,
+
+        100
+
+    );
+
+
+    document.getElementById("mostActiveRepo").textContent =
+        mostActive.name;
+
+    document.getElementById("latestUpdate").textContent =
+    new Date(latestRepo.pushed_at || latestRepo.updated_at)
+        .toLocaleDateString();
+
+    document.getElementById("primaryLanguage").textContent =
+        primary;
+
+    document.getElementById("activityScore").textContent =
+        activityScore + "%";
+
+}
+
+function setHealth(id,value){
+
+    const bar =
+        document.getElementById(id);
+
+    if(!bar) return;
+
+    bar.style.width =
+        value + "%";
+
+}
+
+function updateRepositoryInsights() {
+    const totalElement = document.getElementById("totalRepos");
+    const starredElement = document.getElementById("mostStarredRepo");
+    const forkedElement = document.getElementById("mostForkedRepo");
+    const recentElement = document.getElementById("recentActivity");
+
+    if (
+        !totalElement ||
+        !starredElement ||
+        !forkedElement ||
+        !recentElement
+    ) {
+        return;
+    }
+
+    if (repositories.length === 0) {
+        totalElement.textContent = "0";
+        starredElement.textContent = "-";
+        forkedElement.textContent = "-";
+        recentElement.textContent = "-";
+        return;
+    }
+
+    const mostStarred = repositories.reduce((best, repo) =>
+        repo.stargazers_count > best.stargazers_count ? repo : best
+    );
+
+    const mostForked = repositories.reduce((best, repo) =>
+        repo.forks_count > best.forks_count ? repo : best
+    );
+
+    const mostRecent = repositories.reduce((latest, repo) =>
+        new Date(repo.pushed_at || repo.updated_at) >
+        new Date(latest.pushed_at || latest.updated_at)
+            ? repo
+            : latest
+    );
+
+    totalElement.textContent = repositories.length;
+
+    starredElement.textContent =
+        `${mostStarred.name} (${mostStarred.stargazers_count} stars)`;
+
+    forkedElement.textContent =
+        `${mostForked.name} (${mostForked.forks_count} forks)`;
+
+    recentElement.textContent =
+        `${mostRecent.name} — ${new Date(
+            mostRecent.pushed_at || mostRecent.updated_at
+        ).toLocaleDateString()}`;
+}
+
+function generatePortfolioSWOT() {
+    const languages = getLanguages();
+    const languageCount = Object.keys(languages).length;
+
+    const deployedCount =
+        repositories.filter(repo => repo.homepage).length;
+
+    const documentedCount =
+        repositories.filter(repo => repo.description).length;
+
+    const recentCount =
+        repositories.filter(repo => {
+            const lastPush = new Date(repo.pushed_at || repo.updated_at);
+            const ageInDays =
+                (Date.now() - lastPush.getTime()) /
+                (1000 * 60 * 60 * 24);
+
+            return ageInDays <= 90;
+        }).length;
+
+    const strengths = [];
+    const weaknesses = [];
+    const opportunities = [];
+    const risks = [];
+
+    // Strengths
+    if (repositories.length >= 6) {
+        strengths.push("Good number of public projects.");
+    }
+
+    if (languageCount >= 3) {
+        strengths.push("Portfolio demonstrates technology diversity.");
+    }
+
+    if (recentCount >= 3) {
+        strengths.push("Several repositories are actively maintained.");
+    }
+
+    if (getTotalStars() > 0) {
+        strengths.push("Projects have received community appreciation.");
+    }
+
+    if (strengths.length === 0) {
+        strengths.push("The GitHub profile provides a foundation for growth.");
+    }
+
+    // Weaknesses
+    if (documentedCount < repositories.length / 2) {
+        weaknesses.push("Many repositories need meaningful descriptions.");
+    }
+
+    if (deployedCount < repositories.length / 3) {
+        weaknesses.push("Few projects provide live deployment links.");
+    }
+
+    if (languageCount < 3) {
+        weaknesses.push("The portfolio has limited technology diversity.");
+    }
+
+    if (getTotalStars() === 0) {
+        weaknesses.push("Repositories currently have limited visibility.");
+    }
+
+    if (weaknesses.length === 0) {
+        weaknesses.push("No major structural weakness was detected.");
+    }
+
+    // Opportunities
+    if (languages.JavaScript || languages.TypeScript) {
+        opportunities.push("Build a React or full-stack web application.");
+    }
+
+    if (languages.Python) {
+        opportunities.push("Create a data analysis or machine-learning project.");
+    }
+
+    if (!languages.TypeScript) {
+        opportunities.push("Learn TypeScript for stronger production projects.");
+    }
+
+    opportunities.push("Contribute to open-source repositories.");
+
+    // Risks
+    if (recentCount === 0) {
+        risks.push("Inactive repositories may reduce recruiter confidence.");
+    }
+
+    if (deployedCount === 0) {
+        risks.push("Recruiters cannot directly test any live project.");
+    }
+
+    if (documentedCount === 0) {
+        risks.push("Missing documentation makes projects difficult to evaluate.");
+    }
+
+    if (risks.length === 0) {
+        risks.push("Maintain consistent activity to preserve portfolio quality.");
+    }
+
+    updateSWOTList("swotStrengths", strengths);
+    updateSWOTList("swotWeaknesses", weaknesses);
+    updateSWOTList("swotOpportunities", opportunities);
+    updateSWOTList("swotThreats", risks);
+}
+
+function updateSWOTList(elementId, items) {
+    const element = document.getElementById(elementId);
+
+    if (!element) {
+        return;
+    }
+
+    element.innerHTML = items
+        .map(item => `<li>${item}</li>`)
+        .join("");
 }
