@@ -18,7 +18,7 @@ const router = express.Router();
 const {
   getMatchedInternshipsForStudent,
   syncAllInternships
-} = require('../frontend-career/js/adzunaIntegration');
+} = require('./adzunaintegration');
 
 /**
  * GET /api/internships?roleType=frontend
@@ -49,14 +49,22 @@ router.get('/', async (req, res) => {
  * cache on demand instead of waiting for the 6-hour cron job.
  * In production, protect this route (admin-only) so it can't
  * be spammed and burn through your Adzuna rate limit.
+ *
+ * NOTE: the `detail` field in the error response is for local
+ * debugging only. Remove it (or gate it behind an env check)
+ * before deploying, so you don't leak internal error messages
+ * to the public.
  */
 router.post('/sync', async (req, res) => {
   try {
-    const total = await syncAllInternships();
-    res.json({ message: 'Sync complete', totalSynced: total });
+    await syncAllInternships();
+    res.json({ message: 'Sync complete' });
   } catch (err) {
-    console.error('Manual sync failed:', err);
-    res.status(500).json({ error: 'Sync failed' });
+    console.error('SYNC ERROR:', err); // full object -> prints stack trace in Terminal 1
+    res.status(500).json({
+      error: 'Sync failed',
+      detail: err.message // temporary — remove before production
+    });
   }
 });
 
