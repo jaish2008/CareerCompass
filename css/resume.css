@@ -365,3 +365,137 @@ textarea{
 .certificate-item p{
     margin:5px 0;
 }
+
+.repeat-item {
+    position: relative;
+
+    margin-bottom: 18px;
+    padding: 20px;
+
+    border: 1px solid #dbe3ef;
+    border-radius: 12px;
+
+    background: #f8fafc;
+}
+
+.repeat-item label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #334155;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.repeat-item input,
+.repeat-item textarea {
+    width: 100%;
+
+    margin-bottom: 14px;
+    padding: 12px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+
+    background: white;
+}
+
+.repeat-item textarea {
+    min-height: 95px;
+    resize: vertical;
+}
+
+.add-item-btn {
+    width: 100%;
+
+    padding: 12px 18px;
+
+    border: 1px dashed #2563eb;
+    border-radius: 10px;
+
+    background: #eff6ff;
+    color: #2563eb;
+
+    cursor: pointer;
+
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.add-item-btn:hover {
+    background: #dbeafe;
+}
+
+.remove-item-btn {
+    padding: 8px 13px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #fee2e2;
+    color: #dc2626;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+.remove-item-btn:hover {
+    background: #fecaca;
+}
+
+.preview-entry {
+    margin-bottom: 18px;
+    padding-bottom: 13px;
+
+    border-bottom: 1px solid #e2e8f0;
+
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.preview-entry:last-child {
+    border-bottom: none;
+}
+
+.preview-entry h4 {
+    margin-bottom: 5px;
+
+    color: #1e293b;
+    font-size: 16px;
+}
+
+.analyze-resume-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 14px 28px;
+
+    border-radius: 10px;
+
+    background: #7c3aed;
+    color: white;
+
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.analyze-resume-btn:hover {
+    background: #6d28d9;
+}
+
+@media print {
+
+    .preview-entry {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .preview-repeat-section h3 {
+        break-after: avoid;
+        page-break-after: avoid;
+    }
+}
