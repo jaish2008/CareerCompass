@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Career Quiz | CareerCompass</title>
+
+    <meta name="description"
+          content="Take the CareerCompass AI Career Quiz to discover suitable technology career paths based on your interests and skills.">
+
+    <link rel="stylesheet"
+          href="../css/career-quiz.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <div class="header-container">
+
+        <a href="../index.html" class="brand">
+
+            <div class="brand-icon">🧭</div>
+
+            <div class="brand-text">
+                <strong>CareerCompass</strong>
+                <small>AI Career Guidance Platform</small>
+            </div>
+
+        </a>
+
+        <button
+            type="button"
+            class="nav-toggle"
+            id="navToggle"
+            aria-label="Open navigation"
+            aria-expanded="false">
+
+            ☰
+
+        </button>
+
+        <nav class="site-nav" id="siteNav">
+
+            <a href="../index.html">Home</a>
+
+            <a href="github.html">
+                GitHub Analyzer
+            </a>
+
+            <a href="resume.html">
+                Resume Builder
+            </a>
+
+            <a href="resume-analyzer.html">
+                Resume Analyzer
+            </a>
+
+            <a href="career-quiz.html"
+               class="active">
+
+                Career Quiz
+
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+<main class="main-container">
+
+    <!-- Hero -->
+
+    <section class="quiz-hero">
+
+        <span class="hero-label">
+            AI-Powered Career Discovery
+        </span>
+
+        <h1>Discover Your Best Technology Career</h1>
+
+        <p>
+            Answer a few questions about your interests,
+            strengths and preferred working style.
+            CareerCompass will calculate your top career matches
+            and provide a personalized learning roadmap.
+        </p>
+
+        <div class="hero-features">
+
+            <span>✓ 15 Career Questions</span>
+
+            <span>✓ Top 3 Career Matches</span>
+
+            <span>✓ Personalized Roadmap</span>
+
+        </div>
+
+    </section>
+
+    <!-- Introduction -->
+
+    <section class="quiz-card intro-card"
+             id="quizIntro">
+
+        <div class="intro-icon">🎯</div>
+
+        <h2>Career Interest Assessment</h2>
+
+        <p>
+            This quiz evaluates your technical interests,
+            problem-solving preferences, creativity,
+            data orientation and working style.
+        </p>
+
+        <div class="quiz-information">
+
+            <div class="info-item">
+                <strong>15</strong>
+                <span>Questions</span>
+            </div>
+
+            <div class="info-item">
+                <strong>5–7</strong>
+                <span>Minutes</span>
+            </div>
+
+            <div class="info-item">
+                <strong>10</strong>
+                <span>Career Paths</span>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="primary-btn"
+            id="startQuizBtn">
+
+            Start Career Quiz
+
+        </button>
+
+    </section>
+
+    <!-- Quiz -->
+
+    <section class="quiz-card quiz-section hidden"
+             id="quizSection">
+
+        <div class="quiz-top">
+
+            <div>
+
+                <span class="question-label">
+                    Career Assessment
+                </span>
+
+                <h2 id="questionProgress">
+                    Question 1 of 15
+                </h2>
+
+            </div>
+
+            <span class="progress-percentage"
+                  id="progressPercentage">
+
+                0%
+
+            </span>
+
+        </div>
+
+        <div class="progress-track">
+
+            <div class="progress-fill"
+                 id="progressFill">
+            </div>
+
+        </div>
+
+        <div class="question-container">
+
+            <h3 id="questionText">
+                Question will appear here.
+            </h3>
+
+            <div class="options-container"
+                 id="optionsContainer">
+            </div>
+
+        </div>
+
+        <div class="quiz-actions">
+
+            <button
+                type="button"
+                class="secondary-btn"
+                id="previousBtn"
+                disabled>
+
+                Previous
+
+            </button>
+
+            <button
+                type="button"
+                class="primary-btn"
+                id="nextBtn"
+                disabled>
+
+                Next Question
+
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- Results -->
+
+    <section class="results-section hidden"
+             id="resultsSection">
+
+        <div class="result-heading">
+
+            <span class="hero-label">
+                Your Career Results
+            </span>
+
+            <h2>Your Top Career Matches</h2>
+
+            <p>
+                These matches are calculated from your
+                quiz responses and career-interest scores.
+            </p>
+
+        </div>
+
+        <!-- Primary Match -->
+
+        <div class="primary-result-card">
+
+            <div class="result-rank">
+                Best Match
+            </div>
+
+            <div class="career-result-header">
+
+                <div class="career-icon"
+                     id="primaryCareerIcon">
+
+                    💻
+
+                </div>
+
+                <div>
+
+                    <p class="result-label">
+                        Recommended Career
+                    </p>
+
+                    <h2 id="primaryCareerName">
+                        Career Name
+                    </h2>
+
+                </div>
+
+                <div class="match-score">
+
+                    <strong id="primaryMatchScore">
+                        0%
+                    </strong>
+
+                    <span>Career Match</span>
+
+                </div>
+
+            </div>
+
+            <div class="match-progress">
+
+                <div id="primaryMatchBar">
+                </div>
+
+            </div>
+
+            <p class="career-description"
+               id="primaryCareerDescription">
+            </p>
+
+        </div>
+
+        <!-- Additional Matches -->
+
+        <div class="section-heading">
+
+            <h3>Other Strong Career Matches</h3>
+
+            <p>
+                Your second and third highest-scoring careers.
+            </p>
+
+        </div>
+
+        <div class="secondary-results"
+             id="secondaryResults">
+        </div>
+
+        <!-- Skills -->
+
+        <div class="result-grid">
+
+            <div class="result-card">
+
+                <h3>Recommended Skills</h3>
+
+                <p>
+                    Skills that will help you prepare for
+                    your top career.
+                </p>
+
+                <div class="skill-list"
+                     id="recommendedSkills">
+                </div>
+
+            </div>
+
+            <div class="result-card">
+
+                <h3>Why This Career Fits You</h3>
+
+                <p>
+                    Career qualities that match your answers.
+                </p>
+
+                <ul class="reason-list"
+                    id="careerReasons">
+                </ul>
+
+            </div>
+
+        </div>
+
+        <!-- Roadmap -->
+
+        <div class="result-card roadmap-card">
+
+            <div class="section-heading">
+
+                <h3>Your Career Roadmap</h3>
+
+                <p>
+                    Follow these stages to start preparing
+                    for your recommended career.
+                </p>
+
+            </div>
+
+            <div class="roadmap"
+                 id="careerRoadmap">
+            </div>
+
+        </div>
+
+        <!-- Actions -->
+
+        <div class="result-actions">
+
+            <button
+                type="button"
+                class="secondary-btn"
+                id="retakeQuizBtn">
+
+                Retake Quiz
+
+            </button>
+
+            <button
+                type="button"
+                class="primary-btn"
+                id="downloadQuizReportBtn">
+
+                Download Career Report
+
+            </button>
+
+        </div>
+
+        <p class="result-disclaimer">
+
+            CareerCompass provides an estimated career
+            recommendation based on quiz responses.
+            It should be used as guidance rather than a
+            final career decision.
+
+        </p>
+
+    </section>
+
+</main>
+
+<footer class="site-footer">
+
+    <p>
+        © 2026 CareerCompass — AI Career Guidance Platform
+    </p>
+
+</footer>
+
+<script src="../js/career-quiz.js"></script>
+
+</body>
+</html>

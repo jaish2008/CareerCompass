@@ -54,19 +54,66 @@ cgpaInput.oninput = () => {
 
 const saveBtn = document.getElementById("saveBtn");
 
-saveBtn.onclick = () => {
+saveBtn.addEventListener("click", function () {
+
+    const resumeData = {
+
+        name: nameInput.value,
+        email: emailInput.value,
+        phone: phoneInput.value,
+        objective: objectiveInput.value,
+        skills: skillsInput.value,
+
+        degree: degreeInput.value,
+        college: collegeInput.value,
+        year: yearInput.value,
+        cgpa: cgpaInput.value,
+
+        projectTitle: projectTitle.value,
+        projectTech: projectTech.value,
+        projectDescription:
+            projectDescription.value,
+
+        company: company.value,
+        role: role.value,
+        duration: duration.value,
+        experienceDescription:
+            experienceDescription.value,
+
+        certificateName:
+            certificateName.value,
+        certificateIssuer:
+            certificateIssuer.value,
+        certificateYear:
+            certificateYear.value
+    };
+
+    localStorage.setItem(
+        "careerCompassResume",
+        JSON.stringify(resumeData)
+    );
 
     alert("Resume saved successfully!");
-
-};
+});
 
 const resetBtn = document.getElementById("resetBtn");
 
-resetBtn.onclick = () => {
+resetBtn.addEventListener("click", function () {
+
+    const confirmed = confirm(
+        "Do you want to clear the resume?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    localStorage.removeItem(
+        "careerCompassResume"
+    );
 
     location.reload();
-
-};
+});
 
 const projectTitle = document.getElementById("projectTitle");
 const projectTech = document.getElementById("projectTech");
@@ -103,48 +150,145 @@ experienceDescription.oninput = () => {
         experienceDescription.value;
 };
 
-certificateName.oninput = () => {
-    previewCertificateName.textContent = certificateName.value;
-};
+const previewCertificateName =
+    document.getElementById("previewCertificateName");
 
-certificateIssuer.oninput = () => {
+const previewCertificateIssuer =
+    document.getElementById("previewCertificateIssuer");
+
+const previewCertificateYear =
+    document.getElementById("previewCertificateYear");
+
+    certificateName.addEventListener("input", function () {
+
+    previewCertificateName.textContent =
+        certificateName.value.trim() ||
+        "Certificate Name";
+});
+
+
+certificateIssuer.addEventListener("input", function () {
+
     previewCertificateIssuer.textContent =
-        "Issued By: " + certificateIssuer.value;
-};
+        certificateIssuer.value.trim()
+            ? "Issued By: " + certificateIssuer.value.trim()
+            : "";
+});
 
-certificateYear.oninput = () => {
+
+certificateYear.addEventListener("input", function () {
+
     previewCertificateYear.textContent =
-        " | " + certificateYear.value;
-};
+        certificateYear.value.trim()
+            ? " | " + certificateYear.value.trim()
+            : "";
+});
 
-const profilePhoto = document.getElementById("profilePhoto");
+const profilePhoto = 
+        document.getElementById("profilePhoto");
 
-profilePhoto.addEventListener("change", function(){
+ const previewPhoto =
+        document.getElementById("previewPhoto");
+
+
+profilePhoto.addEventListener("change", function () {
 
     const file = this.files[0];
-
-    if(file){
-
-        const reader = new FileReader();
-
-        reader.onload = function(e){
-
-            document.getElementById("previewPhoto").src = e.target.result;
-
-        }
-
-        reader.readAsDataURL(file);
-
+   
+    if (!file) {
+        previewPhoto.style.display = "none";
+        return;
     }
 
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+
+        previewPhoto.src = event.target.result;
+        previewPhoto.style.display = "block";
+
+    };
+
+    reader.readAsDataURL(file);
 });
 
 const downloadBtn = document.getElementById("downloadBtn");
 
-downloadBtn.addEventListener("click",function(){
+downloadBtn.addEventListener("click", function () {
 
-    const resume = document.querySelector(".resume-preview");
+    const candidateName =
+        document.getElementById("name").value.trim() ||
+        "CareerCompass";
 
-    html2pdf().from(resume).save("Resume.pdf");
+    const oldTitle = document.title;
 
+    document.title =
+        candidateName.replace(/\s+/g, "_") + "_Resume";
+
+    window.print();
+
+    setTimeout(function () {
+        document.title = oldTitle;
+    }, 1000);
+});
+
+window.addEventListener("DOMContentLoaded", function () {
+
+    const savedResume =
+        localStorage.getItem(
+            "careerCompassResume"
+        );
+
+    if (!savedResume) {
+        return;
+    }
+
+    const data = JSON.parse(savedResume);
+
+    const fields = {
+        name: nameInput,
+        email: emailInput,
+        phone: phoneInput,
+        objective: objectiveInput,
+        skills: skillsInput,
+
+        degree: degreeInput,
+        college: collegeInput,
+        year: yearInput,
+        cgpa: cgpaInput,
+
+        projectTitle: projectTitle,
+        projectTech: projectTech,
+        projectDescription:
+            projectDescription,
+
+        company: company,
+        role: role,
+        duration: duration,
+        experienceDescription:
+            experienceDescription,
+
+        certificateName:
+            certificateName,
+        certificateIssuer:
+            certificateIssuer,
+        certificateYear:
+            certificateYear
+    };
+
+    Object.entries(fields).forEach(
+        ([key, element]) => {
+
+            if (
+                element &&
+                data[key] !== undefined
+            ) {
+                element.value = data[key];
+
+                element.dispatchEvent(
+                    new Event("input")
+                );
+            }
+        }
+    );
 });

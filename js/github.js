@@ -10,26 +10,32 @@ const analyzeBtn = document.getElementById("analyzeBtn");
 
 let repositories = [];
 
+const CAREER_API_URL = "http://127.0.0.1:5000/predict";
+
 /* ===============================
    Analyze Button
 ================================*/
 
-analyzeBtn.addEventListener("click", () => {
+analyzeBtn.addEventListener("click", async () => {
 
     const username = usernameInput.value.trim();
 
-    if(username === ""){
+    if (username === "") {
 
         alert("Please enter a GitHub username.");
-
         return;
-
     }
 
-    analyzeGitHub(username);
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = "Analyzing...";
 
+    try {
+        await analyzeGitHub(username);
+    } finally {
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "Analyze";
+    }
 });
-
 
 
 /* ===============================
@@ -172,19 +178,69 @@ if (spinner) {
             `https://api.github.com/users/${username}`
         );
 
-        if(!profileResponse.ok){
+        if (!profileResponse.ok) {
 
-            alert("GitHub user not found.");
+    const remaining =
+        profileResponse.headers.get("x-ratelimit-remaining");
 
-            return;
+    const resetValue =
+        profileResponse.headers.get("x-ratelimit-reset");
 
+    if (
+        profileResponse.status === 403 ||
+        profileResponse.status === 429
+    ) {
+
+        let message =
+            "GitHub API request limit reached.";
+
+        if (remaining === "0" && resetValue) {
+
+            const resetTime = new Date(
+                Number(resetValue) * 1000
+            );
+
+            message +=
+                "\nTry again after: " +
+                resetTime.toLocaleTimeString();
         }
+
+        alert(message);
+
+        return;
+    }
+
+    if (profileResponse.status === 404) {
+
+        alert(
+            "GitHub user not found. Enter only the username, for example: jaish2008"
+        );
+
+        return;
+    }
+
+    alert(
+        `GitHub API error: ${profileResponse.status}`
+    );
+
+    return;
+}
 
         const profile = await profileResponse.json();
 
-        const repoResponse = await fetch(profile.repos_url);
+       const repoResponse = await fetch(
+    `${profile.repos_url}?per_page=100&sort=updated`
+);
 
-       repositories = await repoResponse.json();
+if (!repoResponse.ok) {
+    throw new Error("Unable to fetch GitHub repositories.");
+}
+
+const allRepositories = await repoResponse.json();
+
+repositories = allRepositories
+    .filter(repo => !repo.fork)
+    .slice(0, 8);
 
  updateProfile(profile);
 
@@ -271,6 +327,23 @@ try {
     console.log("✅ generatePortfolioSWOT");
 } catch (error) {
     console.error("❌ generatePortfolioSWOT", error);
+}
+
+try{
+
+    await predictCareerUsingML();
+
+    console.log("✅ AI Career Prediction");
+
+}
+
+catch(error){
+
+    console.error(error);
+
+    alert("Unable to get AI career prediction.");
+
+    throw error;
 }
 
 }
@@ -1659,3 +1732,863 @@ function updateSWOTList(elementId, items) {
         .map(item => `<li>${item}</li>`)
         .join("");
 }
+
+async function fetchRepositoryLanguages(repo) {
+
+    try {
+
+        const response = await fetch(repo.languages_url);
+
+        if (!response.ok) {
+            return [];
+        }
+
+        const languageData = await response.json();
+
+        return Object.keys(languageData);
+
+    } catch (error) {
+
+        console.error(
+            `Unable to fetch languages for ${repo.name}:`,
+            error
+        );
+
+        return [];
+    }
+}
+
+function detectProgrammingLanguage(language, features) {
+
+    const normalizedLanguage =
+        String(language || "").toLowerCase();
+
+    switch (normalizedLanguage) {
+
+        case "html":
+        case "css":
+        case "scss":
+        case "sass":
+            features.html_css = 1;
+            break;
+
+        case "javascript":
+            features.javascript = 1;
+            break;
+
+        case "typescript":
+            features.typescript = 1;
+            break;
+
+        case "python":
+            features.python = 1;
+            break;
+
+        case "java":
+            features.java = 1;
+            break;
+
+        case "sql":
+        case "plsql":
+        case "tsql":
+            features.sql = 1;
+            break;
+
+        case "c#":
+            features.csharp = 1;
+            break;
+
+        case "c++":
+            features.cpp = 1;
+            break;
+
+        case "php":
+            features.php = 1;
+            break;
+
+        case "go":
+            features.go = 1;
+            break;
+
+        case "rust":
+            features.rust = 1;
+            break;
+
+        case "r":
+            features.r_language = 1;
+            break;
+    }
+}
+
+
+async function buildMLFeatures() {
+
+    const features = {
+
+        html_css:0,
+        javascript:0,
+        typescript:0,
+        python:0,
+        java:0,
+        sql:0,
+        csharp:0,
+        cpp:0,
+        php:0,
+        go:0,
+        rust:0,
+        r_language:0,
+
+        react:0,
+        angular:0,
+        vue:0,
+        nodejs:0,
+        express:0,
+        django:0,
+        flask:0,
+        spring_boot:0,
+        aspnet:0,
+
+        mysql:0,
+        postgresql:0,
+        mongodb:0,
+        sqlite:0,
+        redis:0,
+        microsoft_sql_server:0,
+
+        docker:0,
+        aws:0,
+        azure:0,
+        gcp:0,
+        kubernetes:0,
+        terraform:0,
+
+        language_count:0,
+        framework_count:0,
+        database_count:0,
+        platform_count:0
+    };
+
+for (const repo of repositories) {
+
+    detectProgrammingLanguage(
+        repo.language,
+        features
+    );
+
+}
+    
+
+
+    features.language_count = [
+
+        features.html_css,
+        features.javascript,
+        features.typescript,
+        features.python,
+        features.java,
+        features.sql,
+        features.csharp,
+        features.cpp,
+        features.php,
+        features.go,
+        features.rust,
+        features.r_language
+
+    ].reduce((total, value)=>total + value,0);
+
+
+features.framework_count = [
+    features.react,
+    features.angular,
+    features.vue,
+    features.nodejs,
+    features.express,
+    features.django,
+    features.flask,
+    features.spring_boot,
+    features.aspnet
+].reduce((total, value) => total + value, 0);
+
+
+features.database_count = [
+    features.mysql,
+    features.postgresql,
+    features.mongodb,
+    features.sqlite,
+    features.redis,
+    features.microsoft_sql_server
+].reduce((total, value) => total + value, 0);
+
+
+features.platform_count = [
+    features.docker,
+    features.aws,
+    features.azure,
+    features.gcp,
+    features.kubernetes,
+    features.terraform
+].reduce((total, value) => total + value, 0);
+
+    return features;
+
+}
+
+async function predictCareerUsingML() {
+
+    try{
+
+        const featureData = await buildMLFeatures();
+
+        console.log("======ML FEATURES ======");
+        console.table(featureData);
+
+        console.log("ML Features:", featureData);
+
+        const response = await fetch(
+            CAREER_API_URL,
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify(featureData)
+            }
+        );
+
+        if(!response.ok){
+
+            throw new Error(
+                "Prediction API failed."
+            );
+
+        }
+
+        const result = await response.json();
+
+        console.log("ML Prediction:", result);
+
+        updateMLPrediction(result);
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert("Unable to get AI Career Prediction.");
+
+    }
+
+}
+
+function updateMLPrediction(result){
+
+    const career =
+        document.getElementById("careerSuggestion");
+
+    const confidence =
+        document.getElementById("hireProbability");
+
+    if(career){
+
+        career.textContent =
+            result.prediction;
+
+    }
+
+    if(confidence){
+
+        confidence.textContent =
+            result.confidence + "%";
+
+    }
+
+    const progress =
+    document.getElementById(
+        "confidenceProgress"
+    );
+
+if(progress){
+
+    progress.style.width =
+        result.confidence + "%";
+
+    progress.textContent =
+        result.confidence + "%";
+
+}
+
+const explanation =
+    document.getElementById(
+        "aiExplanation"
+    );
+
+if(explanation){
+
+    explanation.innerHTML="";
+
+    const features =
+        result.received_features;
+
+    if(features.html_css){
+
+        explanation.innerHTML +=
+        "<li>✅ HTML/CSS detected</li>";
+
+    }
+
+    if(features.javascript){
+
+        explanation.innerHTML +=
+        "<li>✅ JavaScript detected</li>";
+
+    }
+
+    if(features.python){
+
+        explanation.innerHTML +=
+        "<li>✅ Python detected</li>";
+
+    }
+
+    if(features.java){
+
+        explanation.innerHTML +=
+        "<li>✅ Java detected</li>";
+
+    }
+
+    explanation.innerHTML +=
+    `<li>🎯 AI confidence: ${result.confidence}%</li>`;
+
+}
+
+
+    //-----------------------------
+
+    const container =
+        document.getElementById(
+            "topCareerPredictions"
+        );
+
+    if(!container){
+
+        return;
+
+    }
+
+    container.innerHTML = "";
+
+
+    result.career_probabilities
+
+        .slice(0,3)
+
+        .forEach((career,index)=>{
+
+            const medals = [
+
+                "🥇",
+
+                "🥈",
+
+                "🥉"
+
+            ];
+
+            container.innerHTML +=
+
+            `
+            <div class="prediction-row">
+
+                <span class="prediction-title">
+
+                    ${medals[index]}
+                    ${career.career}
+
+                </span>
+
+                <span class="prediction-score">
+
+                    ${career.probability}%
+
+                </span>
+
+            </div>
+            `;
+
+        });
+
+        updateCareerRoadmap(result.prediction);
+
+        updateAssessment(result.received_features);
+
+}
+
+async function fetchRepositoryFiles(owner, repoName){
+
+    try{
+
+        const response = await fetch(
+            `https://api.github.com/repos/${owner}/${repoName}/contents`
+        );
+
+        if(!response.ok){
+
+            return [];
+
+        }
+
+        return await response.json();
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        return [];
+
+    }
+
+}
+
+async function fetchTextFile(downloadUrl) {
+
+    try {
+
+        const response = await fetch(downloadUrl);
+
+        if (!response.ok) {
+            return "";
+        }
+
+        return await response.text();
+
+    } catch (error) {
+
+        console.error("Unable to read repository file:", error);
+
+        return "";
+    }
+}
+
+function detectPackageDependencies(packageText, features) {
+
+    try {
+
+        const packageData = JSON.parse(packageText);
+
+        const dependencies = {
+            ...(packageData.dependencies || {}),
+            ...(packageData.devDependencies || {})
+        };
+
+        const dependencyNames = Object.keys(dependencies)
+            .map(name => name.toLowerCase());
+
+        const hasDependency = (...names) =>
+            names.some(name => dependencyNames.includes(name));
+
+        if (hasDependency("react", "react-dom", "next")) {
+            features.react = 1;
+        }
+
+        if (hasDependency("@angular/core", "angular")) {
+            features.angular = 1;
+        }
+
+        if (hasDependency("vue", "nuxt")) {
+            features.vue = 1;
+        }
+
+        if (
+            hasDependency(
+                "express",
+                "koa",
+                "fastify",
+                "nestjs",
+                "@nestjs/core"
+            )
+        ) {
+            features.nodejs = 1;
+        }
+
+        if (hasDependency("express")) {
+            features.express = 1;
+        }
+
+        if (hasDependency("mongoose", "mongodb")) {
+            features.mongodb = 1;
+        }
+
+        if (hasDependency("mysql", "mysql2", "sequelize")) {
+            features.mysql = 1;
+        }
+
+        if (hasDependency("pg", "postgres", "postgresql")) {
+            features.postgresql = 1;
+        }
+
+        if (hasDependency("redis", "ioredis")) {
+            features.redis = 1;
+        }
+
+        if (
+            dependencyNames.some(name =>
+                name.startsWith("@aws-sdk/")
+            ) ||
+            hasDependency("aws-sdk")
+        ) {
+            features.aws = 1;
+        }
+
+        if (
+            dependencyNames.length > 0 ||
+            packageData.scripts
+        ) {
+            features.nodejs = 1;
+        }
+
+    } catch (error) {
+
+        console.error("Invalid package.json:", error);
+    }
+}
+
+
+
+//-- technology detection ----
+
+async function detectTechnology(files, features) {
+
+    for (const file of files) {
+
+        const name = file.name.toLowerCase();
+
+        switch (name) {
+
+            case "package.json": {
+
+                features.nodejs = 1;
+
+                if (file.download_url) {
+
+                    const packageText =
+                        await fetchTextFile(file.download_url);
+
+                    detectPackageDependencies(
+                        packageText,
+                        features
+                    );
+                }
+
+                break;
+            }
+
+            case "requirements.txt":
+                features.python = 1;
+                break;
+
+            case "dockerfile":
+            case "docker-compose.yml":
+            case "docker-compose.yaml":
+                features.docker = 1;
+                break;
+
+            case "pom.xml":
+                features.java = 1;
+                features.spring_boot = 1;
+                break;
+
+            case "build.gradle":
+            case "build.gradle.kts":
+                features.java = 1;
+                break;
+
+            case "composer.json":
+                features.php = 1;
+                break;
+
+            case "cargo.toml":
+                features.rust = 1;
+                break;
+
+            case "go.mod":
+                features.go = 1;
+                break;
+        }
+    }
+}
+
+
+function updateCareerRoadmap(career){
+
+    const roadmap =
+        document.getElementById("careerRoadmap");
+
+    if(!roadmap) return;
+
+    const paths={
+
+        "Frontend Developer":[
+            ["📘","Learn HTML, CSS & JavaScript"],
+            ["⚛️","Master React.js"],
+            ["🎨","Build Responsive Websites"],
+            ["🌐","Deploy Projects on Vercel"],
+            ["💼","Apply for Frontend Jobs"]
+        ],
+
+        "Backend Developer":[
+            ["🐍","Learn Node.js / Python"],
+            ["🗄️","Master SQL & MongoDB"],
+            ["🔗","Build REST APIs"],
+            ["☁️","Deploy Backend Services"],
+            ["💼","Apply for Backend Jobs"]
+        ],
+
+        "Full Stack Developer":[
+            ["🌐","Frontend Development"],
+            ["⚙️","Backend Development"],
+            ["🗄️","Databases"],
+            ["🚀","Deploy Full Stack Apps"],
+            ["💼","Become Full Stack Engineer"]
+        ],
+
+        "AI/ML Engineer":[
+            ["🐍","Master Python"],
+            ["📊","Learn Machine Learning"],
+            ["🧠","Deep Learning"],
+            ["🤖","Build AI Projects"],
+            ["💼","AI Engineer Jobs"]
+        ],
+
+        "Data Analyst":[
+            ["📈","Excel"],
+            ["🐍","Python"],
+            ["🗄️","SQL"],
+            ["📊","Power BI / Tableau"],
+            ["💼","Data Analyst Jobs"]
+        ]
+    };
+
+    const steps =
+        paths[career] || paths["Full Stack Developer"];
+
+    roadmap.innerHTML="";
+
+    steps.forEach(step=>{
+
+        roadmap.innerHTML+=`
+
+        <div class="roadmap-step">
+
+            <div class="roadmap-icon">
+
+                ${step[0]}
+
+            </div>
+
+            <div class="roadmap-content">
+
+                <h4>${step[1]}</h4>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+function updateAssessment(features){
+
+    const strengths=[];
+    const weaknesses=[];
+
+    if(features.javascript)
+        strengths.push("JavaScript skills detected");
+
+    if(features.python)
+        strengths.push("Python knowledge detected");
+
+    if(features.html_css)
+        strengths.push("Frontend development skills");
+
+    if(features.react===0)
+        weaknesses.push("Learn React");
+
+    if(features.docker===0)
+        weaknesses.push("Learn Docker");
+
+    if(features.aws===0)
+        weaknesses.push("Explore Cloud Computing");
+
+    document.getElementById("strengthList").innerHTML =
+        strengths.map(x=>`<li>✅ ${x}</li>`).join("");
+
+    document.getElementById("weaknessList").innerHTML =
+        weaknesses.map(x=>`<li>⚠ ${x}</li>`).join("");
+
+}
+
+const score=Math.round(result.confidence);
+
+document.getElementById("recruiterScore").textContent =
+score+"/100";
+
+const advice={
+
+"Frontend Developer":
+"Build React, Next.js and TypeScript projects.",
+
+"Backend Developer":
+"Focus on APIs, databases and Docker.",
+
+"Full Stack Developer":
+"Develop complete MERN or Spring Boot applications.",
+
+"AI/ML Engineer":
+"Build deep learning and computer vision projects.",
+
+"Data Analyst":
+"Learn SQL, Power BI and Tableau."
+
+};
+
+document.getElementById("aiRecommendation").textContent =
+advice[result.prediction];
+
+
+async function downloadCareerReport(){
+
+    console.log("Download button clicked");
+
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF();
+
+    let y = 20;
+
+    pdf.setTextColor(37,99,235);
+
+    pdf.setFontSize(22);
+
+    pdf.text("CareerCompass ",20,20);
+
+    y+=15;
+
+    pdf.setFontSize(16);
+
+    pdf.text(
+    "AI Career Report",
+    20,
+    30
+);
+
+pdf.setTextColor(0,0,0);
+
+    pdf.text(
+        "Predicted Career: " +
+        document.getElementById("careerSuggestion").textContent,
+        20,
+        y
+    );
+
+    y+=10;
+
+    pdf.text(
+        "Confidence: " +
+        document.getElementById("hireProbability").textContent,
+        20,
+        y
+    );
+
+    y+=15;
+
+    pdf.text("Top Career Predictions",20,y);
+
+    y+=10;
+
+    document.querySelectorAll(".prediction-row")
+    .forEach(row=>{
+
+       const medals = ["1.","2.","3."];
+
+predictionRows.forEach((row,index)=>{
+
+    const text =
+        medals[index] + " " +
+        row.innerText
+            .replace(/🥇|🥈|🥉/g,"")
+            .trim();
+
+    pdf.text(text,20,y);
+
+    y+=8;
+
+});
+
+        y+=8;
+
+    });
+
+    y+=10;
+
+    pdf.text("AI Recommendation",20,y);
+
+    y+=8;
+
+    pdf.text(
+        document.getElementById("aiRecommendation").textContent,
+        20,
+        y,
+        {
+            maxWidth:170
+        }
+    );
+
+    y+=25;
+
+    pdf.text("Generated by CareerCompass",20,y);
+
+    pdf.save("CareerCompass_AI_Report.pdf");
+
+} 
+
+// =========================
+// Download PDF Button
+// =========================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    console.log("DOM Loaded");
+
+    const btn = document.getElementById("downloadReportBtn");
+
+    console.log(btn);
+
+    if(btn){
+
+        btn.onclick = function(){
+
+            console.log("Button clicked");
+
+            downloadCareerReport();
+
+        };
+
+    }
+
+});
+
+pdf.text(
+    "Generated on: " + new Date().toLocaleString(),
+    20,
+    y + 10
+);
+

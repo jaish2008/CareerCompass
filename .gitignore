@@ -1,0 +1,21 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large raw dataset and old model
+datasets/survey_results_public.csv
+models/career_model.pkl
+
+# Large local training files
+datasets/survey_results_public.csv
+models/career_model.pkl
