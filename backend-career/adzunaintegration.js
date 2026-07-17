@@ -22,11 +22,21 @@ require('dotenv').config();
 const axios = require('axios');
 const cron = require('node-cron');
 const admin = require('firebase-admin');
+const { getApps } = require('firebase-admin/app');
+const path = require('path');
 
-// Assumes firebase-admin is already initialized elsewhere in your project
-// (e.g. admin.initializeApp() in your main server.js). If not, uncomment:
-// admin.initializeApp({ credential: admin.credential.applicationDefault() });
-const db = admin.firestore();
+// Self-contained init: works whether this file is required by server.js
+// or run directly (e.g. test-sync.js). The getApps().length check
+// prevents a "duplicate app" crash if server.js already initialized it.
+if (!getApps().length) {
+  const serviceAccount = require(path.join(__dirname, 'serviceAccountKey.json'));
+  admin.initializeApp({
+    credential: admin.cert(serviceAccount)
+  });
+}
+
+const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+const db = getFirestore();
 
 const ADZUNA_APP_ID = process.env.ADZUNA_APP_ID;
 const ADZUNA_APP_KEY = process.env.ADZUNA_APP_KEY;
@@ -101,7 +111,7 @@ async function fetchListingsForRole(roleType, searchTerm) {
       applyUrl: job.redirect_url,
       postedDate: job.created,
       source: 'adzuna',
-      fetchedAt: admin.firestore.FieldValue.serverTimestamp()
+      fetchedAt: FieldValue.serverTimestamp()
     }));
   } catch (err) {
     console.error(`Adzuna fetch failed for role "${roleType}":`, err.message);
