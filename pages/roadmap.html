@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Personalized Skill Roadmap | CareerCompass</title>
+
+    <meta
+        name="description"
+        content="View your personalized technology career roadmap, required skills, projects and learning progress.">
+
+    <link rel="stylesheet"
+          href="../css/roadmap.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <nav class="navbar"
+         aria-label="Main Navigation">
+
+        <a href="../index.html"
+           class="brand">
+
+            <span class="brand-icon">🧭</span>
+
+            <span class="brand-text">
+                CareerCompass
+            </span>
+
+        </a>
+
+        <button
+            type="button"
+            id="menuToggle"
+            class="menu-toggle"
+            aria-label="Open navigation"
+            aria-expanded="false">
+
+            <i class="fa-solid fa-bars"></i>
+
+        </button>
+
+        <div class="nav-links"
+             id="navLinks">
+
+            <a href="../index.html">
+                Home
+            </a>
+
+            <a href="career-quiz.html">
+                Career Quiz
+            </a>
+
+            <a href="resume.html">
+                Resume Builder
+            </a>
+
+            <a href="resume-analyzer.html">
+                Resume Analyzer
+            </a>
+
+            <a href="github.html">
+                GitHub Analyzer
+            </a>
+
+            <a href="roadmap.html"
+               class="active">
+
+                Skill Roadmap
+
+            </a>
+
+        </div>
+
+    </nav>
+
+</header>
+
+
+<main class="page-container">
+
+    <!-- Hero -->
+
+    <section class="roadmap-hero">
+
+        <div class="hero-content">
+
+            <span class="eyebrow">
+                Personalized Career Development
+            </span>
+
+            <h1>
+                Your Skill Roadmap
+            </h1>
+
+            <p>
+                Follow a structured learning path based on your
+                selected technology career and track your progress.
+            </p>
+
+        </div>
+
+        <div class="hero-progress-card">
+
+            <span>Overall Roadmap Progress</span>
+
+            <strong id="overallProgressText">
+                0%
+            </strong>
+
+            <div class="progress-track">
+
+                <div
+                    class="progress-fill"
+                    id="overallProgressBar">
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- No career result -->
+
+    <section
+        class="empty-state hidden"
+        id="noCareerState">
+
+        <div class="empty-icon">
+            🎯
+        </div>
+
+        <h2>
+            Complete Your Career Assessment
+        </h2>
+
+        <p>
+            Take the Career Quiz first so CareerCompass can
+            generate a personalized learning roadmap.
+        </p>
+
+        <a
+            href="career-quiz.html"
+            class="primary-btn">
+
+            Take Career Quiz
+
+        </a>
+
+    </section>
+
+
+    <!-- Main roadmap content -->
+
+    <section
+        class="roadmap-content hidden"
+        id="roadmapContent">
+
+        <!-- Career summary -->
+
+        <article class="career-summary-card">
+
+            <div class="career-summary-main">
+
+                <div
+                    class="career-icon"
+                    id="careerIcon">
+
+                    💻
+
+                </div>
+
+                <div>
+
+                    <span class="small-label">
+                        Selected Career
+                    </span>
+
+                    <h2 id="careerName">
+                        Career Name
+                    </h2>
+
+                    <p id="careerDescription">
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="career-match">
+
+                <strong id="careerMatch">
+                    0%
+                </strong>
+
+                <span>Career Match</span>
+
+            </div>
+
+        </article>
+
+
+        <!-- Career selector -->
+
+        <section class="card career-selector-card">
+
+            <div>
+
+                <h2>
+                    Change Career Roadmap
+                </h2>
+
+                <p>
+                    Select another career to explore its required
+                    skills and learning stages.
+                </p>
+
+            </div>
+
+            <select
+                id="careerSelector"
+                aria-label="Select career roadmap">
+
+                <option value="frontend">
+                    Frontend Developer
+                </option>
+
+                <option value="backend">
+                    Backend Developer
+                </option>
+
+                <option value="fullstack">
+                    Full Stack Developer
+                </option>
+
+                <option value="software">
+                    Software Developer
+                </option>
+
+                <option value="aiml">
+                    AI/ML Engineer
+                </option>
+
+                <option value="analyst">
+                    Data Analyst
+                </option>
+
+                <option value="scientist">
+                    Data Scientist
+                </option>
+
+                <option value="devops">
+                    DevOps Engineer
+                </option>
+
+                <option value="cloud">
+                    Cloud Engineer
+                </option>
+
+                <option value="cybersecurity">
+                    Cybersecurity Analyst
+                </option>
+
+            </select>
+
+        </section>
+
+
+        <!-- Required skills -->
+
+        <section class="card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="small-label">
+                        Career Requirements
+                    </span>
+
+                    <h2>
+                        Required Skills
+                    </h2>
+
+                    <p>
+                        Core skills commonly required for this
+                        career path.
+                    </p>
+
+                </div>
+
+                <span
+                    class="completion-count"
+                    id="skillCompletionCount">
+
+                    0 / 0 completed
+
+                </span>
+
+            </div>
+
+            <div
+                class="skills-grid"
+                id="requiredSkills">
+
+            </div>
+
+        </section>
+
+
+        <!-- Learning stages -->
+
+        <section class="roadmap-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="small-label">
+                        Step-by-Step Plan
+                    </span>
+
+                    <h2>
+                        Learning Stages
+                    </h2>
+
+                    <p>
+                        Complete each stage in order to build strong
+                        career-ready knowledge.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div
+                class="stages-container"
+                id="learningStages">
+
+            </div>
+
+        </section>
+
+
+        <!-- Projects -->
+
+        <section class="card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="small-label">
+                        Practical Experience
+                    </span>
+
+                    <h2>
+                        Recommended Projects
+                    </h2>
+
+                    <p>
+                        Build these projects to apply your skills and
+                        strengthen your portfolio.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div
+                class="projects-grid"
+                id="recommendedProjects">
+
+            </div>
+
+        </section>
+
+
+        <!-- Next step -->
+
+        <section class="next-step-card">
+
+            <div>
+
+                <span class="small-label">
+                    Next CareerCompass Step
+                </span>
+
+                <h2>
+                    Convert this roadmap into a weekly plan
+                </h2>
+
+                <p>
+                    The Learning Planner will divide your skills,
+                    projects and goals into manageable weekly tasks.
+                </p>
+
+            </div>
+
+            <a
+                href="planner.html"
+                class="primary-btn">
+
+                Open Learning Planner
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+        </section>
+
+    </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <p>
+        © 2026 CareerCompass — AI Career Guidance Platform
+    </p>
+
+</footer>
+
+
+<script src="../js/roadmap.js"></script>
+
+</body>
+</html>
