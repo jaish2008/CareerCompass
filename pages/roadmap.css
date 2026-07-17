@@ -1,0 +1,319 @@
+/* ===========================
+   Project Roadmap Page
+   Extends dashboard.css — same tokens:
+   accent #2563eb | ink #1e293b | bg #f8fafc
+   radius 18px | shadow 0 10px 25px rgba(0,0,0,.08)
+=========================== */
+
+.section-heading{
+    font-size:1.4rem;
+    color:#1e293b;
+    margin-bottom:20px;
+}
+
+/* ===========================
+   Scope Banner
+=========================== */
+
+.scope-banner{
+    background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);
+    border-radius:18px;
+    padding:35px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:30px;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:35px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.scope-eyebrow{
+    display:inline-block;
+    color:#93c5fd;
+    font-size:.8rem;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:10px;
+}
+
+.scope-text{
+    flex:1 1 380px;
+}
+
+.scope-text h2{
+    color:#fff;
+    font-size:1.6rem;
+    line-height:1.35;
+    margin-bottom:14px;
+}
+
+.scope-text p{
+    color:#cbd5e1;
+    line-height:1.7;
+    max-width:520px;
+}
+
+.scope-badges{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    flex:1 1 280px;
+}
+
+.scope-badge{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;
+    padding:14px 18px;
+}
+
+.scope-badge i{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#2563eb;
+    color:#fff;
+    border-radius:12px;
+    font-size:1.1rem;
+    flex-shrink:0;
+}
+
+.scope-badge strong{
+    display:block;
+    color:#fff;
+    font-size:.95rem;
+}
+
+.scope-badge span{
+    color:#94a3b8;
+    font-size:.8rem;
+}
+
+/* ===========================
+   Team Section
+=========================== */
+
+.team-section{
+    margin-bottom:40px;
+}
+
+.team-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+
+.team-card{
+    background:#fff;
+    padding:28px;
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s ease;
+}
+
+.team-card:hover{
+    transform:translateY(-6px);
+}
+
+.team-role-icon{
+    width:52px;
+    height:52px;
+    border-radius:14px;
+    background:#eff6ff;
+    color:#2563eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.3rem;
+    margin-bottom:16px;
+}
+
+.team-card h3{
+    color:#1e293b;
+    margin-bottom:10px;
+    font-size:1.1rem;
+}
+
+.team-card p{
+    color:#64748b;
+    line-height:1.6;
+    margin-bottom:16px;
+}
+
+.team-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.team-tags span{
+    background:#f1f5f9;
+    color:#2563eb;
+    font-size:.78rem;
+    font-weight:600;
+    padding:6px 12px;
+    border-radius:20px;
+}
+
+/* ===========================
+   Timeline
+=========================== */
+
+.timeline-section{
+    margin-bottom:40px;
+}
+
+.timeline{
+    position:relative;
+    padding-left:40px;
+}
+
+.timeline::before{
+    content:"";
+    position:absolute;
+    left:19px;
+    top:6px;
+    bottom:6px;
+    width:2px;
+    background:repeating-linear-gradient(
+        to bottom,
+        #cbd5e1 0,
+        #cbd5e1 6px,
+        transparent 6px,
+        transparent 12px
+    );
+}
+
+.timeline-item{
+    position:relative;
+    margin-bottom:26px;
+}
+
+.timeline-item:last-child{
+    margin-bottom:0;
+}
+
+.timeline-node{
+    position:absolute;
+    left:-40px;
+    top:4px;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:.9rem;
+    box-shadow:0 0 0 6px #f8fafc;
+    z-index:1;
+}
+
+.timeline-item.done .timeline-node{ background:#22c55e; }
+.timeline-item.active .timeline-node{ background:#2563eb; }
+.timeline-item.upcoming .timeline-node{ background:#cbd5e1; color:#64748b; }
+
+.timeline-item.active .timeline-node i{
+    animation:spin 1.6s linear infinite;
+}
+
+@keyframes spin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+}
+
+.timeline-card{
+    background:#fff;
+    border-radius:16px;
+    padding:22px 26px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    border-left:5px solid #cbd5e1;
+    transition:.3s ease;
+}
+
+.timeline-item.done .timeline-card{ border-left-color:#22c55e; }
+.timeline-item.active .timeline-card{ border-left-color:#2563eb; }
+.timeline-item.upcoming .timeline-card{ border-left-color:#cbd5e1; }
+
+.timeline-card:hover{
+    transform:translateX(6px);
+}
+
+.timeline-status{
+    display:inline-block;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:20px;
+    margin-right:10px;
+}
+
+.status-done{ background:#dcfce7; color:#16a34a; }
+.status-active{ background:#dbeafe; color:#2563eb; }
+.status-upcoming{ background:#f1f5f9; color:#64748b; }
+
+.timeline-phase{
+    font-size:.78rem;
+    color:#94a3b8;
+    font-weight:600;
+}
+
+.timeline-card h3{
+    color:#1e293b;
+    margin:10px 0 8px;
+    font-size:1.1rem;
+}
+
+.timeline-card p{
+    color:#64748b;
+    line-height:1.6;
+    margin-bottom:14px;
+}
+
+.timeline-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.timeline-tags span{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    color:#475569;
+    font-size:.75rem;
+    padding:5px 10px;
+    border-radius:8px;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width:768px){
+
+    .scope-banner{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .timeline{
+        padding-left:32px;
+    }
+
+    .timeline-node{
+        left:-32px;
+        width:32px;
+        height:32px;
+        font-size:.8rem;
+    }
+
+}
