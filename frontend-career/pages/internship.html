@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internship Tracker | CareerCompass</title>
+<style>
+  :root{
+    --navy:#0f172a;
+    --navy-light:#1a2540;
+    --blue:#2563eb;
+    --blue-light:#e8eefd;
+    --bg:#f5f6fa;
+    --card:#ffffff;
+    --text:#1e293b;
+    --muted:#64748b;
+    --green:#16a34a;
+    --green-bg:#eafaf0;
+    --orange:#d97706;
+    --orange-bg:#fef3e2;
+    --red:#dc2626;
+    --red-bg:#fdeaea;
+    --border:#eef0f4;
+    --radius:14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+    min-height:100vh;
+  }
+
+  /* Sidebar */
+  .sidebar{
+    width:220px;
+    background:var(--navy);
+    color:#cbd5e1;
+    flex-shrink:0;
+    padding:22px 14px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .logo{
+    color:#fff;
+    font-weight:700;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:0 8px 22px 8px;
+  }
+  .logo span.dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--blue);
+    display:inline-block;
+  }
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:9px;
+    font-size:13.5px;
+    color:#aab3c2;
+    cursor:pointer;
+    text-decoration:none;
+  }
+  .nav-item:hover{ background:rgba(255,255,255,0.06); color:#fff; }
+  .nav-item.active{
+    background:var(--blue);
+    color:#fff;
+    font-weight:600;
+  }
+  .nav-icon{ width:16px; text-align:center; font-size:14px; }
+
+  /* Main */
+  .main{ flex:1; padding:28px 34px 60px 34px; max-width:1400px; }
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .topbar h1{ font-size:22px; font-weight:700; }
+  .topbar p{ color:var(--muted); font-size:13.5px; margin-top:4px; }
+
+  /* Stat cards */
+  .stats-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:24px;
+  }
+  .stat-card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    border:1px solid var(--border);
+  }
+  .stat-card .label{ font-size:12.5px; color:var(--muted); margin-bottom:8px; }
+  .stat-card .value{ font-size:24px; font-weight:700; color:var(--navy); }
+  .stat-card .sub{ font-size:11.5px; margin-top:6px; font-weight:600; }
+  .sub.good{ color:var(--green); }
+  .sub.warn{ color:var(--orange); }
+  .sub.neutral{ color:var(--muted); font-weight:500; }
+
+  /* Layout: cards + side panel */
+  .content-grid{
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:20px;
+    align-items:start;
+  }
+
+  /* Tabs */
+  .tab-row{
+    display:flex;
+    gap:7px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+    row-gap:8px;
+  }
+  .tab{
+    padding:7px 13px;
+    border-radius:20px;
+    font-size:12.5px;
+    font-weight:600;
+    background:var(--card);
+    border:1px solid var(--border);
+    color:var(--muted);
+    cursor:pointer;
+    transition:all .15s ease;
+    white-space:nowrap;
+  }
+  .tab:hover{ border-color:var(--blue); color:var(--blue); }
+  .tab.active{ background:var(--blue); color:#fff; border-color:var(--blue); }
+
+  .search-box{
+    margin-left:auto;
+    position:relative;
+  }
+  .search-box input{
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:8px 14px 8px 32px;
+    font-size:12.5px;
+    width:190px;
+    background:#fff;
+  }
+  .search-box::before{
+    content:"⌕";
+    position:absolute;
+    left:12px; top:7px;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  /* Internship cards */
+  .internship-list{ display:flex; flex-direction:column; gap:14px; }
+  .job-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    transition:box-shadow .15s ease;
+  }
+  .job-card:hover{ box-shadow:0 4px 18px rgba(15,23,42,0.06); }
+  .job-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .job-title-block h3{ font-size:15.5px; font-weight:700; }
+  .job-title-block .company{ font-size:13px; color:var(--muted); margin-top:2px; }
+  .job-title-block .meta{
+    display:flex; gap:14px; margin-top:8px; font-size:12px; color:var(--muted); flex-wrap:wrap;
+  }
+  .job-title-block .meta span{ display:flex; align-items:center; gap:5px; }
+
+  .match-badge{
+    flex-shrink:0;
+    text-align:center;
+    border-radius:12px;
+    padding:8px 14px;
+    min-width:74px;
+  }
+  .match-badge .pct{ font-size:19px; font-weight:800; line-height:1; }
+  .match-badge .lbl{ font-size:9.5px; text-transform:uppercase; letter-spacing:.03em; margin-top:3px; font-weight:600; }
+  .match-high{ background:var(--green-bg); color:var(--green); }
+  .match-mid{ background:var(--orange-bg); color:var(--orange); }
+  .match-low{ background:var(--red-bg); color:var(--red); }
+
+  .skill-chips{ display:flex; gap:6px; flex-wrap:wrap; }
+  .chip{
+    font-size:11px;
+    background:var(--blue-light);
+    color:var(--blue);
+    padding:4px 10px;
+    border-radius:6px;
+    font-weight:600;
+  }
+  .chip.gap{ background:var(--red-bg); color:var(--red); }
+
+  .job-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .seats-block{ flex:1; min-width:180px; }
+  .seats-block .seats-label{
+    display:flex; justify-content:space-between;
+    font-size:11.5px; color:var(--muted); margin-bottom:5px;
+  }
+  .seats-label b{ color:var(--text); }
+  .seat-bar-track{
+    height:6px;
+    background:#eef0f4;
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .seat-bar-fill{ height:100%; border-radius:6px; background:var(--blue); }
+  .seat-bar-fill.filling{ background:var(--orange); }
+  .seat-bar-fill.full{ background:var(--red); }
+
+  .deadline-badge{
+    font-size:10.5px;
+    font-weight:700;
+    padding:5px 10px;
+    border-radius:12px;
+    white-space:nowrap;
+  }
+  .deadline-urgent{ background:var(--red-bg); color:var(--red); }
+  .deadline-soon{ background:var(--orange-bg); color:var(--orange); }
+  .deadline-ok{ background:var(--green-bg); color:var(--green); }
+
+  .apply-btn{
+    background:var(--blue);
+    color:#fff;
+    border:none;
+    padding:9px 18px;
+    border-radius:9px;
+    font-size:12.5px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .apply-btn:hover{ background:#1d4ed8; }
+  .apply-btn:disabled{
+    background:#e2e8f0;
+    color:#94a3b8;
+    cursor:not-allowed;
+  }
+
+  /* Side panel */
+  .side-panel{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px;
+  }
+  .side-panel h4{ font-size:14px; margin-bottom:12px; }
+  .why-item{
+    display:flex; gap:10px; font-size:12.5px; color:var(--muted);
+    padding:9px 0; border-bottom:1px solid var(--border);
+  }
+  .why-item:last-child{ border-bottom:none; }
+  .why-icon{ flex-shrink:0; font-size:14px; }
+  .why-item b{ color:var(--text); }
+
+  .legend{ margin-top:18px; }
+  .legend-row{ display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); margin-bottom:8px; }
+  .legend-dot{ width:9px; height:9px; border-radius:50%; }
+
+  @media (max-width:1000px){
+    .stats-row{ grid-template-columns:repeat(2,1fr); }
+    .content-grid{ grid-template-columns:1fr; }
+  }
+  @media (max-width:640px){
+    body{ flex-direction:column; }
+    .sidebar{ width:100%; flex-direction:row; overflow-x:auto; padding:12px; }
+    .stats-row{ grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo"><span class="dot"></span> CareerCompass</div>
+  <a class="nav-item" href="#">🏠 <span>Dashboard</span></a>
+  <a class="nav-item" href="#">📊 <span>Career Assessment</span></a>
+  <a class="nav-item" href="#">📄 <span>Resume Builder</span></a>
+  <a class="nav-item" href="#">🔧 <span>GitHub Analyzer</span></a>
+  <a class="nav-item" href="#">🧭 <span>Skill Roadmap</span></a>
+  <a class="nav-item" href="#">📅 <span>Learning Planner</span></a>
+  <a class="nav-item active">💼 <span>Internship Tracker</span></a>
+  <a class="nav-item" href="#">🤖 <span>AI Assistant</span></a>
+  <a class="nav-item" href="#">⚙️ <span>Settings</span></a>
+</div>
+
+<div class="main">
+
+  <div class="topbar">
+    <div>
+      <h1>Internship Opportunities</h1>
+      <p>Matched to your skills, marks and daily practice — updated live as seats fill.</p>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="label">Eligible Internships</div>
+      <div class="value">15</div>
+      <div class="sub good">▲ 4 new this week</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Best Match</div>
+      <div class="value">91%</div>
+      <div class="sub neutral">Frontend Developer @ Pixelworks</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Applications Sent</div>
+      <div class="value">4</div>
+      <div class="sub neutral">2 pending review</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Seats Filling Fast</div>
+      <div class="value">3</div>
+      <div class="sub warn">Apply before they close</div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div>
+      <div class="tab-row">
+        <div class="tab active" data-tab="all">All</div>
+        <div class="tab" data-tab="software">Software Developer</div>
+        <div class="tab" data-tab="frontend">Frontend Developer</div>
+        <div class="tab" data-tab="backend">Backend Developer</div>
+        <div class="tab" data-tab="fullstack">Full Stack Developer</div>
+        <div class="tab" data-tab="datascience">Data Scientist</div>
+        <div class="tab" data-tab="aiml">AI / ML Engineer</div>
+        <div class="tab" data-tab="cybersecurity">Cyber Security</div>
+        <div class="tab" data-tab="cloud">Cloud Engineer</div>
+      </div>
+      <div class="tab-row" style="margin-bottom:18px;">
+        <div class="search-box" style="margin-left:0;"><input type="text" id="searchInput" placeholder="Search company or role"></div>
+      </div>
+
+      <div class="internship-list" id="jobList"></div>
+    </div>
+
+    <div class="side-panel">
+      <h4>Why these matches</h4>
+      <div class="why-item"><span class="why-icon">✅</span><div><b>JavaScript</b> is your strongest tracked skill — boosting Frontend & Backend matches.</div></div>
+      <div class="why-item"><span class="why-icon">⚠️</span><div><b>DSA</b> is below the cutoff for 2 Backend roles — practice daily to unlock them.</div></div>
+      <div class="why-item"><span class="why-icon">🐍</span><div><b>Python</b> isn't tracked yet — add it in Settings to unlock Data Science & AI/ML matching.</div></div>
+      <div class="why-item"><span class="why-icon">🔒</span><div><b>Networking</b> and <b>Cloud basics</b> aren't tracked yet — add them to unlock Cyber Security & Cloud matches.</div></div>
+
+      <div class="legend">
+        <h4>Seat status</h4>
+        <div class="legend-row"><span class="legend-dot" style="background:var(--blue)"></span> Seats open</div>
+        <div class="legend-row"><span class="legend-dot" style="background:var(--orange)"></span> Filling fast (&lt;30% left)</div>
+        <div class="legend-row"><span class="legend-dot" style="background:var(--red)"></span> Full — waitlist only</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/adzunaintegration.js"></script>
+<script src="../js/internshiproutes.js"></script>
+<script>
+// ---- Dummy data (replace with Firestore query later) ----
+const internships = [
+  {
+    company:"Bright Byte Technologies", role:"Software Developer Intern", type:"software",
+    skills:["Java","OOP","Git","DSA"], gapSkills:["DSA"],
+    match:66, seatsTotal:10, seatsFilled:5, deadlineDays:6, stipend:"₹8,000/mo"
+  },
+  {
+    company:"Pixelworks Studio", role:"Frontend Developer Intern", type:"frontend",
+    skills:["HTML","CSS","JavaScript"], gapSkills:[],
+    match:91, seatsTotal:10, seatsFilled:6, deadlineDays:1, stipend:"₹8,000/mo"
+  },
+  {
+    company:"Craftify UI", role:"Frontend Developer Intern", type:"frontend",
+    skills:["HTML","CSS","JavaScript","Git"], gapSkills:[],
+    match:84, seatsTotal:6, seatsFilled:6, deadlineDays:2, stipend:"₹6,000/mo"
+  },
+  {
+    company:"Nimbus Cloud Labs", role:"Backend Developer Intern", type:"backend",
+    skills:["Node.js","REST API","MongoDB"], gapSkills:["DSA"],
+    match:64, seatsTotal:8, seatsFilled:7, deadlineDays:3, stipend:"₹10,000/mo"
+  },
+  {
+    company:"Fintrail Systems", role:"Backend Developer Intern", type:"backend",
+    skills:["Node.js","Express","DSA"], gapSkills:["DSA"],
+    match:70, seatsTotal:12, seatsFilled:4, deadlineDays:12, stipend:"₹12,000/mo"
+  },
+  {
+    company:"Vertex Commerce", role:"Full Stack Developer Intern", type:"fullstack",
+    skills:["HTML","CSS","JavaScript","Node.js","Firebase"], gapSkills:[],
+    match:89, seatsTotal:8, seatsFilled:3, deadlineDays:5, stipend:"₹10,000/mo"
+  },
+  {
+    company:"Orbitly Technologies", role:"Full Stack Developer Intern", type:"fullstack",
+    skills:["React","Express","MongoDB","Git"], gapSkills:["React"],
+    match:73, seatsTotal:6, seatsFilled:2, deadlineDays:9, stipend:"₹9,000/mo"
+  },
+  {
+    company:"Insight Metrics", role:"Data Scientist Intern", type:"datascience",
+    skills:["Python","Statistics","Pandas"], gapSkills:["Python","Statistics"],
+    match:41, seatsTotal:5, seatsFilled:3, deadlineDays:8, stipend:"₹7,000/mo"
+  },
+  {
+    company:"QuantEdge Analytics", role:"Data Scientist Intern", type:"datascience",
+    skills:["Python","SQL","ML Basics"], gapSkills:["Python","ML Basics"],
+    match:36, seatsTotal:4, seatsFilled:1, deadlineDays:14, stipend:"₹6,000/mo"
+  },
+  {
+    company:"NeuroVista AI", role:"AI/ML Engineer Intern", type:"aiml",
+    skills:["Python","Statistics","ML Basics"], gapSkills:["Python","ML Basics"],
+    match:38, seatsTotal:5, seatsFilled:2, deadlineDays:7, stipend:"Unpaid + Certificate"
+  },
+  {
+    company:"DataForge Analytics", role:"AI/ML Engineer Intern", type:"aiml",
+    skills:["Python","Pandas","ML Basics"], gapSkills:["Python","ML Basics"],
+    match:45, seatsTotal:4, seatsFilled:1, deadlineDays:15, stipend:"₹5,000/mo"
+  },
+  {
+    company:"ShieldNet Security", role:"Cyber Security Intern", type:"cybersecurity",
+    skills:["Networking","Linux","Security Basics"], gapSkills:["Networking","Security Basics"],
+    match:29, seatsTotal:4, seatsFilled:1, deadlineDays:11, stipend:"₹7,000/mo"
+  },
+  {
+    company:"SentinelGuard", role:"Cyber Security Analyst Intern", type:"cybersecurity",
+    skills:["Linux","Networking","Ethical Hacking Basics"], gapSkills:["Networking","Ethical Hacking Basics"],
+    match:25, seatsTotal:3, seatsFilled:2, deadlineDays:4, stipend:"₹6,000/mo"
+  },
+  {
+    company:"CloudSphere Systems", role:"Cloud Engineer Intern", type:"cloud",
+    skills:["Linux","AWS Basics","Docker"], gapSkills:["AWS Basics","Docker"],
+    match:47, seatsTotal:6, seatsFilled:2, deadlineDays:10, stipend:"₹9,000/mo"
+  },
+  {
+    company:"Nimbus Cloud Labs", role:"Cloud Engineer Intern", type:"cloud",
+    skills:["AWS Basics","Linux","Git"], gapSkills:["AWS Basics"],
+    match:58, seatsTotal:5, seatsFilled:4, deadlineDays:3, stipend:"₹10,000/mo"
+  }
+];
+
+let activeTab = "all";
+let searchTerm = "";
+
+function matchClass(m){
+  if(m>=75) return "match-high";
+  if(m>=50) return "match-mid";
+  return "match-low";
+}
+function deadlineClass(d){
+  if(d<=2) return "deadline-urgent";
+  if(d<=7) return "deadline-soon";
+  return "deadline-ok";
+}
+function seatFillClass(filled,total){
+  const ratio = filled/total;
+  if(ratio>=1) return "full";
+  if(ratio>=0.7) return "filling";
+  return "";
+}
+
+function render(){
+  const list = document.getElementById("jobList");
+  list.innerHTML = "";
+
+  const filtered = internships.filter(j=>{
+    const tabOk = activeTab === "all" || j.type === activeTab;
+    const searchOk = !searchTerm ||
+      j.company.toLowerCase().includes(searchTerm) ||
+      j.role.toLowerCase().includes(searchTerm);
+    return tabOk && searchOk;
+  }).sort((a,b)=> b.match - a.match);
+
+  if(filtered.length === 0){
+    list.innerHTML = '<div style="padding:30px;text-align:center;color:var(--muted);font-size:13px;">No internships match this filter yet.</div>';
+    return;
+  }
+
+  filtered.forEach(j=>{
+    const seatsLeft = j.seatsTotal - j.seatsFilled;
+    const isFull = seatsLeft <= 0;
+    const fillPct = Math.min(100, (j.seatsFilled/j.seatsTotal)*100);
+
+    const card = document.createElement("div");
+    card.className = "job-card";
+    card.innerHTML = `
+      <div class="job-top">
+        <div class="job-title-block">
+          <h3>${j.role}</h3>
+          <div class="company">${j.company}</div>
+          <div class="meta">
+            <span>💰 ${j.stipend}</span>
+            <span>📍 Remote / Hybrid</span>
+          </div>
+        </div>
+        <div class="match-badge ${matchClass(j.match)}">
+          <div class="pct">${j.match}%</div>
+          <div class="lbl">Match</div>
+        </div>
+      </div>
+
+      <div class="skill-chips">
+        ${j.skills.map(s=>`<span class="chip ${j.gapSkills.includes(s)?'gap':''}">${s}</span>`).join("")}
+      </div>
+
+      <div class="job-bottom">
+        <div class="seats-block">
+          <div class="seats-label">
+            <span>${isFull ? "Seats full" : `${seatsLeft} of ${j.seatsTotal} seats left`}</span>
+            <span class="deadline-badge ${deadlineClass(j.deadlineDays)}">${j.deadlineDays<=1 ? "Last day" : j.deadlineDays+" days left"}</span>
+          </div>
+          <div class="seat-bar-track">
+            <div class="seat-bar-fill ${seatFillClass(j.seatsFilled,j.seatsTotal)}" style="width:${fillPct}%"></div>
+          </div>
+        </div>
+        <button class="apply-btn" ${isFull ? "disabled" : ""}>${isFull ? "Join Waitlist" : "Apply Now"}</button>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    activeTab = tab.dataset.tab;
+    render();
+  });
+});
+
+document.getElementById("searchInput").addEventListener("input", (e)=>{
+  searchTerm = e.target.value.toLowerCase();
+  render();
+});
+
+render();
+</script>
+
+</body>
+</html>
