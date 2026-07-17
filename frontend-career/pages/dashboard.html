@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerCompass Dashboard</title>
+
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- ================= PHASE 3 STYLES ================= -->
+    <!-- Dark mode + responsive colors/layout live in dashboard.css.
+         This block only styles the new Phase 3 components. -->
+    <style>
+      /* ---- phase 3 action buttons in topbar ---- */
+      .phase3-actions{ display:flex; gap:10px; align-items:center; }
+      .p3-btn{
+        font-family:inherit; font-size:13px; font-weight:600; cursor:pointer;
+        border:1px solid #cbd5e1; background:#fff; color:#1e293b;
+        border-radius:8px; padding:8px 14px; display:inline-flex; align-items:center; gap:6px;
+        transition:.2s ease;
+      }
+      .p3-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.12); }
+      .p3-btn.solid{ background:#2563eb; color:#fff; border-color:#2563eb; }
+      .p3-btn.solid:hover{ background:#1d4ed8; }
+      body.dark .p3-btn{ background:#1e293b; color:#f1f5f9; border-color:#334155; }
+
+      /* ---- loading skeleton ---- */
+      .sk-block{
+        background:linear-gradient(100deg,#e2e8f0 30%,#f1f5f9 45%,#e2e8f0 60%);
+        background-size:300% 100%; animation:shimmer 1.4s ease-in-out infinite;
+        border-radius:14px;
+      }
+      @keyframes shimmer{0%{background-position:120% 0;}100%{background-position:-20% 0;}}
+      .sk-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
+      .sk-stats .sk-block{ height:110px; }
+      .sk-big{ height:280px; margin-bottom:20px; }
+      @media(max-width:800px){ .sk-stats{ grid-template-columns:repeat(2,1fr); } }
+
+      #dashboardBody{ display:none; opacity:0; transform:translateY(10px); }
+      #dashboardBody.show{ display:block; animation:riseIn .6s cubic-bezier(.2,.7,.3,1) forwards; }
+      @keyframes riseIn{ to{ opacity:1; transform:translateY(0); } }
+
+      .stat-card, .chart-card, .calendar-card, .tasks, .activity,
+      .progress-card, .recommendation-card, .deadline-card, .notification-item{
+        transition: transform .2s ease;
+      }
+      .stat-card:hover, .recommendation-card:hover, .deadline-card:hover{
+        transform: translateY(-3px);
+      }
+
+      canvas#confettiCanvas{ position:fixed; inset:0; pointer-events:none; z-index:999; }
+
+      .p3-toast{
+        position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+        background:#1e293b; color:#f8fafc; padding:12px 20px; border-radius:999px;
+        font-size:13px; opacity:0; pointer-events:none; transition:.3s ease; z-index:1000;
+      }
+      .p3-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+      @media print{
+        .sidebar, .phase3-actions, .p3-toast, canvas#confettiCanvas, .hamburger-btn{ display:none !important; }
+        body{ background:#fff !important; }
+      }
+
+      body.pdf-exporting .stat-card,
+      body.pdf-exporting .chart-card,
+      body.pdf-exporting .calendar-card,
+      body.pdf-exporting .tasks,
+      body.pdf-exporting .activity,
+      body.pdf-exporting .progress-card,
+      body.pdf-exporting .recommendation-card,
+      body.pdf-exporting .deadline-card,
+      body.pdf-exporting .notification-item{
+        box-shadow:none !important;
+        transition:none !important;
+        transform:none !important;
+      }
+      body.pdf-exporting #dashboardBody{
+        opacity:1 !important;
+        transform:none !important;
+        animation:none !important;
+      }
+
+      /* ---- working task checkboxes ---- */
+      #taskList{ list-style:none; }
+      .task-item{
+        display:flex; align-items:center; gap:12px; cursor:pointer; padding:15px 0;
+        border-bottom:1px solid #e5e7eb;
+      }
+      #taskList li{ border-bottom:none; padding:0; }
+      body.dark .task-item{ border-bottom-color:#334155; }
+      .task-checkbox{
+        width:18px; height:18px; accent-color:#2563eb; cursor:pointer; flex-shrink:0;
+      }
+      .task-item span{ color:#475569; transition:.2s ease; }
+      body.dark .task-item span{ color:#cbd5e1; }
+      li.completed .task-item span{ text-decoration:line-through; color:#94a3b8; opacity:.7; }
+      .task-count{ font-size:.85rem; color:#64748b; font-weight:600; }
+
+      .no-results{ color:#64748b; padding:20px 0; font-size:14px; }
+
+      /* ---- hamburger (mobile menu button) ---- */
+      .hamburger-btn{
+        display:none; background:white; border:none; width:42px; height:42px;
+        border-radius:10px; font-size:1.2rem; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,.08);
+        flex-shrink:0;
+      }
+      body.dark .hamburger-btn{ background:#1e293b; color:#f1f5f9; }
+      .topbar-left{ display:flex; align-items:center; gap:16px; }
+      .sidebar-backdrop{
+        display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:900;
+      }
+      .sidebar-backdrop.show{ display:block; }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="confettiCanvas"></canvas>
+    <div class="p3-toast" id="p3Toast"></div>
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+         <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-logo">
+        <span>🧭</span>
+        <h2>CareerCompass</h2>
+    </div>
+
+    <nav class="sidebar-menu">
+
+        <a href="dashboard.html" class="active"><i class="fa-solid fa-house"></i> Dashboard</a>
+
+        <a href="assessment.html"><i class="fa-solid fa-bullseye"></i> Career Assessment</a>
+
+        <a href="resume.html"><i class="fa-solid fa-file-lines"></i> Resume Builder</a>
+
+        <a href="github.html"><i class="fa-brands fa-github"></i> GitHub Analyzer</a>
+
+        <a href="roadmap.html"><i class="fa-solid fa-road"></i> Skill Roadmap</a>
+
+        <a href="planner.html"><i class="fa-solid fa-calendar-days"></i> Learning Planner</a>
+
+        <a href="internship.html"><i class="fa-solid fa-briefcase"></i> Internship Tracker</a>
+
+        <a href="#"><i class="fa-solid fa-robot"></i> AI Assistant</a>
+
+        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+
+    </nav>
+
+</aside>
+
+    <!-- Shown behind the sidebar on mobile when it's open; tap to close -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+    <!-- Top Navigation -->
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">☰</button>
+            <div class="welcome">
+
+                <h1>Welcome Back, Jaish 👋</h1>
+
+                <p>Let's continue building your career today.</p>
+
+            </div>
+        </div>
+
+        <div class="topbar-actions">
+
+            
+
+            <!-- ===== PHASE 3: Dark mode / PDF / Share ===== -->
+            <div class="phase3-actions">
+              <button class="p3-btn" id="darkToggleBtn">🌙 <span id="darkLabel">Dark</span></button>
+              <button class="p3-btn" id="shareBtn">🖼 Share</button>
+              <button class="p3-btn solid" id="pdfBtn">📄 PDF</button>
+            </div>
+
+            <button class="notification-btn">
+                🔔
+            </button>
+
+            <div class="profile">
+
+                👤
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- ===== PHASE 3: Loading skeleton (shown first) ===== -->
+    <div id="skeletonOverlay">
+        <div class="sk-stats">
+            <div class="sk-block"></div><div class="sk-block"></div>
+            <div class="sk-block"></div><div class="sk-block"></div>
+        </div>
+        <div class="sk-block sk-big"></div>
+    </div>
+
+    <!-- ===== PHASE 3: Real content, hidden until skeleton finishes ===== -->
+    <div id="dashboardBody">
+
+<!-- Statistics -->
+
+<section class="stats">
+
+    <div class="stat-card">
+
+        <h3>Placement Readiness</h3>
+
+        <h2><span class="p3-counter" data-target="78">0</span>%</h2>
+
+        <p>+8% this month</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Resume Score</h3>
+
+        <h2><span class="p3-counter" data-target="84">0</span>%</h2>
+
+        <p>ATS Friendly</p>
+
+    </div>
+
+    <div class="stat-card" id="githubHealthCard">
+
+        <h3>GitHub Health</h3>
+
+        <h2><span class="p3-counter" data-target="91">0</span>%</h2>
+
+        <p>Excellent Profile</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Today's Goal</h3>
+
+        <h2><span class="p3-counter" data-target="4">0</span> / 6</h2>
+
+        <p>Tasks Completed</p>
+
+    </div>
+
+</section>
+
+<!-- chart section-->
+ <section class="analytics">
+
+    <div class="chart-card">
+
+        <h2>Weekly Progress</h2>
+
+        <canvas id="progressChart"></canvas>
+    </div>
+
+    <div class="calendar-card">
+
+        <h2>Upcoming Goals</h2>
+
+        <ul>
+
+            <li>📅 Complete JavaScript - Monday</li>
+
+            <li>📄 Update Resume - Tuesday</li>
+
+            <li>💼 Internship Application - Wednesday</li>
+
+            <li>🎯 Mock Interview - Friday</li>
+
+        </ul>
+
+    </div>
+
+</section>
+
+    <!-- Dashboard Bottom -->
+
+<section class="dashboard-bottom">
+
+    <!-- Today's Tasks -->
+
+    <div class="tasks" id="tasksCard">
+
+        <h2>Today's Tasks <span class="task-count" id="taskCount"></span></h2>
+
+        <ul id="taskList">
+
+            <li data-searchable="Complete JavaScript Module">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span>Complete JavaScript Module</span>
+                </label>
+            </li>
+
+            <li data-searchable="Solve 2 DSA Problems">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span>Solve 2 DSA Problems</span>
+                </label>
+            </li>
+
+            <li data-searchable="Upload Resume">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span>Upload Resume</span>
+                </label>
+            </li>
+
+            <li data-searchable="Apply for Internship">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span>Apply for Internship</span>
+                </label>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <!-- Recent Activity -->
+
+    <div class="activity">
+
+        <h2>Recent Activity</h2>
+
+        <ul>
+
+            <li>✅ Resume Updated</li>
+
+            <li>✅ GitHub Profile Synced</li>
+
+            <li>✅ Roadmap Generated</li>
+
+            <li>✅ Career Assessment Completed</li>
+
+        </ul>
+
+    </div>
+
+</section>
+
+     <!-- Progress Section -->
+
+<section class="progress-section">
+
+    <div class="progress-card">
+
+        <h2>Skill Progress</h2>
+
+        <div class="progress-item">
+            <span>HTML</span>
+            <progress value="90" max="100"></progress>
+        </div>
+
+        <div class="progress-item">
+            <span>CSS</span>
+            <progress value="80" max="100"></progress>
+        </div>
+
+        <div class="progress-item">
+            <span>JavaScript</span>
+            <progress value="45" max="100"></progress>
+        </div>
+
+        <div class="progress-item">
+            <span>DSA</span>
+            <progress value="30" max="100"></progress>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="recommendations">
+
+    <h2>🤖 AI Career Recommendations</h2>
+
+    <div class="recommendation-grid" id="recommendationGrid">
+
+        <div class="recommendation-card" data-searchable="Continue Learning JavaScript HTML CSS">
+
+            <h3>📚 Continue Learning</h3>
+
+            <p>
+                You have completed HTML and CSS.
+                JavaScript should be your next priority.
+            </p>
+
+        </div>
+
+        <div class="recommendation-card" data-searchable="Build More Projects JavaScript placement">
+
+            <h3>💻 Build More Projects</h3>
+
+            <p>
+                Complete two JavaScript projects to improve
+                your placement readiness score.
+            </p>
+
+        </div>
+
+        <div class="recommendation-card" data-searchable="Improve DSA practice problems">
+
+            <h3>🎯 Improve DSA</h3>
+
+            <p>
+                Your current DSA progress is low.
+                Practice at least two problems daily.
+            </p>
+
+        </div>
+
+        <div class="recommendation-card" data-searchable="Internship Advice Frontend Developer">
+
+            <h3>💼 Internship Advice</h3>
+
+            <p>
+                Your profile is suitable for Frontend Developer
+                internships. Apply this week.
+            </p>
+
+        </div>
+
+    </div>
+
+    <p class="no-results" id="noResultsMsg" style="display:none;">No matches found for your search.</p>
+
+</section>
+
+<!-- ================= UPCOMING DEADLINES ================= -->
+
+<section class="deadlines-section">
+
+    <h2>📅 Upcoming Deadlines</h2>
+
+    <div class="deadlines-grid" id="deadlinesGrid">
+
+        <div class="deadline-card" data-searchable="JavaScript Assignment due tomorrow">
+
+            <h3>JavaScript Assignment</h3>
+
+            <p>Due Tomorrow</p>
+
+            <span class="deadline urgent">1 Day Left</span>
+
+        </div>
+
+        <div class="deadline-card" data-searchable="Resume Submission College Placement Cell">
+
+            <h3>Resume Submission</h3>
+
+            <p>College Placement Cell</p>
+
+            <span class="deadline medium">3 Days Left</span>
+
+        </div>
+
+        <div class="deadline-card" data-searchable="Hackathon Registration TechFest 2026">
+
+            <h3>Hackathon Registration</h3>
+
+            <p>TechFest 2026</p>
+
+            <span class="deadline normal">7 Days Left</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= NOTIFICATIONS ================= -->
+
+<section class="notifications-section">
+
+    <h2>🔔 Notifications</h2>
+
+    <div class="notification-list" id="notificationList">
+
+        <div class="notification-item" data-searchable="Resume Score improved 84%">
+            🎉 Resume Score improved to <strong>84%</strong>
+        </div>
+
+        <div class="notification-item" data-searchable="New Frontend Internship available">
+            💼 New Frontend Internship available.
+        </div>
+
+        <div class="notification-item" data-searchable="JavaScript Roadmap updated">
+            📚 JavaScript Roadmap updated.
+        </div>
+
+        <div class="notification-item" data-searchable="AI recommends learning React.js">
+            🤖 AI recommends learning React.js next.
+        </div>
+
+    </div>
+
+</section>
+
+    </div><!-- /#dashboardBody -->
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- ================= PHASE 3 SCRIPT ================= -->
+    <script>
+    (function(){
+      const skeleton = document.getElementById('skeletonOverlay');
+      const body = document.getElementById('dashboardBody');
+
+      function animateCounter(el, target, duration){
+        const start = performance.now();
+        function tick(now){
+          const p = Math.min((now-start)/duration, 1);
+          const eased = 1 - Math.pow(1-p, 3);
+          el.textContent = Math.round(eased*target);
+          if(p<1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      function reveal(){
+        skeleton.style.display = 'none';
+        body.classList.add('show');
+        document.querySelectorAll('.p3-counter').forEach(c=>{
+          animateCounter(c, parseInt(c.dataset.target, 10), 1200);
+        });
+        updateTaskCount();
+        setTimeout(()=>{ launchConfetti(); }, 900);
+      }
+      setTimeout(reveal, 1100);
+
+      // ---- dark mode ----
+      const darkBtn = document.getElementById('darkToggleBtn');
+      const darkLabel = document.getElementById('darkLabel');
+      darkBtn.addEventListener('click', ()=>{
+        document.body.classList.toggle('dark');
+        const nowDark = document.body.classList.contains('dark');
+        darkLabel.textContent = nowDark ? 'Light' : 'Dark';
+
+        if(window.progressChart){
+          const chart = window.progressChart;
+          chart.options.plugins.legend.labels.color = nowDark ? '#f1f5f9' : '#1e293b';
+          chart.options.scales.x.ticks.color = nowDark ? '#cbd5e1' : '#1e293b';
+          chart.options.scales.x.grid.color  = nowDark ? '#334155' : '#e2e8f0';
+          chart.options.scales.y.ticks.color = nowDark ? '#cbd5e1' : '#1e293b';
+          chart.options.scales.y.grid.color  = nowDark ? '#334155' : '#e2e8f0';
+          chart.update();
+        }
+      });
+
+      // ---- toast ----
+      const toast = document.getElementById('p3Toast');
+      let toastTimer;
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(()=> toast.classList.remove('show'), 2400);
+      }
+
+      // ---- PDF (real file download) ----
+      function swapProgressBars(){
+        document.querySelectorAll('progress').forEach(p=>{
+          const pct = Math.round((p.value / p.max) * 100);
+          const visual = document.createElement('div');
+          visual.className = 'pdf-progress-visual';
+          visual.style.cssText = 'width:100%;height:12px;background:#e2e8f0;border-radius:8px;overflow:hidden;';
+          visual.innerHTML = `<div style="width:${pct}%;height:100%;background:#2563eb;border-radius:8px;"></div>`;
+          p.dataset.pdfHidden = 'true';
+          p.style.display = 'none';
+          p.insertAdjacentElement('afterend', visual);
+        });
+      }
+      function restoreProgressBars(){
+        document.querySelectorAll('.pdf-progress-visual').forEach(v=> v.remove());
+        document.querySelectorAll('progress[data-pdf-hidden]').forEach(p=>{
+          p.style.display = '';
+          delete p.dataset.pdfHidden;
+        });
+      }
+
+      document.getElementById('pdfBtn').addEventListener('click', async ()=>{
+        const btn = document.getElementById('pdfBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '📄 Generating…';
+        btn.disabled = true;
+
+        try{
+          const target = document.getElementById('dashboardBody');
+          swapProgressBars();
+          document.body.classList.add('pdf-exporting');
+          await new Promise(r => setTimeout(r, 60));
+
+          const canvas = await html2canvas(target, {
+            scale: 2,
+            backgroundColor: document.body.classList.contains('dark') ? '#0f172a' : '#f8fafc',
+            useCORS: true
+          });
+
+          document.body.classList.remove('pdf-exporting');
+          restoreProgressBars();
+
+          const imgData = canvas.toDataURL('image/png');
+          const { jsPDF } = window.jspdf;
+          const MARGIN = 32;
+
+          const contentWidthPt = target.offsetWidth * 0.75;
+          const contentHeightPt = target.offsetHeight * 0.75;
+          const pageWidth = contentWidthPt + MARGIN * 2;
+          const pageHeight = contentHeightPt + MARGIN * 2;
+
+          const pdf = new jsPDF({
+            orientation: pageHeight > pageWidth ? 'portrait' : 'landscape',
+            unit: 'pt',
+            format: [pageWidth, pageHeight]
+          });
+
+          pdf.setFillColor(document.body.classList.contains('dark') ? '#0f172a' : '#f8fafc');
+          pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+          pdf.addImage(imgData, 'PNG', MARGIN, MARGIN, contentWidthPt, contentHeightPt);
+
+          pdf.save('CareerCompass-Report.pdf');
+          showToast('PDF downloaded');
+        } catch(err){
+          console.error(err);
+          document.body.classList.remove('pdf-exporting');
+          restoreProgressBars();
+          showToast('Could not generate PDF — check console');
+        } finally {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // ---- Share ----
+      document.getElementById('shareBtn').addEventListener('click', async ()=>{
+        const text = 'CareerCompass Report — Jaish\nPlacement Readiness 78% · Resume Score 84% · GitHub Health 91%';
+        if(navigator.share){
+          try{ await navigator.share({ title:'CareerCompass Report', text }); }
+          catch(e){}
+        } else {
+          try{ await navigator.clipboard.writeText(text); showToast('Report summary copied to clipboard'); }
+          catch(e){ showToast('Could not copy — select manually'); }
+        }
+      });
+
+      // ---- Task checkboxes (now actually work) ----
+      function updateTaskCount(){
+        const boxes = document.querySelectorAll('.task-checkbox');
+        const done = document.querySelectorAll('.task-checkbox:checked').length;
+        document.getElementById('taskCount').textContent = `(${done}/${boxes.length})`;
+      }
+      document.querySelectorAll('.task-checkbox').forEach(box=>{
+        box.addEventListener('change', ()=>{
+          const li = box.closest('li');
+          li.classList.toggle('completed', box.checked);
+          updateTaskCount();
+          if(box.checked) showToast('Task marked complete');
+        });
+      });
+
+      // ---- Hamburger menu (mobile sidebar) ----
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      function openSidebar(){ sidebar.classList.add('mobile-open'); backdrop.classList.add('show'); }
+      function closeSidebar(){ sidebar.classList.remove('mobile-open'); backdrop.classList.remove('show'); }
+      hamburgerBtn.addEventListener('click', openSidebar);
+      backdrop.addEventListener('click', closeSidebar);
+
+      // ---- Search bar (live filter — actually works now) ----
+      console.log('[CareerCompass] Phase 3 script loaded.');
+
+      const searchInput = document.getElementById('dashboardSearch');
+      console.log('[CareerCompass] search input element found:', searchInput);
+
+      if (!searchInput) {
+        console.error('[CareerCompass] ERROR: no element with id="dashboardSearch" exists on this page. The search box in your HTML is missing that id attribute, or this script is running on the wrong page.');
+      } else {
+        const searchableSelectors = [
+          '#taskList li',
+          '#recommendationGrid .recommendation-card',
+          '#deadlinesGrid .deadline-card',
+          '#notificationList .notification-item'
+        ];
+
+        // sanity-check each target list exists and log how many items it found
+        searchableSelectors.forEach(sel=>{
+          const count = document.querySelectorAll(sel).length;
+          console.log(`[CareerCompass] selector "${sel}" matched ${count} element(s)`);
+        });
+
+        searchInput.addEventListener('input', ()=>{
+          const query = searchInput.value.trim().toLowerCase();
+          console.log('[CareerCompass] search fired, query =', JSON.stringify(query));
+          let anyVisible = false;
+
+          searchableSelectors.forEach(sel=>{
+            document.querySelectorAll(sel).forEach(el=>{
+              const haystack = (el.dataset.searchable || el.textContent).toLowerCase();
+              const matches = query === '' || haystack.includes(query);
+              el.style.display = matches ? '' : 'none';
+              if(matches) anyVisible = true;
+            });
+          });
+
+          document.getElementById('noResultsMsg').style.display =
+            (query !== '' && !anyVisible) ? 'block' : 'none';
+        });
+
+        console.log('[CareerCompass] search listener attached successfully.');
+      }
+
+      // ---- confetti ----
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+      resize(); addEventListener('resize', resize);
+
+      function launchConfetti(){
+        const colors = ['#2563eb','#16a34a','#d97706','#7c3aed','#f8fafc'];
+        const particles = Array.from({length:130}, ()=>({
+          x: canvas.width/2 + (Math.random()-0.5)*200,
+          y: canvas.height*0.25,
+          vx: (Math.random()-0.5)*8,
+          vy: Math.random()*-6 - 4,
+          size: Math.random()*6+4,
+          color: colors[Math.floor(Math.random()*colors.length)],
+          rot: Math.random()*360,
+          vrot: (Math.random()-0.5)*10,
+          shape: Math.random() > 0.5 ? 'rect' : 'circle'
+        }));
+        let frame = 0;
+        function loop(){
+          frame++;
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+          let alive = false;
+          particles.forEach(p=>{
+            p.vy += 0.18;
+            p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
+            if(p.y < canvas.height + 20) alive = true;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot*Math.PI/180);
+            ctx.fillStyle = p.color;
+            if(p.shape==='rect') ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+            else { ctx.beginPath(); ctx.arc(0,0,p.size/2,0,Math.PI*2); ctx.fill(); }
+            ctx.restore();
+          });
+          if(alive && frame < 260) requestAnimationFrame(loop);
+          else ctx.clearRect(0,0,canvas.width,canvas.height);
+        }
+        loop();
+      }
+    })();
+    </script>
+
+</body>
+</html>
