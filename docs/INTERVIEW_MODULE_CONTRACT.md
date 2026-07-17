@@ -41,6 +41,6 @@ Possible later additions:
 
 ## Branch
 feature/interview-preparation
-done, lets continue fastly our work , as i have deadline of 6 days only to complete this project abd submit it
+
 ## Pull Request Target
 landing-page

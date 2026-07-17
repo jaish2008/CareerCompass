@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Resume Analyzer — CareerCompass</title>
+  <meta name="description" content="Upload your resume and receive an estimated ATS-readiness score, skill analysis, missing keywords, and personalized improvement suggestions." />
+  <link rel="stylesheet" href="../css/resume-analyzer.css" />
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Mammoth.js for DOCX -->
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.12.0/mammoth.browser.min.js"></script>
+  <!-- jsPDF for report download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <!-- ============ HEADER ============ -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="brand" aria-label="CareerCompass Home">
+        <span class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="16 8 12 14 8 16 12 10 16 8"></polygon>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>CareerCompass</strong>
+          <small>AI Career Guidance Platform</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="site-nav" id="siteNav" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="github.html">GitHub Analyzer</a>
+        <a href="resume.html">Resume Builder</a>
+        <a href="resume-analyzer.html" class="active" aria-current="page">Resume Analyzer</a>
+        <a href="#">Career Quiz</a>
+        <a href="#">Learning Hub</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn-outline" href="resume.html">Open Resume Builder</a>
+        <button class="icon-btn" type="button" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="hero-inner">
+        <span class="hero-eyebrow">✨ Powered by AI · Estimated ATS Analysis</span>
+        <h1>AI Resume Analyzer</h1>
+        <p>Upload your resume and receive an estimated ATS-readiness score, skill analysis, missing keywords, and personalized improvement suggestions.</p>
+        <div class="hero-badges">
+          <span class="badge">🎯 ATS Readiness</span>
+          <span class="badge">🧠 Skill Detection</span>
+          <span class="badge">💡 Smart Suggestions</span>
+        </div>
+        <p class="hero-disclaimer">This project provides an estimated readiness score and does not represent the score of any specific recruitment platform.</p>
+      </div>
+    </section>
+
+    <!-- ============ UPLOAD SECTION ============ -->
+    <section class="grid-2 upload-section">
+      <!-- LEFT: Upload -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Upload Your Resume</h2>
+          <p class="muted">We support PDF, DOCX, and TXT files up to 5 MB.</p>
+        </div>
+
+        <label class="dropzone" id="dropzone" for="resumeFile" tabindex="0">
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <div class="dropzone-title">Drag and drop your resume here</div>
+          <div class="dropzone-sub">or <span class="link">click to browse</span></div>
+          <div class="dropzone-meta">Supported: PDF · DOCX · TXT — Max 5 MB</div>
+          <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" hidden />
+        </label>
+
+        <div class="file-preview hidden" id="filePreview" aria-live="polite">
+          <div class="fp-icon">📄</div>
+          <div class="fp-meta">
+            <div class="fp-name" id="fpName">resume.pdf</div>
+            <div class="fp-sub">
+              <span id="fpType">PDF</span> · <span id="fpSize">0 KB</span>
+              <span class="fp-ok">✓ Ready</span>
+            </div>
+          </div>
+          <button class="fp-remove" id="fpRemove" type="button" aria-label="Remove file">✕</button>
+        </div>
+
+        <div class="inline-error hidden" id="uploadError"></div>
+      </div>
+
+      <!-- RIGHT: Target Role -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Target Career Role</h2>
+          <p class="muted">Choose the role you want your resume evaluated against.</p>
+        </div>
+
+        <label for="targetRole" class="form-label">Select role</label>
+        <select id="targetRole" class="select">
+          <option value="Frontend Developer">Frontend Developer</option>
+          <option value="Backend Developer">Backend Developer</option>
+          <option value="Full Stack Developer">Full Stack Developer</option>
+          <option value="AI/ML Engineer">AI/ML Engineer</option>
+          <option value="Data Analyst">Data Analyst</option>
+          <option value="DevOps Engineer">DevOps Engineer</option>
+        </select>
+
+        <p class="role-desc" id="roleDesc">Builds user interfaces using HTML, CSS, JavaScript and modern frameworks.</p>
+
+        <div class="btn-row">
+          <button type="button" id="analyzeResumeBtn" class="btn btn-primary" disabled>
+            <span class="btn-label">Analyze Resume</span>
+          </button>
+          <button type="button" id="resetAnalyzerBtn" class="btn btn-ghost">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ANALYSIS PROCESS ============ -->
+    <section class="card hidden" id="analysisProcessCard" aria-live="polite">
+      <div class="card-header">
+        <h2>Analyzing Your Resume</h2>
+        <p class="muted" id="analysisStatus">Preparing analysis…</p>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="analysisProgressBar"></div></div>
+        <div class="progress-text" id="analysisProgressText">0%</div>
+      </div>
+
+      <ol class="steps" id="analysisSteps">
+        <li data-step="1"><span class="dot"></span>Reading resume file</li>
+        <li data-step="2"><span class="dot"></span>Extracting text</li>
+        <li data-step="3"><span class="dot"></span>Detecting resume sections</li>
+        <li data-step="4"><span class="dot"></span>Matching career keywords</li>
+        <li data-step="5"><span class="dot"></span>Calculating ATS readiness</li>
+        <li data-step="6"><span class="dot"></span>Generating suggestions</li>
+        <li data-step="7"><span class="dot"></span>Analysis completed</li>
+      </ol>
+    </section>
+
+    <!-- ============ RESULTS ============ -->
+    <section id="analysisResults" class="hidden">
+      <!-- ATS SCORE -->
+      <div class="card score-card">
+        <div class="score-left">
+          <div class="score-ring">
+            <svg viewBox="0 0 120 120" width="180" height="180">
+              <circle cx="60" cy="60" r="52" class="ring-bg"></circle>
+              <circle cx="60" cy="60" r="52" class="ring-fg" id="atsScoreCircle"></circle>
+            </svg>
+            <div class="score-center">
+              <div class="score-value"><span id="atsScore">0</span><small>/100</small></div>
+              <div class="score-caption">ATS Score</div>
+            </div>
+          </div>
+          <div class="score-meta">
+            <span class="status-badge" id="atsStatusBadge">Pending</span>
+            <h3 id="scoreLabel">Awaiting analysis</h3>
+            <p id="scoreExplanation" class="muted">Your ATS-readiness score will appear here after analysis.</p>
+          </div>
+        </div>
+
+        <div class="score-right">
+          <h4 class="mini-title">Score Breakdown</h4>
+          <div class="breakdown">
+            <div class="bd-row"><span>Structure</span><div class="mini-bar"><div id="structureScore"></div></div><b class="bd-val">0%</b></div>
+            <div class="bd-row"><span>Skills</span><div class="mini-bar"><div id="skillScore"></div></div><b class="bd-val">0%</b></div>
+            <div class="bd-row"><span>Keywords</span><div class="mini-bar"><div id="keywordScore"></div></div><b class="bd-val">0%</b></div>
+            <div class="bd-row"><span>Length</span><div class="mini-bar"><div id="lengthScore"></div></div><b class="bd-val">0%</b></div>
+            <div class="bd-row"><span>Contact Info</span><div class="mini-bar"><div id="contactScore"></div></div><b class="bd-val">0%</b></div>
+            <div class="bd-row"><span>Achievements</span><div class="mini-bar"><div id="achievementScore"></div></div><b class="bd-val">0%</b></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTIONS + SKILLS -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h2>Resume Sections</h2>
+            <p class="muted"><span id="sectionCount">0 / 7</span> sections found</p>
+          </div>
+          <div class="section-grid" id="sectionResults"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Detected Skills</h2>
+            <p class="muted"><span id="matchedSkillCount">0</span> skills matched with the selected career role.</p>
+          </div>
+          <div class="chip-list" id="detectedSkillResults"></div>
+        </div>
+      </div>
+
+      <!-- MISSING KEYWORDS -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Missing Role Keywords</h2>
+          <p class="muted">Add only the skills and keywords that truthfully represent your knowledge and experience.</p>
+        </div>
+        <div class="chip-list" id="missingKeywordResults"></div>
+      </div>
+
+      <!-- STATISTICS -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Resume Statistics</h2>
+          <p class="muted">Quick metrics extracted from your resume.</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat"><div class="stat-value" id="wordCount">0</div><div class="stat-label">Word Count</div></div>
+          <div class="stat"><div class="stat-value" id="characterCount">0</div><div class="stat-label">Characters</div></div>
+          <div class="stat"><div class="stat-value" id="sectionCountStat">0</div><div class="stat-label">Sections Found</div></div>
+          <div class="stat"><div class="stat-value" id="matchedSkillCountStat">0</div><div class="stat-label">Matched Skills</div></div>
+        </div>
+        <div class="detect-row">
+          <span class="detect" id="emailDetected">✉ Email: —</span>
+          <span class="detect" id="phoneDetected">📞 Phone: —</span>
+          <span class="detect" id="achievementDetected">📈 Achievements: —</span>
+          <span class="detect" id="actionVerbDetected">⚡ Action Verbs: —</span>
+        </div>
+      </div>
+
+      <!-- SUGGESTIONS -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Smart Improvement Suggestions</h2>
+          <p class="muted">Personalized recommendations to strengthen your resume.</p>
+        </div>
+        <ol class="suggestions" id="suggestionResults"></ol>
+      </div>
+
+      <!-- ROLE MATCH -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Career Role Match</h2>
+          <p class="muted" id="bestMatchingRole">Match analysis will appear here.</p>
+        </div>
+        <div class="role-matches" id="roleMatchResults"></div>
+      </div>
+
+      <!-- STRENGTHS / WEAKNESSES -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><h2>✅ Resume Strengths</h2></div>
+          <ul class="sw-list sw-strong" id="resumeStrengths"></ul>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>⚠ Areas to Improve</h2></div>
+          <ul class="sw-list sw-weak" id="resumeWeaknesses"></ul>
+        </div>
+      </div>
+
+      <!-- EXTRACTED TEXT -->
+      <details class="card details-card">
+        <summary>
+          <span>View Extracted Resume Text</span>
+          <button type="button" id="copyExtractedTextBtn" class="btn btn-outline btn-sm">Copy Text</button>
+        </summary>
+        <pre class="extracted" id="extractedText">No text extracted yet.</pre>
+      </details>
+
+      <!-- DOWNLOAD -->
+      <div class="card download-card">
+        <div>
+          <h2>Download Resume Analysis Report</h2>
+          <p class="muted">Save your ATS score, detected skills, missing keywords, and improvement suggestions.</p>
+        </div>
+        <button type="button" id="downloadAnalysisBtn" class="btn btn-primary">⬇ Download Analysis Report</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>CareerCompass</strong>
+        <p class="muted">AI-powered career guidance for students and developers.</p>
+      </div>
+      <div>
+        <p class="muted">Built with HTML • CSS • JavaScript • PDF.js • Mammoth.js</p>
+        <p class="muted small">ATS score is an estimated project-based readiness score.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/resume-analyzer.js"></script>
+</body>
+</html>

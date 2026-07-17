@@ -73,16 +73,18 @@
 
 <div class="project-section">
 
-<h3>Projects</h3>
+    <h3>Projects</h3>
 
-<label>Project Title</label>
-<input type="text" id="projectTitle" placeholder="CareerCompass">
+    <div id="projectsContainer"></div>
 
-<label>Technology Used</label>
-<input type="text" id="projectTech" placeholder="HTML, CSS, JavaScript">
+    <button
+        type="button"
+        class="add-item-btn"
+        id="addProjectBtn">
 
-<label>Description</label>
-<textarea id="projectDescription" placeholder="Describe your project"></textarea>
+        + Add Another Project
+
+    </button>
 
 </div>
 
@@ -90,18 +92,16 @@
 
     <h3>Experience</h3>
 
-    <label>Company Name</label>
-    <input type="text" id="company" placeholder="Google">
+    <div id="experiencesContainer"></div>
 
-    <label>Job Role</label>
-    <input type="text" id="role" placeholder="Frontend Developer Intern">
+    <button
+        type="button"
+        class="add-item-btn"
+        id="addExperienceBtn">
 
-    <label>Duration</label>
-    <input type="text" id="duration" placeholder="Jan 2026 - Mar 2026">
+        + Add Another Experience
 
-    <label>Description</label>
-    <textarea id="experienceDescription"
-        placeholder="Describe your responsibilities"></textarea>
+    </button>
 
 </div>
 
@@ -109,18 +109,21 @@
 
     <h3>Certificates</h3>
 
-    <label>Certificate Name</label>
-    <input type="text" id="certificateName" placeholder="Python for Everybody">
+    <div id="certificatesContainer"></div>
 
-    <label>Issued By</label>
-    <input type="text" id="certificateIssuer" placeholder="Coursera">
+    <button
+        type="button"
+        class="add-item-btn"
+        id="addCertificateBtn">
 
-    <label>Year</label>
-    <input type="text" id="certificateYear" placeholder="2026">
+        + Add Another Certificate
+
+    </button>
 
 </div>
 
 <div class="button-group">
+
 
     <button type="button" class="save-btn" id="saveBtn">
         Save Resume
@@ -134,6 +137,14 @@
         Download PDF
     </button>
 
+    <a
+    href="resume-analyzer.html"
+    class="analyze-resume-btn">
+
+    Analyze Resume
+
+</a>
+
  </div>
     </div>
 
@@ -144,16 +155,16 @@
         <div class="photo-preview">
 
     <img id="previewPhoto"
-         src="https://via.placeholder.com/140"
-         alt="Profile Photo">
+         alt="Profile Photo"
+         style="display: none;">
 
 </div>
 
         <h1 id="previewName">Your Name</h1>
 
-        <p 📧 <span id="previewEmail">Email</span></p>
+        <p>📧 <span id="previewEmail">Email</span></p>
 
-        <p 📱<span id="previewPhone">Phone</span></p>
+        <p>📱 <span id="previewPhone">Phone</span></p>
 
         <div class="divider"></div>
 
@@ -175,39 +186,63 @@
 
 <p><strong>CGPA:</strong> <span id="previewCGPA"></span></p>
 
-   <h3>Projects</h3>
+  <section
+    class="preview-repeat-section"
+    id="projectsPreviewSection">
 
-<h4 id="previewProjectTitle"></h4>
+    <h3>Projects</h3>
 
-<p id="previewProjectTech"></p>
+    <div id="previewProjectsList"></div>
 
-<p id="previewProjectDescription"></p>
+</section>
 
-<h3>Experience</h3>
 
-<h4 id="previewCompany"></h4>
+<section
+    class="preview-repeat-section"
+    id="experiencesPreviewSection">
 
-<p><strong>Role:</strong> <span id="previewRole"></span></p>
+    <h3>Experience</h3>
 
-<p><strong>Duration:</strong> <span id="previewDuration"></span></p>
+    <div id="previewExperiencesList"></div>
 
-<p id="previewExperienceDescription"></p>
+</section>
 
-<h3>Certificates</h3>
 
-<p><strong id="previewCertificateName"></strong></p>
+<div class="certificate-preview-section">
 
-<p>
-    <span id="previewCertificateIssuer"></span>
+    <h3>Certificates</h3>
 
-    <span id="previewCertificateYear"></span>
-</p>
+    <div class="certificate-item">
 
-    </div>
+        <p>
+            <strong id="previewCertificateName">
+                Certificate Name
+            </strong>
+        </p>
+
+        <p>
+            <span id="previewCertificateIssuer"></span>
+            <span id="previewCertificateYear"></span>
+        </p>
+
+<section
+    class="preview-repeat-section"
+    id="certificatesPreviewSection">
+
+    <h3>Certificates</h3>
+
+    <div id="previewCertificatesList"></div>
+ skill-roadmap
+
+</section>
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</div>
+
+roadmap
+    </div>
+
 
 <script src="../js/resume.js"></script>
 

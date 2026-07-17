@@ -767,3 +767,21 @@ footer hr{
 .mobile-only{
     display:none;
 }
+
+.feature-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.feature-link:hover {
+    transform: translateY(-6px);
+}
+
+.feature-action {
+    display: inline-block;
+    margin-top: 14px;
+    color: #2563eb;
+    font-weight: 600;
+}

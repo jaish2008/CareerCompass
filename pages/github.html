@@ -865,6 +865,136 @@
             <p id="careerSuggestion">Loading...</p>
         </div>
 
+
+<div class="card" id="topCareerCard">
+
+    <h2>🏆 Top AI Career Predictions</h2>
+
+    <div id="topCareerPredictions">
+
+        Waiting for prediction...
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>🎯 AI Confidence</h2>
+
+    <div class="confidence-bar">
+
+        <div
+            id="confidenceProgress"
+            class="confidence-progress">
+
+            0%
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>🧠 Why did AI choose this Career?</h2>
+
+    <ul id="aiExplanation">
+
+        <li>Waiting...</li>
+
+    </ul>
+
+</div>
+
+<div class="card">
+
+    <h2>🗺️ AI Career Roadmap</h2>
+
+    <div id="careerRoadmap">
+
+        Waiting for prediction...
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>💪 AI Portfolio Assessment</h2>
+
+    <div class="assessment-grid">
+
+        <div>
+
+            <h3>Strengths</h3>
+
+            <ul id="strengthList"></ul>
+
+        </div>
+
+        <div>
+
+            <h3>Weaknesses</h3>
+
+            <ul id="weaknessList"></ul>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+<h2>👨‍💼 Recruiter Score</h2>
+
+<h1 id="recruiterScore">0/100</h1>
+
+</div>
+
+<div class="card">
+
+<h2>💡 AI Recommendation</h2>
+
+<p id="aiRecommendation"></p>
+
+</div>
+
+<div class="card">
+
+<h2>🤖 AI Model</h2>
+
+<table>
+
+<tr><td>Model</td><td>Random Forest V4</td></tr>
+
+<tr><td>Dataset</td><td>Stack Overflow Survey 2025</td></tr>
+
+<tr><td>Accuracy</td><td>48.66%</td></tr>
+
+<tr><td>Macro F1</td><td>38.29%</td></tr>
+
+</table>
+
+</div>
+
+<div class="card">
+
+    <h2>📄 AI Career Report</h2>
+
+    <p>
+        Download a personalized AI-generated career report.
+    </p>
+
+    <button type="button" id="downloadReportBtn">
+        📥 Download PDF Report
+    </button>
+
+</div>
+
         <div class="report-card">
             <h3>Hire Probability</h3>
             <p id="hireProbability">0%</p>
@@ -902,7 +1032,243 @@
 
 </main>
 
+<footer>
+
+Built with ❤️ using
+
+Python • Flask • Random Forest • Scikit-learn • GitHub API
+
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="../js/github.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="../js/github.js?v=15"></script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const downloadButton =
+        document.getElementById("downloadReportBtn");
+
+    if (!downloadButton) {
+        return;
+    }
+
+    downloadButton.addEventListener("click", function () {
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+
+        const career =
+            document.getElementById("careerSuggestion")
+                ?.textContent.trim() || "Not available";
+
+        const confidence =
+            document.getElementById("hireProbability")
+                ?.textContent.trim() || "Not available";
+
+        const recommendation =
+            document.getElementById("aiRecommendation")
+                ?.textContent.trim() ||
+            getPDFRecommendation(career);
+
+        let y = 20;
+
+        // Main heading
+        pdf.setTextColor(37, 99, 235);
+        pdf.setFontSize(22);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("CareerCompass", 20, y);
+
+        y += 10;
+
+        pdf.setFontSize(16);
+        pdf.text("AI Career Report", 20, y);
+
+        // Divider
+        y += 8;
+        pdf.setDrawColor(37, 99, 235);
+        pdf.line(20, y, 190, y);
+
+        // Career section
+        y += 15;
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFontSize(13);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("Predicted Career", 20, y);
+
+        y += 8;
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "normal");
+        pdf.text(career, 20, y);
+
+        // Confidence section
+        y += 15;
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(13);
+        pdf.text("AI Confidence", 20, y);
+
+        y += 8;
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(12);
+        pdf.text(confidence, 20, y);
+
+        // Top predictions
+        y += 15;
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(13);
+        pdf.text("Top 3 Career Predictions", 20, y);
+
+        y += 9;
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(11);
+
+        const rows =
+            document.querySelectorAll(".prediction-row");
+
+        if (rows.length > 0) {
+
+            rows.forEach(function (row, index) {
+
+                let text = row.innerText
+                    .replace(/🥇|🥈|🥉/g, "")
+                    .replace(/\s+/g, " ")
+                    .trim();
+
+                // Remove unsupported characters
+                text = text.replace(/[^\x20-\x7E]/g, "");
+
+                pdf.text(
+                    `${index + 1}. ${text}`,
+                    25,
+                    y
+                );
+
+                y += 8;
+            });
+
+        } else {
+
+            pdf.text(
+                "Prediction information is unavailable.",
+                25,
+                y
+            );
+
+            y += 8;
+        }
+
+        // Recommendation
+        y += 10;
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(13);
+        pdf.text("AI Recommendation", 20, y);
+
+        y += 9;
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(11);
+
+        const recommendationText =
+            recommendation ===
+            "Complete GitHub analysis to receive a recommendation."
+                ? getPDFRecommendation(career)
+                : recommendation;
+
+        const recommendationLines =
+            pdf.splitTextToSize(
+                recommendationText,
+                165
+            );
+
+        pdf.text(
+            recommendationLines,
+            20,
+            y
+        );
+
+        y += recommendationLines.length * 7 + 15;
+
+        // Model information
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(13);
+        pdf.text("AI Model Information", 20, y);
+
+        y += 9;
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+
+        pdf.text("Model: Random Forest V4", 20, y);
+        y += 7;
+
+        pdf.text(
+            "Dataset: Stack Overflow Developer Survey 2025",
+            20,
+            y
+        );
+        y += 7;
+
+        pdf.text("Accuracy: 48.66%", 20, y);
+        y += 7;
+
+        pdf.text("Macro F1 Score: 38.29%", 20, y);
+
+        // Footer
+        pdf.setDrawColor(180);
+        pdf.line(20, 270, 190, 270);
+
+        pdf.setFontSize(9);
+        pdf.setTextColor(90);
+
+        pdf.text(
+            "Generated by CareerCompass",
+            20,
+            278
+        );
+
+        pdf.text(
+            "Generated on: " +
+            new Date().toLocaleString(),
+            20,
+            284
+        );
+
+        pdf.save(
+            "CareerCompass_AI_Career_Report.pdf"
+        );
+    });
+});
+
+
+function getPDFRecommendation(career) {
+
+    const recommendations = {
+
+        "Frontend Developer":
+            "Strengthen HTML, CSS and JavaScript skills. Learn React, TypeScript and responsive design. Build and deploy polished frontend projects.",
+
+        "Backend Developer":
+            "Focus on REST APIs, databases, authentication, Docker and backend deployment. Build secure and scalable server-side applications.",
+
+        "Full Stack Developer":
+            "Improve both frontend and backend development. Build complete applications using React, Node.js, databases and cloud deployment.",
+
+        "AI/ML Engineer":
+            "Strengthen Python, statistics and machine learning. Build projects using Scikit-learn, TensorFlow and real-world datasets.",
+
+        "Data Analyst":
+            "Learn advanced Excel, SQL, Python, Pandas and Power BI or Tableau. Build dashboards and data-analysis portfolio projects.",
+
+        "DevOps Engineer":
+            "Learn Linux, Docker, CI/CD, cloud platforms and Kubernetes. Practice automating application deployment workflows."
+    };
+
+    return recommendations[career] ||
+        "Continue improving your technical skills, project quality, documentation and GitHub activity.";
+}
+</script>
+
 </body>
 </html>
