@@ -15,6 +15,9 @@ app.use(express.json());
 const internshipRoutes = require('./internshiproutes');
 app.use('/api/internships', internshipRoutes);
 
+const aiRoutes = require('./airoutes');
+app.use('/api/ai', aiRoutes);
+
 const { startScheduledSync } = require('./adzunaintegration');
 startScheduledSync();
 
