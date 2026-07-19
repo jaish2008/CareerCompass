@@ -13,13 +13,10 @@ const router = express.Router();
 const {
   generateCareerQuiz,
   generateRecommendation,
-  generateLearningPlan
+  generateLearningPlan,
+  chatReply
 } = require('./geminiservice');
 
-/**
- * GET /api/ai/quiz?count=5
- * Returns a freshly generated set of career quiz questions.
- */
 router.get('/quiz', async (req, res) => {
   try {
     const count = parseInt(req.query.count) || 5;
@@ -31,12 +28,6 @@ router.get('/quiz', async (req, res) => {
   }
 });
 
-/**
- * POST /api/ai/recommend
- * Body: { skills: [...], quizResult: "frontend", topMatchRole: "frontend" }
- * In production, pull skills from the authenticated user's Firestore
- * profile (req.user.uid) instead of trusting the request body directly.
- */
 router.post('/recommend', async (req, res) => {
   try {
     const recommendation = await generateRecommendation(req.body);
@@ -47,10 +38,6 @@ router.post('/recommend', async (req, res) => {
   }
 });
 
-/**
- * POST /api/ai/learning-plan
- * Body: { skillGaps: ["Python", "DSA"] }
- */
 router.post('/learning-plan', async (req, res) => {
   try {
     const { skillGaps } = req.body;
@@ -62,4 +49,15 @@ router.post('/learning-plan', async (req, res) => {
   }
 });
 
+router.post('/chat', async (req, res) => {
+  try {
+    const { history, systemInstruction } = req.body;
+    const reply = await chatReply(history, systemInstruction);
+    res.json({ reply });
+  } catch (err) {
+    res.status(500).json({ error: 'Chat failed' });
+  }
+});
+
 module.exports = router;
+

@@ -138,8 +138,15 @@ Respond ONLY with valid JSON, no markdown, no preamble, in this exact shape:
   return JSON.parse(cleanJson(raw));
 }
 
-module.exports = {
-  generateCareerQuiz,
-  generateRecommendation,
-  generateLearningPlan
-};
+
+
+async function chatReply(history, systemInstruction) {
+  const response = await axios.post(
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
+    { systemInstruction: { parts: [{ text: systemInstruction }] }, contents: history },
+    { headers: { 'Content-Type': 'application/json', 'X-goog-api-key': GEMINI_API_KEY } }
+  );
+  return response.data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't reply.";
+}
+
+module.exports = { generateCareerQuiz, generateRecommendation, generateLearningPlan, chatReply };
