@@ -383,8 +383,8 @@ let searchTerm = "";
 async function loadInternships() {
     try {
         const response = await fetch(
-            `http://localhost:5000/api/internships?roleType=${activeTab}&skills=React,JavaScript`
-        );
+    `https://careercompass-g2a3.onrender.com/api/internships?roleType=${activeTab}&skills=React,JavaScript`
+);
 
         if (!response.ok) {
             throw new Error("Failed to fetch internships");
