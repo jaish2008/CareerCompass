@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics — CareerCompass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --ink:#0f172a; --ink-soft:#1e293b; --muted:#64748b; --line:#e2e8f0;
+    --bg:#f4f7fb; --card:#ffffff;
+    --blue:#2563eb; --blue-dark:#1d4ed8; --blue-pale:#eaf1ff;
+    --cyan:#06b6d4; --green:#16a34a; --green-pale:#dcfce7;
+    --amber:#f59e0b; --amber-pale:#fef3c7; --red:#dc2626; --red-pale:#fee2e2;
+    --navy-deep:#0b1327; --navy-soft:#141c33;
+    --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'IBM Plex Mono',monospace;
+    --radius:18px; --shadow:0 10px 30px rgba(15,23,42,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--ink-soft);-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  h1,h2,h3{font-family:var(--font-display);color:var(--ink);}
+  .num{font-family:var(--font-mono);}
+
+  /* ---------- SHELL ---------- */
+  .app-shell{display:flex;min-height:100vh;}
+  .sidebar{
+    width:264px;flex-shrink:0;background:linear-gradient(185deg,var(--navy-deep),var(--navy-soft));
+    color:#cbd5e1;padding:28px 22px;display:flex;flex-direction:column;gap:32px;position:sticky;top:0;height:100vh;
+  }
+  .brand{display:flex;align-items:center;gap:10px;color:#fff;}
+  .brand-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:17px;}
+  .brand span{font-family:var(--font-display);font-size:19px;font-weight:600;letter-spacing:.2px;}
+
+  .nav{display:flex;flex-direction:column;gap:4px;}
+  .nav a{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:11px;font-size:14.5px;font-weight:500;color:#94a3b8;text-decoration:none;transition:.2s;}
+  .nav a:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav a.active{background:rgba(37,99,235,.22);color:#fff;box-shadow:inset 0 0 0 1px rgba(96,165,250,.25);}
+  .nav-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6;}
+
+  .signal-widget{margin-top:auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:20px;text-align:center;}
+  .signal-widget .eyebrow{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#7c8db5;margin-bottom:12px;display:block;}
+  .ring-wrap{position:relative;width:104px;height:104px;margin:0 auto 10px;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  .ring-bg{fill:none;stroke:rgba(255,255,255,.12);stroke-width:9;}
+  .ring-fg{fill:none;stroke:url(#ringGrad);stroke-width:9;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:283;transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1);}
+  .ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+  .ring-num strong{font-family:var(--font-mono);font-size:26px;color:#fff;}
+  .ring-num small{font-size:10px;color:#8ea3c9;}
+  .signal-widget p{font-size:12.5px;color:#9db0d3;line-height:1.5;}
+  .signal-widget .trend{color:#4ade80;font-weight:600;}
+
+  .main{flex:1;min-width:0;}
+  .topbar{position:sticky;top:0;z-index:5;background:rgba(244,247,251,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:22px 40px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;}
+  .topbar .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.4px;color:var(--blue);font-weight:700;margin-bottom:6px;}
+  .topbar h1{font-size:30px;font-weight:600;}
+  .topbar p{color:var(--muted);font-size:14.5px;margin-top:4px;max-width:520px;}
+  .top-actions{display:flex;gap:10px;align-items:center;}
+  .btn{border:none;font-family:var(--font-body);font-weight:600;font-size:14px;padding:11px 18px;border-radius:11px;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:8px;}
+  .btn-primary{background:var(--blue);color:#fff;}
+  .btn-primary:hover{background:var(--blue-dark);transform:translateY(-1px);}
+  .btn-ghost{background:#fff;color:var(--ink-soft);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
+  select.role-select{border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:13.5px;font-weight:600;color:var(--ink-soft);background:#fff;cursor:pointer;}
+
+  .content{padding:36px 40px 80px;max-width:1320px;}
+
+  .rsection{margin-bottom:52px;}
+  .rsection__head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;gap:16px;flex-wrap:wrap;}
+  .rsection__head .eyebrow{font-size:11.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);font-weight:700;margin-bottom:6px;}
+  .rsection__head h2{font-size:23px;font-weight:600;}
+  .rsection__head .desc{color:var(--muted);font-size:13.5px;max-width:460px;margin-top:2px;}
+
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(15,23,42,.03);}
+
+  /* Overview grid */
+  .overview-grid{display:grid;grid-template-columns:1.1fr 1.4fr;gap:24px;}
+  .readiness-card{padding:34px;display:flex;gap:30px;align-items:center;}
+  .big-ring{position:relative;width:168px;height:168px;flex-shrink:0;}
+  .big-ring svg{transform:rotate(-90deg);}
+  .big-ring .bg{fill:none;stroke:var(--line);stroke-width:13;}
+  .big-ring .fg{fill:none;stroke:var(--blue);stroke-width:13;stroke-linecap:round;stroke-dasharray:452;stroke-dashoffset:452;transition:stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1);}
+  .big-ring .txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .big-ring .txt strong{font-family:var(--font-mono);font-size:40px;color:var(--ink);}
+  .big-ring .txt span{font-size:12px;color:var(--muted);}
+  .readiness-breakdown{flex:1;display:flex;flex-direction:column;gap:14px;}
+  .breakdown-row{display:flex;align-items:center;gap:12px;}
+  .breakdown-row .label{width:98px;font-size:13px;font-weight:600;color:var(--ink-soft);flex-shrink:0;}
+  .breakdown-row .bar{flex:1;height:8px;background:var(--bg);border-radius:20px;overflow:hidden;}
+  .breakdown-row .bar i{display:block;height:100%;width:0;border-radius:20px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+  .breakdown-row .val{width:40px;text-align:right;font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--ink);}
+
+  .predictive-card{padding:30px;display:flex;flex-direction:column;justify-content:space-between;}
+  .predictive-card .tag{display:inline-block;background:var(--blue-pale);color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:5px 11px;border-radius:20px;margin-bottom:14px;width:fit-content;}
+  .predictive-card h3{font-size:19px;font-weight:600;margin-bottom:10px;line-height:1.35;}
+  .predictive-card p{color:var(--muted);font-size:13.5px;line-height:1.65;}
+  .predictive-date{font-family:var(--font-mono);color:var(--blue);font-weight:600;}
+  .leaderboard-toggle{margin-top:20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:16px;}
+  .leaderboard-toggle span{font-size:13px;color:var(--muted);}
+  .switch{position:relative;width:42px;height:24px;background:var(--line);border-radius:20px;cursor:pointer;transition:.2s;flex-shrink:0;}
+  .switch i{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+  .switch.on{background:var(--blue);}
+  .switch.on i{left:21px;}
+  #leaderboardList{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  #leaderboardList.open{max-height:260px;margin-top:14px;}
+  .peer-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:13px;border-bottom:1px dashed var(--line);}
+  .peer-row.me{color:var(--blue);font-weight:700;}
+  .peer-row .rank{width:24px;color:var(--muted);font-family:var(--font-mono);}
+
+  /* Skill gap */
+  .skillgap-card{padding:30px;}
+  .skillgap-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
+  .skill-cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+  .skill-col h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:12px;}
+  .skill-list{display:flex;flex-wrap:wrap;gap:9px;}
+  .pill{padding:8px 14px;border-radius:22px;font-size:13px;font-weight:600;}
+  .pill.have{background:var(--green-pale);color:#166534;}
+  .pill.gap{background:var(--red-pale);color:#b91c1c;}
+  #nextStepMsg{margin-top:20px;background:var(--blue-pale);border-radius:12px;padding:14px 18px;font-size:13.5px;color:var(--blue-dark);font-weight:600;}
+
+  /* Weekly activity */
+  .activity-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;}
+  .chart-card{padding:26px;}
+  .chart-card h4{font-size:14px;font-weight:600;margin-bottom:16px;color:var(--ink-soft);}
+  .streak-card{padding:26px;}
+  .streak-grid{display:grid;grid-template-columns:repeat(14,1fr);gap:5px;margin:16px 0 14px;}
+  .streak-cell{aspect-ratio:1;border-radius:4px;background:var(--line);}
+  .streak-legend{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);}
+  .streak-stats{display:flex;gap:22px;margin-top:18px;}
+  .streak-stats div strong{display:block;font-family:var(--font-mono);font-size:22px;color:var(--ink);}
+  .streak-stats div span{font-size:12px;color:var(--muted);}
+
+  /* Feature tabs */
+  .tabbar{display:flex;gap:6px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);padding:6px;border-radius:14px;margin-bottom:22px;box-shadow:var(--shadow);}
+  .tab-btn{border:none;background:transparent;padding:9px 16px;border-radius:10px;font-family:var(--font-body);font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.2s;}
+  .tab-btn.active{background:var(--blue);color:#fff;}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;animation:fadeUp .4s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;}
+  .metric-card{padding:22px;}
+  .metric-card .m-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
+  .metric-card .m-value{font-family:var(--font-mono);font-size:27px;color:var(--ink);font-weight:600;}
+  .metric-card .m-sub{font-size:12.5px;color:var(--green);margin-top:6px;font-weight:600;}
+  .metric-card .m-sub.down{color:var(--red);}
+  .feature-chart-wrap{margin-top:20px;}
+
+  .toast{position:fixed;bottom:26px;right:26px;background:var(--ink);color:#fff;padding:14px 20px;border-radius:12px;font-size:13.5px;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.25);transform:translateY(120%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:50;}
+  .toast.show{transform:translateY(0);}
+
+  @media(max-width:1080px){.overview-grid,.activity-grid{grid-template-columns:1fr;}.skill-cols{grid-template-columns:1fr;}}
+  @media(max-width:900px){.sidebar{display:none;}.content{padding:28px 20px;}.topbar{padding:20px;}}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">C</div><span>CareerCompass</span></div>
+    <nav class="nav">
+      <a href="analytics.html" class="active"><span class="nav-dot"></span>Analytics</a>
+      <a href="assessment.html"><span class="nav-dot"></span>Assessment</a>
+      <a href="settings.html"><span class="nav-dot"></span>Settings</a>
+    </nav>
+    <div class="signal-widget">
+      <span class="eyebrow">Readiness Signal</span>
+      <div class="ring-wrap">
+        <svg viewBox="0 0 104 104" width="104" height="104">
+          <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#06b6d4"/>
+          </linearGradient></defs>
+          <circle class="ring-bg" cx="52" cy="52" r="45"/>
+          <circle class="ring-fg" id="sideRing" cx="52" cy="52" r="45"/>
+        </svg>
+        <div class="ring-num"><strong id="sideRingVal">0</strong><small>/ 100</small></div>
+      </div>
+      <p><span class="trend">▲ 6 pts</span> this month — on track for your target role</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">Overview</div>
+        <h1>Analytics</h1>
+        <p>A live read on how your GitHub work, study habits, tests, interviews and resume add up to one readiness picture.</p>
+      </div>
+      <div class="top-actions">
+        <select class="role-select" id="roleSelect">
+          <option value="frontend">Target: Frontend Engineer</option>
+          <option value="backend">Target: Backend Engineer</option>
+          <option value="data">Target: Data Analyst</option>
+        </select>
+        <button class="btn btn-ghost" id="exportBtn">⬇ Export data</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <section class="rsection">
+        <div class="rsection__head">
+          <div><div class="eyebrow">Career Readiness Score</div><h2>One number, four inputs</h2><div class="desc">Combines resume quality, GitHub activity, test performance and roadmap progress.</div></div>
+        </div>
+        <div class="overview-grid">
+          <div class="card readiness-card">
+            <div class="big-ring">
+              <svg viewBox="0 0 168 168" width="168" height="168">
+                <circle class="bg" cx="84" cy="84" r="72"/>
+                <circle class="fg" id="mainRing" cx="84" cy="84" r="72"/>
+              </svg>
+              <div class="txt"><strong id="mainRingVal">0</strong><span>Readiness / 100</span></div>
+            </div>
+            <div class="readiness-breakdown" id="breakdownRows"></div>
+          </div>
+
+          <div class="card predictive-card">
+            <div>
+              <span class="tag">Predictive insight</span>
+              <h3 id="predictiveHeadline">At this pace, you'll be interview-ready by <span class="predictive-date" id="predictiveDate">—</span></h3>
+              <p id="predictiveBody">Loading projection…</p>
+            </div>
+            <div class="leaderboard-toggle">
+              <span>Show peer leaderboard (anonymous, opt-in)</span>
+              <div class="switch" id="peerSwitch"><i></i></div>
+            </div>
+            <div id="leaderboardList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SKILL GAP -->
+      <section class="rsection">
+        <div class="rsection__head">
+          <div><div class="eyebrow">Skill Gap Analysis</div><h2>What you have vs. what the role needs</h2><div class="desc">Pulled from GitHub language use and quiz results, compared against your target role.</div></div>
+        </div>
+        <div class="card skillgap-card">
+          <div class="skillgap-top"></div>
+          <div class="skill-cols">
+            <div class="skill-col"><h4>Skills you've demonstrated</h4><div class="skill-list" id="haveSkills"></div></div>
+            <div class="skill-col"><h4>Gaps for this role</h4><div class="skill-list" id="gapSkills"></div></div>
+          </div>
+          <div id="nextStepMsg"></div>
+        </div>
+      </section>
+
+      <!-- ACTIVITY -->
+      <section class="rsection">
+        <div class="rsection__head">
+          <div><div class="eyebrow">Activity Summary</div><h2>Weekly usage &amp; streaks</h2><div class="desc">Which parts of CareerCompass you're actually using, and how consistently.</div></div>
+        </div>
+        <div class="activity-grid">
+          <div class="card chart-card"><h4>Most-used features (this week)</h4><canvas id="usageChart" height="220"></canvas></div>
+          <div class="card streak-card">
+            <h4>Login streak — last 14 days</h4>
+            <div class="streak-grid" id="streakGrid"></div>
+            <div class="streak-legend"><span>Less</span><span>More</span></div>
+            <div class="streak-stats">
+              <div><strong id="streakCurrent">0</strong><span>Current streak</span></div>
+              <div><strong id="streakBest">0</strong><span>Best streak</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURE BREAKDOWN -->
+      <section class="rsection">
+        <div class="rsection__head">
+          <div><div class="eyebrow">Feature Breakdown</div><h2>Detail, by tool</h2><div class="desc">Every module feeds the score above — open one for the numbers behind it.</div></div>
+        </div>
+        <div class="tabbar" id="tabbar"></div>
+        <div id="tabPanels"></div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">Export ready — check your downloads.</div>
+
+<script>
+/* ---------------- MOCK DYNAMIC DATA ---------------- */
+const roleProfiles = {
+  frontend:{
+    have:['JavaScript','React','CSS','Git','HTML','REST APIs'],
+    gap:['TypeScript','Testing (Jest)','Accessibility','CI/CD'],
+    next:'Next step: ship one project with TypeScript + a Jest test suite to close your two biggest gaps.'
+  },
+  backend:{
+    have:['Python','SQL','Git','REST APIs','Node.js'],
+    gap:['Docker','System Design','Redis','Message Queues'],
+    next:'Next step: containerize one existing repo with Docker to start closing your infra gap.'
+  },
+  data:{
+    have:['Python','SQL','Pandas','Excel','Git'],
+    gap:['Statistics','A/B Testing','Tableau','Machine Learning'],
+    next:'Next step: complete one A/B-testing case study to move this from "gap" to "have".'
+  }
+};
+
+const breakdown = [
+  {label:'Resume', value:78, color:'#2563eb'},
+  {label:'GitHub', value:64, color:'#06b6d4'},
+  {label:'Tests', value:71, color:'#16a34a'},
+  {label:'Roadmap', value:55, color:'#f59e0b'},
+];
+const overallScore = Math.round(breakdown.reduce((a,b)=>a+b.value,0)/breakdown.length);
+
+const leaderboard = [
+  {name:'You', score:overallScore, me:true},
+  {name:'Ananya R.', score:81}, {name:'Marcus T.', score:74},
+  {name:'Priya S.', score:69}, {name:'Devon K.', score:62},
+];
+
+const featureTabs = [
+  {id:'github', label:'GitHub', metrics:[
+    {label:'Commit consistency',value:'86%',sub:'+4% vs last month'},
+    {label:'Contribution streak',value:'12 days',sub:'Personal best'},
+    {label:'Repo quality trend',value:'7.4 / 10',sub:'+0.6 vs last month'},
+    {label:'Languages tracked',value:'6',sub:'JS leads at 41%'},
+  ], chart:{type:'line', labels:['W1','W2','W3','W4','W5','W6'], data:[52,58,60,66,71,74], label:'Repo quality score'}},
+  {id:'planner', label:'Daily Planner', metrics:[
+    {label:'Hours studied (wk)',value:'18.5',sub:'vs 22 planned', down:true},
+    {label:'Adherence rate',value:'84%',sub:'+2% vs last week'},
+    {label:'Study streak',value:'9 days',sub:'Keep it going'},
+    {label:'Top subject',value:'DSA',sub:'42% of hours'},
+  ], chart:{type:'bar', labels:['DSA','Web Dev','System Design','Aptitude'], data:[7.8,5.2,3.1,2.4], label:'Hours by subject'}},
+  {id:'tests', label:'Mock Tests', metrics:[
+    {label:'Average score',value:'72%',sub:'+5% vs last 5 tests'},
+    {label:'Percentile vs peers',value:'81st',sub:'Top quartile'},
+    {label:'Accuracy',value:'77%',sub:'Speed: 68%', down:false},
+    {label:'Weakest topic',value:'Graphs',sub:'54% accuracy', down:true},
+  ], chart:{type:'line', labels:['T1','T2','T3','T4','T5','T6'], data:[58,61,64,69,70,72], label:'Score trend'}},
+  {id:'interview', label:'Interview Practice', metrics:[
+    {label:'Sessions completed',value:'14',sub:'+3 this month'},
+    {label:'Communication score',value:'7.9/10',sub:'+0.8 improvement'},
+    {label:'Filler words / min',value:'3.2',sub:'-1.4 vs first session'},
+    {label:'Confidence rating',value:'7.2/10',sub:'+1.1 improvement'},
+  ], chart:{type:'line', labels:['S1','S3','S5','S7','S9','S11','S14'], data:[5.1,5.6,6.2,6.8,7.1,7.6,7.9], label:'Communication score'}},
+  {id:'resume', label:'Resume Builder', metrics:[
+    {label:'Resume score',value:'82/100',sub:'+9 after last edit'},
+    {label:'ATS compatibility',value:'88%',sub:'Passes most filters'},
+    {label:'Keyword match',value:'64%',sub:'vs target postings', down:true},
+    {label:'Last updated',value:'3d ago',sub:'2 edits this week'},
+  ], chart:{type:'bar', labels:['ATS Score','Keyword Match','Formatting','Impact Language'], data:[88,64,91,73], label:'Resume sub-scores'}},
+  {id:'roadmap', label:'Roadmap', metrics:[
+    {label:'Milestones done',value:'11/18',sub:'61% complete'},
+    {label:'Status',value:'On track',sub:'2 days ahead'},
+    {label:'This week',value:'2 due',sub:'1 completed early'},
+    {label:'Est. finish',value:'Sep 14',sub:'At current pace'},
+  ], chart:{type:'bar', labels:['Foundations','Core Skills','Projects','Interview Prep'], data:[100,80,45,20], label:'% complete by phase'}},
+  {id:'jobs', label:'Job Search', metrics:[
+    {label:'Applications sent',value:'23',sub:'+6 this month'},
+    {label:'Responses',value:'7',sub:'30% response rate'},
+    {label:'Interviews',value:'3',sub:'13% conversion'},
+    {label:'Offers',value:'0',sub:'Keep applying'},
+  ], chart:{type:'bar', labels:['Sent','Responses','Interviews','Offers'], data:[23,7,3,0], label:'Funnel'}},
+];
+
+const usage = {labels:['GitHub','Planner','Mock Tests','Interview','Resume','Roadmap','Jobs'], data:[9,14,6,4,3,8,2]};
+
+/* ---------------- RENDER ---------------- */
+function animateRing(el, valEl, pct, r){
+  const c = 2*Math.PI*r;
+  el.style.strokeDasharray = c;
+  requestAnimationFrame(()=>{ el.style.strokeDashoffset = c - (pct/100)*c; });
+  let cur=0; const step=Math.max(1,Math.round(pct/40));
+  const t=setInterval(()=>{cur=Math.min(pct,cur+step); valEl.textContent=cur; if(cur>=pct) clearInterval(t);},25);
+}
+
+function renderOverview(){
+  animateRing(document.getElementById('mainRing'), document.getElementById('mainRingVal'), overallScore, 72);
+  animateRing(document.getElementById('sideRing'), document.getElementById('sideRingVal'), overallScore, 45);
+
+  const rows = document.getElementById('breakdownRows');
+  rows.innerHTML = breakdown.map(b=>`
+    <div class="breakdown-row">
+      <div class="label">${b.label}</div>
+      <div class="bar"><i style="background:${b.color}"></i></div>
+      <div class="val">${b.value}</div>
+    </div>`).join('');
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('.breakdown-row .bar i').forEach((el,i)=>{ el.style.width = breakdown[i].value+'%'; });
+  });
+
+  const weeks = 3;
+  const projected = new Date(); projected.setDate(projected.getDate()+ (100-overallScore) * 1.1);
+  document.getElementById('predictiveDate').textContent = projected.toLocaleDateString('en-US',{month:'short', day:'numeric'});
+  document.getElementById('predictiveBody').textContent = `Based on your last ${weeks} weeks of activity across tests, interviews and GitHub commits, your readiness score is climbing roughly 2 points a week. Keep this pace and you'll cross the 85-point interview-ready line by the date above.`;
+
+  document.getElementById('leaderboardList').innerHTML = leaderboard
+    .sort((a,b)=>b.score-a.score)
+    .map((p,i)=>`<div class="peer-row ${p.me?'me':''}"><span class="rank">#${i+1}</span><span>${p.name}</span><span class="num">${p.score}</span></div>`).join('');
+}
+
+function renderSkillGap(role){
+  const p = roleProfiles[role];
+  document.getElementById('haveSkills').innerHTML = p.have.map(s=>`<span class="pill have">${s}</span>`).join('');
+  document.getElementById('gapSkills').innerHTML = p.gap.map(s=>`<span class="pill gap">${s}</span>`).join('');
+  document.getElementById('nextStepMsg').textContent = p.next;
+}
+
+function renderStreak(){
+  const grid = document.getElementById('streakGrid');
+  const days = Array.from({length:14},()=> Math.random());
+  grid.innerHTML = days.map(v=>{
+    const shade = v>0.75?'#2563eb': v>0.5?'#7fa8f2': v>0.25?'#c3d7fb':'#e5e7eb';
+    return `<div class="streak-cell" style="background:${shade}"></div>`;
+  }).join('');
+  document.getElementById('streakCurrent').textContent = '9 days';
+  document.getElementById('streakBest').textContent = '17 days';
+}
+
+let usageChartRef;
+function renderUsageChart(){
+  const ctx = document.getElementById('usageChart');
+  usageChartRef = new Chart(ctx, {
+    type:'bar',
+    data:{labels:usage.labels, datasets:[{data:usage.data, backgroundColor:'#2563eb', borderRadius:8, maxBarThickness:34}]},
+    options:{plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'#eef1f6'}}, x:{grid:{display:false}}}}
+  });
+}
+
+let activeFeatureChart;
+function renderTabs(){
+  const bar = document.getElementById('tabbar');
+  const panels = document.getElementById('tabPanels');
+  bar.innerHTML = featureTabs.map((f,i)=>`<button class="tab-btn ${i===0?'active':''}" data-tab="${f.id}">${f.label}</button>`).join('');
+  panels.innerHTML = featureTabs.map((f,i)=>`
+    <div class="tab-panel ${i===0?'active':''}" id="panel-${f.id}">
+      <div class="feature-grid">
+        ${f.metrics.map(m=>`
+          <div class="card metric-card">
+            <div class="m-label">${m.label}</div>
+            <div class="m-value">${m.value}</div>
+            <div class="m-sub ${m.down?'down':''}">${m.sub}</div>
+          </div>`).join('')}
+      </div>
+      <div class="card feature-chart-wrap" style="padding:24px;margin-top:18px;">
+        <canvas id="chart-${f.id}" height="90"></canvas>
+      </div>
+    </div>`).join('');
+
+  drawFeatureChart(featureTabs[0]);
+
+  bar.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      bar.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      panels.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      const f = featureTabs.find(x=>x.id===btn.dataset.tab);
+      document.getElementById('panel-'+f.id).classList.add('active');
+      if(activeFeatureChart){ activeFeatureChart.destroy(); }
+      drawFeatureChart(f);
+    });
+  });
+}
+function drawFeatureChart(f){
+  const ctx = document.getElementById('chart-'+f.id);
+  activeFeatureChart = new Chart(ctx, {
+    type:f.chart.type,
+    data:{labels:f.chart.labels, datasets:[{
+      label:f.chart.label, data:f.chart.data,
+      borderColor:'#2563eb', backgroundColor: f.chart.type==='line' ? 'rgba(37,99,235,.08)' : '#06b6d4',
+      fill:f.chart.type==='line', tension:.35, borderRadius: f.chart.type==='bar'?8:0, maxBarThickness:40, pointRadius:3
+    }]},
+    options:{plugins:{legend:{display:false},title:{display:true,text:f.chart.label,align:'start',color:'#64748b',font:{size:12,weight:'600'}}}, scales:{y:{grid:{color:'#eef1f6'}}, x:{grid:{display:false}}}}
+  });
+}
+
+/* Interactions */
+document.getElementById('peerSwitch').addEventListener('click', function(){
+  this.classList.toggle('on');
+  document.getElementById('leaderboardList').classList.toggle('open', this.classList.contains('on'));
+});
+document.getElementById('roleSelect').addEventListener('change', e=> renderSkillGap(e.target.value));
+
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const payload = {
+    generatedAt: new Date().toISOString(),
+    readinessScore: overallScore,
+    breakdown, featureTabs: featureTabs.map(({id,label,metrics})=>({id,label,metrics})),
+    skillGap: roleProfiles[document.getElementById('roleSelect').value]
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'careercompass-analytics.json';
+  a.click();
+  const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2600);
+});
+
+renderOverview();
+renderSkillGap('frontend');
+renderStreak();
+renderUsageChart();
+renderTabs();
+</script>
+</body>
+</html>
