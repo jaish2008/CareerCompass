@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — CareerCompass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0f172a; --ink-soft:#1e293b; --muted:#64748b; --line:#e2e8f0;
+    --bg:#f4f7fb; --card:#ffffff;
+    --blue:#2563eb; --blue-dark:#1d4ed8; --blue-pale:#eaf1ff;
+    --cyan:#06b6d4; --green:#16a34a; --green-pale:#dcfce7;
+    --amber:#f59e0b; --amber-pale:#fef3c7; --red:#dc2626; --red-pale:#fee2e2;
+    --navy-deep:#0b1327; --navy-soft:#141c33;
+    --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'IBM Plex Mono',monospace;
+    --radius:18px; --shadow:0 10px 30px rgba(15,23,42,.07);
+  }
+  [data-theme="dark"]{
+    --ink:#f1f5f9; --ink-soft:#e2e8f0; --muted:#94a3b8; --line:#2a3550;
+    --bg:#0c1324; --card:#141c33; --blue-pale:#1c2a4d; --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--ink-soft);-webkit-font-smoothing:antialiased;transition:background .3s ease,color .3s ease;}
+  h1,h2,h3{font-family:var(--font-display);color:var(--ink);}
+  .num{font-family:var(--font-mono);}
+
+  .app-shell{display:flex;min-height:100vh;}
+  .sidebar{width:264px;flex-shrink:0;background:linear-gradient(185deg,var(--navy-deep),var(--navy-soft));color:#cbd5e1;padding:28px 22px;display:flex;flex-direction:column;gap:32px;position:sticky;top:0;height:100vh;}
+  .brand{display:flex;align-items:center;gap:10px;color:#fff;}
+  .brand-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:17px;}
+  .brand span{font-family:var(--font-display);font-size:19px;font-weight:600;}
+  .nav{display:flex;flex-direction:column;gap:4px;}
+  .nav a{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:11px;font-size:14.5px;font-weight:500;color:#94a3b8;text-decoration:none;transition:.2s;}
+  .nav a:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav a.active{background:rgba(37,99,235,.22);color:#fff;box-shadow:inset 0 0 0 1px rgba(96,165,250,.25);}
+  .nav-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6;}
+  .signal-widget{margin-top:auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:20px;}
+  .signal-widget .eyebrow{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#7c8db5;margin-bottom:10px;display:block;}
+  .signal-widget p{font-size:12.5px;color:#9db0d3;line-height:1.55;}
+
+  .main{flex:1;min-width:0;}
+  .topbar{position:sticky;top:0;z-index:5;background:rgba(244,247,251,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:22px 40px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;}
+  [data-theme="dark"] .topbar{background:rgba(12,19,36,.85);}
+  .topbar .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.4px;color:var(--blue);font-weight:700;margin-bottom:6px;}
+  .topbar h1{font-size:30px;font-weight:600;}
+  .topbar p{color:var(--muted);font-size:14.5px;margin-top:4px;max-width:520px;}
+  .btn{border:none;font-family:var(--font-body);font-weight:600;font-size:14px;padding:11px 18px;border-radius:11px;cursor:pointer;transition:.2s;}
+  .btn-primary{background:var(--blue);color:#fff;}
+  .btn-primary:hover{background:var(--blue-dark);transform:translateY(-1px);}
+  .btn-ghost{background:var(--card);color:var(--ink-soft);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
+  .btn-danger{background:var(--red-pale);color:#b91c1c;}
+
+  .content{padding:36px 40px 90px;max-width:1320px;display:flex;gap:36px;align-items:flex-start;}
+  .settings-nav{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:4px;position:sticky;top:100px;}
+  .settings-nav button{text-align:left;border:none;background:transparent;padding:11px 14px;border-radius:10px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;transition:.2s;}
+  .settings-nav button:hover{background:var(--blue-pale);color:var(--blue);}
+  .settings-nav button.active{background:var(--blue-pale);color:var(--blue);}
+
+  .panels{flex:1;min-width:0;}
+  .panel{display:none;}
+  .panel.active{display:block;animation:fadeUp .35s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(15,23,42,.03);padding:30px;margin-bottom:22px;}
+  .panel-head{margin-bottom:22px;}
+  .panel-head .eyebrow{font-size:11.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);font-weight:700;margin-bottom:6px;}
+  .panel-head h2{font-size:23px;font-weight:600;}
+  .panel-head .desc{color:var(--muted);font-size:13.5px;max-width:520px;margin-top:4px;}
+
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+  .field{display:flex;flex-direction:column;gap:7px;}
+  .field label{font-size:12.5px;font-weight:600;color:var(--muted);}
+  .field input, .field select, .field textarea{
+    border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-family:var(--font-body);font-size:14px;background:var(--card);color:var(--ink-soft);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:none;border-color:var(--blue);}
+  .field textarea{resize:vertical;min-height:90px;}
+
+  .row-item{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);gap:20px;}
+  .row-item:last-child{border-bottom:none;}
+  .row-item h4{font-size:14.5px;font-weight:600;color:var(--ink-soft);font-family:var(--font-body);}
+  .row-item p{font-size:12.5px;color:var(--muted);margin-top:3px;}
+  .switch{position:relative;width:42px;height:24px;background:var(--line);border-radius:20px;cursor:pointer;transition:.2s;flex-shrink:0;}
+  .switch i{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+  .switch.on{background:var(--blue);}
+  .switch.on i{left:21px;}
+
+  .integration-row{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid var(--line);gap:16px;}
+  .integration-row:last-child{border-bottom:none;}
+  .integration-left{display:flex;align-items:center;gap:14px;}
+  .int-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:15px;flex-shrink:0;}
+  .integration-row h4{font-size:14.5px;font-family:var(--font-body);}
+  .integration-row p{font-size:12.5px;color:var(--muted);}
+  .status-pill{font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:20px;}
+  .status-pill.connected{background:var(--green-pale);color:#166534;}
+  .status-pill.off{background:var(--line);color:var(--muted);}
+
+  .theme-picker{display:flex;gap:14px;}
+  .theme-opt{flex:1;border:2px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;text-align:center;transition:.2s;}
+  .theme-opt.active{border-color:var(--blue);background:var(--blue-pale);}
+  .theme-swatch{height:44px;border-radius:9px;margin-bottom:10px;}
+  .swatch-light{background:linear-gradient(135deg,#fff,#eaf1ff);border:1px solid #e2e8f0;}
+  .swatch-dark{background:linear-gradient(135deg,#141c33,#0b1327);}
+  .theme-opt span{font-size:13px;font-weight:600;}
+
+  .visibility-radio{display:flex;flex-direction:column;gap:10px;}
+  .visibility-radio label{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;cursor:pointer;}
+  .visibility-radio input{margin-top:3px;}
+  .visibility-radio span{color:var(--muted);font-size:12.5px;display:block;margin-top:2px;}
+
+  .toast{position:fixed;bottom:26px;right:26px;background:var(--ink);color:var(--bg);padding:14px 20px;border-radius:12px;font-size:13.5px;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.25);transform:translateY(120%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:50;}
+  .toast.show{transform:translateY(0);}
+
+  .save-bar{display:flex;justify-content:flex-end;gap:10px;}
+
+  @media(max-width:1080px){.content{flex-direction:column;}.settings-nav{position:static;width:100%;flex-direction:row;flex-wrap:wrap;}.field-row{grid-template-columns:1fr;}}
+  @media(max-width:900px){.sidebar{display:none;}.content{padding:28px 20px;}.topbar{padding:20px;}}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">C</div><span>CareerCompass</span></div>
+    <nav class="nav">
+      <a href="analytics.html"><span class="nav-dot"></span>Analytics</a>
+      <a href="assessment.html"><span class="nav-dot"></span>Assessment</a>
+      <a href="settings.html" class="active"><span class="nav-dot"></span>Settings</a>
+    </nav>
+    <div class="signal-widget">
+      <span class="eyebrow">Account</span>
+      <p>Signed in as <strong style="color:#fff;">Aarav Mehta</strong><br>Target role: Frontend Engineer</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">Preferences</div>
+        <h1>Settings</h1>
+        <p>Your profile, planner preferences, connected accounts, privacy and account controls — all in one place.</p>
+      </div>
+      <button class="btn btn-ghost" id="exportDataBtn">⬇ Download my data</button>
+    </div>
+
+    <div class="content">
+      <nav class="settings-nav" id="settingsNav">
+        <button data-panel="profile" class="active">Profile</button>
+        <button data-panel="planner">Study Planner</button>
+        <button data-panel="notifications">Notifications</button>
+        <button data-panel="integrations">Integrations</button>
+        <button data-panel="privacy">Privacy</button>
+        <button data-panel="security">Account &amp; Security</button>
+        <button data-panel="appearance">Appearance</button>
+      </nav>
+
+      <div class="panels">
+
+        <!-- PROFILE -->
+        <div class="panel active" id="panel-profile">
+          <div class="panel-head"><div class="eyebrow">Profile</div><h2>Who you are, and where you're headed</h2><div class="desc">This feeds your Career Readiness Score and skill-gap comparisons.</div></div>
+          <div class="card">
+            <div class="field-row">
+              <div class="field"><label>Full name</label><input type="text" value="Aarav Mehta"></div>
+              <div class="field"><label>Email</label><input type="email" value="aarav.mehta@example.com"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Target career / role</label>
+                <select><option>Frontend Engineer</option><option>Backend Engineer</option><option>Data Analyst</option><option>Product Manager</option></select>
+              </div>
+              <div class="field"><label>Education</label><input type="text" value="B.Tech Computer Science, 3rd Year"></div>
+            </div>
+            <div class="field"><label>Skills (comma-separated)</label><textarea>JavaScript, React, CSS, Git, HTML, REST APIs</textarea></div>
+          </div>
+          <div class="card">
+            <div class="row-item"><div><h4>Resume on file</h4><p>resume_aarav_v3.pdf · uploaded Jul 12, 2026</p></div><button class="btn btn-ghost">Replace</button></div>
+          </div>
+        </div>
+
+        <!-- PLANNER -->
+        <div class="panel" id="panel-planner">
+          <div class="panel-head"><div class="eyebrow">Study Planner</div><h2>How and when you like to study</h2><div class="desc">Reminders and calendar sync follow these preferences.</div></div>
+          <div class="card">
+            <div class="field-row">
+              <div class="field"><label>Preferred study days</label>
+                <select multiple size="5" style="height:auto;">
+                  <option selected>Monday</option><option selected>Tuesday</option><option>Wednesday</option><option selected>Thursday</option><option>Friday</option><option selected>Saturday</option><option>Sunday</option>
+                </select>
+              </div>
+              <div class="field"><label>Preferred time window</label><input type="text" value="7:00 PM – 9:30 PM"></div>
+            </div>
+            <div class="field"><label>Reminder frequency</label><select><option>Daily</option><option selected>Every study day</option><option>Weekly summary only</option><option>Off</option></select></div>
+          </div>
+          <div class="card">
+            <div class="row-item"><div><h4>Google Calendar sync</h4><p>Adds study blocks and deadlines directly to your calendar.</p></div><div class="switch" data-toggle><i></i></div></div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div class="panel" id="panel-notifications">
+          <div class="panel-head"><div class="eyebrow">Notifications</div><h2>What we should tell you, and when</h2></div>
+          <div class="card">
+            <div class="row-item"><div><h4>Daily study reminders</h4><p>A nudge at the start of your preferred time window.</p></div><div class="switch on" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Streak alerts</h4><p>Warn me before a login or study streak breaks.</p></div><div class="switch on" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Internship &amp; deadline alerts</h4><p>Applications closing soon for saved roles.</p></div><div class="switch" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Weekly progress email</h4><p>A Sunday summary of tests, hours and score changes.</p></div><div class="switch on" data-toggle><i></i></div></div>
+          </div>
+        </div>
+
+        <!-- INTEGRATIONS -->
+        <div class="panel" id="panel-integrations">
+          <div class="panel-head"><div class="eyebrow">Integrations</div><h2>Connected accounts</h2><div class="desc">These power the GitHub analyzer, calendar sync and job-portal tracking.</div></div>
+          <div class="card">
+            <div class="integration-row">
+              <div class="integration-left"><div class="int-icon" style="background:#111827;">Gh</div><div><h4>GitHub</h4><p>Powers commit, repo and language analytics.</p></div></div>
+              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill connected" id="ghStatus">Connected</span><button class="btn btn-ghost" data-int="github">Disconnect</button></div>
+            </div>
+            <div class="integration-row">
+              <div class="integration-left"><div class="int-icon" style="background:#0a66c2;">in</div><div><h4>LinkedIn</h4><p>Cross-post resume updates and endorsements.</p></div></div>
+              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill off" id="liStatus">Not connected</span><button class="btn btn-primary" data-int="linkedin">Connect</button></div>
+            </div>
+            <div class="integration-row">
+              <div class="integration-left"><div class="int-icon" style="background:#2563eb;">Cal</div><div><h4>Calendar sync</h4><p>Google Calendar — study blocks &amp; deadlines.</p></div></div>
+              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill off" id="calStatus">Not connected</span><button class="btn btn-primary" data-int="calendar">Connect</button></div>
+            </div>
+            <div class="integration-row">
+              <div class="integration-left"><div class="int-icon" style="background:#16a34a;">Jb</div><div><h4>Job portals</h4><p>Track applications sent through partner boards.</p></div></div>
+              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill off" id="jobStatus">Not connected</span><button class="btn btn-primary" data-int="jobs">Connect</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRIVACY -->
+        <div class="panel" id="panel-privacy">
+          <div class="panel-head"><div class="eyebrow">Privacy</div><h2>Who can see your progress</h2></div>
+          <div class="card">
+            <div class="field"><label>Profile visibility</label></div>
+            <div class="visibility-radio" style="margin-top:10px;">
+              <label><input type="radio" name="vis" checked><div>Private<span>Only you can see your scores and analytics.</span></div></label>
+              <label><input type="radio" name="vis"><div>Anonymous leaderboard only<span>Your score appears on peer leaderboards without your name.</span></div></label>
+              <label><input type="radio" name="vis"><div>Public profile<span>Recruiters and peers can view your readiness score and resume.</span></div></label>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row-item"><div><h4>Share analytics with recruiters</h4><p>Applies only if your profile is public.</p></div><div class="switch" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Include test scores in shared profile</h4><p>Hide individual test scores while keeping the overall trend.</p></div><div class="switch on" data-toggle><i></i></div></div>
+          </div>
+        </div>
+
+        <!-- SECURITY -->
+        <div class="panel" id="panel-security">
+          <div class="panel-head"><div class="eyebrow">Account &amp; Security</div><h2>Password and sign-in</h2></div>
+          <div class="card">
+            <div class="field-row">
+              <div class="field"><label>Current password</label><input type="password" placeholder="••••••••"></div>
+              <div class="field"><label>New password</label><input type="password" placeholder="••••••••"></div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:6px;">Update password</button>
+          </div>
+          <div class="card">
+            <div class="row-item"><div><h4>Two-factor authentication</h4><p>Require a code from your phone at sign-in.</p></div><div class="switch" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Sign out of all other sessions</h4><p>Last active session: Chrome on Windows, today.</p></div><button class="btn btn-ghost">Sign out others</button></div>
+          </div>
+          <div class="card">
+            <div class="row-item"><div><h4>Delete account</h4><p>Permanently removes your profile, resume and history.</p></div><button class="btn btn-danger">Delete account</button></div>
+          </div>
+        </div>
+
+        <!-- APPEARANCE -->
+        <div class="panel" id="panel-appearance">
+          <div class="panel-head"><div class="eyebrow">Appearance</div><h2>Theme</h2><div class="desc">Changes apply instantly across every page.</div></div>
+          <div class="card">
+            <div class="theme-picker">
+              <div class="theme-opt active" data-theme="light"><div class="theme-swatch swatch-light"></div><span>Light</span></div>
+              <div class="theme-opt" data-theme="dark"><div class="theme-swatch swatch-dark"></div><span>Dark</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="save-bar">
+          <button class="btn btn-ghost">Discard</button>
+          <button class="btn btn-primary" id="saveBtn">Save changes</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">Changes saved.</div>
+
+<script>
+/* Panel switching */
+document.querySelectorAll('#settingsNav button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#settingsNav button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.panel).classList.add('active');
+  });
+});
+
+/* Generic toggles */
+document.querySelectorAll('.switch[data-toggle]').forEach(sw=>{
+  sw.addEventListener('click', ()=> sw.classList.toggle('on'));
+});
+
+/* Integrations connect/disconnect */
+const intMeta = {
+  github:{statusEl:'ghStatus'}, linkedin:{statusEl:'liStatus'}, calendar:{statusEl:'calStatus'}, jobs:{statusEl:'jobStatus'}
+};
+document.querySelectorAll('[data-int]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key = btn.dataset.int;
+    const statusEl = document.getElementById(intMeta[key].statusEl);
+    const isConnected = statusEl.classList.contains('connected');
+    if(isConnected){
+      statusEl.textContent='Not connected'; statusEl.classList.remove('connected'); statusEl.classList.add('off');
+      btn.textContent='Connect'; btn.classList.remove('btn-ghost'); btn.classList.add('btn-primary');
+    } else {
+      statusEl.textContent='Connected'; statusEl.classList.add('connected'); statusEl.classList.remove('off');
+      btn.textContent='Disconnect'; btn.classList.remove('btn-primary'); btn.classList.add('btn-ghost');
+    }
+    showToast(isConnected ? key+' disconnected.' : key+' connected.');
+  });
+});
+
+/* Theme picker — live, in-memory only */
+document.querySelectorAll('.theme-opt').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    document.querySelectorAll('.theme-opt').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active');
+    document.documentElement.setAttribute('data-theme', opt.dataset.theme);
+  });
+});
+
+/* Save */
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+document.getElementById('saveBtn').addEventListener('click', ()=> showToast('Changes saved.'));
+
+/* Export data */
+document.getElementById('exportDataBtn').addEventListener('click', ()=>{
+  const payload = {
+    generatedAt:new Date().toISOString(),
+    profile:{name:'Aarav Mehta', email:'aarav.mehta@example.com', targetRole:'Frontend Engineer', education:'B.Tech Computer Science, 3rd Year', skills:['JavaScript','React','CSS','Git','HTML','REST APIs']},
+    resume:{file:'resume_aarav_v3.pdf', uploaded:'2026-07-12'},
+    privacy:{visibility:'private'}
+  };
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='careercompass-profile-data.json'; a.click();
+  showToast('Data export ready — check your downloads.');
+});
+</script>
+</body>
+</html>
