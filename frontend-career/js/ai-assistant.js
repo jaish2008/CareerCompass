@@ -5,9 +5,7 @@
    but before any real/public launch this should move server-side
    (anyone can view it in page source right now).
    ========================================================= */
-const GEMINI_API_KEY = "AQ.Ab8RN6JP2LZj92E1CekXC5sIMyL_IcFUDBYvZbGoZLoFh4uz_w";
-const GEMINI_MODEL = "gemini-3.1-flash-lite";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
 
 const el = (id) => document.getElementById(id);
 
@@ -18,23 +16,14 @@ const el = (id) => document.getElementById(id);
    Returns the raw text of the model's reply.
    ========================================================= */
 async function askGemini(history, systemInstruction) {
-  const response = await fetch(GEMINI_URL, {
+  const response = await fetch("http://localhost:5000/api/ai/chat", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": GEMINI_API_KEY
-    },
-    body: JSON.stringify({
-      contents: history,
-      systemInstruction: { parts: [{ text: systemInstruction }] },
-      generationConfig: { thinkingConfig: { thinkingLevel: "minimal" } }
-    })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ history, systemInstruction })
   });
-  if (!response.ok) throw new Error("Gemini request failed: " + response.status);
   const data = await response.json();
-  const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("") || "";
-  if (!text) throw new Error("Empty Gemini response");
-  return text;
+  if (!data.reply) throw new Error("Empty Gemini response");
+  return data.reply;
 }
 
 /* Ask Gemini for strict JSON and parse it, with one retry-on-parse-failure. */
