@@ -4,7 +4,6 @@
    should touch on. These are used to actually check the
    content of the answer, not just its length.
    ========================================================= */
-const GEMINI_API_KEY = "AQ.Ab8RN6JP2LZj92E1CekXC5sIMyL_IcFUDBYvZbGoZLoFh4uz_w";
    const HR_QUESTIONS = [
   { text: "Tell me about yourself and why you're interested in this role.",
     keywords: ["experience", "background", "skills", "role", "interested", "passion", "goal", "team"] },
