@@ -32,13 +32,20 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 </div>
 
-<form>
+<form id="signupForm">
 
 <div class="input-group">
 
 <label>Full Name</label>
 
-<input type="text" placeholder="Enter your name" required>
+<input
+    type="text"
+    id="signupName"
+    name="name"
+    placeholder="Enter your name"
+    autocomplete="name"
+    maxlength="100"
+    required>
 
 </div>
 
@@ -46,7 +53,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <label>Email</label>
 
-<input type="email" placeholder="Enter your email" required>
+<input
+    type="email"
+    id="signupEmail"
+    name="email"
+    placeholder="Enter your email"
+    autocomplete="email"
+    maxlength="255"
+    required>
 
 </div>
 
@@ -57,10 +71,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 <div class="password-box">
 
 <input
-type="password"
-id="password"
-placeholder="Create password"
-required>
+    type="password"
+    id="password"
+    name="password"
+    placeholder="Create password"
+    autocomplete="new-password"
+    minlength="8"
+    maxlength="128"
+    required>
 
 <i class="fa-solid fa-eye" id="togglePassword"></i>
 
@@ -68,7 +86,53 @@ required>
 
 </div>
 
-<button type="submit">
+<div class="input-group">
+
+    <label for="signupEducation">Education</label>
+
+    <input
+        type="text"
+        id="signupEducation"
+        name="education"
+        placeholder="Example: Diploma"
+        maxlength="100">
+
+</div>
+
+<div class="input-group">
+
+    <label for="signupCourse">Course / Branch</label>
+
+    <input
+        type="text"
+        id="signupCourse"
+        name="course"
+        placeholder="Example: Computer Science"
+        maxlength="100">
+
+</div>
+
+<div class="input-group">
+
+    <label for="signupSemester">Semester / Year</label>
+
+    <input
+        type="text"
+        id="signupSemester"
+        name="semester"
+        placeholder="Example: 5"
+        maxlength="50">
+
+</div>
+
+<p
+    id="authMessage"
+    class="auth-message"
+    role="alert"
+    aria-live="polite">
+</p>
+
+<button type="submit" id="signupButton" >
 
 Create Account
 

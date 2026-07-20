@@ -32,16 +32,20 @@
 
         </div>
 
-        <form>
+        <form id="loginForm">
 
             <div class="input-group">
 
                 <label>Email</label>
 
-                <input
-                    type="email"
-                    placeholder="Enter your email"
-                    required>
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        maxlength="255"
+                        required>
 
             </div>
 
@@ -53,8 +57,11 @@
 
                     <input
                         type="password"
-                        placeholder="Enter password"
                         id="password"
+                        name="password"
+                        placeholder="Enter password"
+                        autocomplete="current-password"
+                        maxlength="128"
                         required>
 
                     <i class="fa-solid fa-eye" id="togglePassword"></i>
@@ -63,11 +70,29 @@
 
             </div>
 
+            <label class="remember-option">
+
+    <input
+        type="checkbox"
+        id="rememberLogin"
+        checked>
+
+    <span>Keep me signed in</span>
+
+</label>
+
+<p
+    id="authMessage"
+    class="auth-message"
+    role="alert"
+    aria-live="polite">
+</p>
+
             <a href="forgot-password.html" class="forgot">
                 Forgot Password?
             </a>
 
-            <button type="submit">
+            <button type="submit" id="loginButton">
                 Login
             </button>
 

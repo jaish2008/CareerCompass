@@ -23,3 +23,8 @@ models/career_model.pkl
 # Large local training files
 datasets/survey_results_public.csv
 models/career_model.pkl
+
+# Local database
+instance/
+backend/instance/
+*.db

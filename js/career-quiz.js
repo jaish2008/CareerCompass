@@ -1508,6 +1508,28 @@ function showResults() {
     const primaryCareer =
         topThree[0];
 
+        localStorage.setItem(
+    "careerCompassCareerResult",
+    JSON.stringify({
+        primaryCareer: {
+            key: primaryCareer.key,
+            name: primaryCareer.name,
+            percentage: primaryCareer.percentage,
+            description: primaryCareer.description,
+            skills: primaryCareer.skills,
+            roadmap: primaryCareer.roadmap
+        },
+
+        topThree: topThree.map(function (career) {
+            return {
+                key: career.key,
+                name: career.name,
+                percentage: career.percentage
+            };
+        })
+    })
+);
+
     primaryCareerIcon.textContent =
         primaryCareer.icon;
 

@@ -1,19 +1,270 @@
 import os
+from datetime import datetime, timezone
+
+from flask import Flask
 import joblib
 import pandas as pd
 
+from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_login import (
+    LoginManager,
+    UserMixin,
+    current_user,
+    login_required,
+    login_user,
+    logout_user
+)
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import IntegrityError
 
+from werkzeug.security import (
+    check_password_hash,
+    generate_password_hash
+)
 
 # ==========================================
 # Flask Application
 # ==========================================
 
+load_dotenv()
+
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv( "DATABASE_URL",
+    "sqlite:///careercompass.db")
 
-CORS(app)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["REMEMBER_COOKIE_HTTPONLY"] = True
+app.config["REMEMBER_COOKIE_SAMESITE"] = "Lax"
+
+if not app.config["SECRET_KEY"]:
+    raise RuntimeError(
+        "SECRET_KEY is missing from the .env file."
+    )
+
+CORS(app,
+    supports_credentials=True,
+    origins=[
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "http://127.0.0.1:5000",
+        "http://localhost:5000"
+    ]
+    )
+
+db = SQLAlchemy(app)
+
+login_manager = LoginManager(app)
+
+# ==========================================
+# Database Models
+# ==========================================
+
+class User(UserMixin, db.Model):
+
+    __tablename__ = "users"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    email = db.Column(
+        db.String(255),
+        unique=True,
+        nullable=False,
+        index=True
+    )
+
+    password_hash = db.Column(
+        db.String(255),
+        nullable=False
+    )
+
+    education = db.Column(
+        db.String(100),
+        nullable=True
+    )
+
+    course = db.Column(
+        db.String(100),
+        nullable=True
+    )
+
+    semester = db.Column(
+        db.String(50),
+        nullable=True
+    )
+
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False
+    )
+
+    profile = db.relationship(
+        "CareerProfile",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan"
+    )
+
+
+class CareerProfile(db.Model):
+
+    __tablename__ = "career_profiles"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "users.id",
+            ondelete="CASCADE"
+        ),
+        unique=True,
+        nullable=False,
+        index=True
+    )
+
+    career_result = db.Column(
+        db.JSON,
+        nullable=True
+    )
+
+    resume_data = db.Column(
+        db.JSON,
+        nullable=True
+    )
+
+    resume_analysis = db.Column(
+        db.JSON,
+        nullable=True
+    )
+
+    github_analysis = db.Column(
+        db.JSON,
+        nullable=True
+    )
+
+    roadmap_progress = db.Column(
+        db.JSON,
+        nullable=True
+    )
+
+    planner_data = db.Column(
+        db.JSON,
+        nullable=True
+    )
+
+    resume_score = db.Column(
+        db.Float,
+        nullable=True
+    )
+
+    github_score = db.Column(
+        db.Float,
+        nullable=True
+    )
+
+    onboarding_step = db.Column(
+        db.String(100),
+        default="career-assessment",
+        nullable=False
+    )
+
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        nullable=False
+    )
+
+    user = db.relationship(
+        "User",
+        back_populates="profile"
+    )
+
+
+# ==========================================
+# Flask-Login User Loader
+# ==========================================
+
+@login_manager.user_loader
+def load_user(user_id):
+
+    try:
+        return db.session.get(
+            User,
+            int(user_id)
+        )
+
+    except (TypeError, ValueError):
+        return None
+
+
+@login_manager.unauthorized_handler
+def unauthorized_user():
+
+    return jsonify({
+        "status": "error",
+        "message": "Authentication is required."
+    }), 401
+
+# ==========================================
+# Authentication Helpers
+# ==========================================
+
+def serialize_user(user):
+
+    profile = user.profile
+
+    return {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "education": user.education,
+        "course": user.course,
+        "semester": user.semester,
+        "onboarding_step": (
+            profile.onboarding_step
+            if profile
+            else "career-assessment"
+        )
+    }
+
+
+def get_json_body():
+
+    data = request.get_json(silent=True)
+
+    if not isinstance(data, dict):
+        return {}
+
+    return data
+
+# ==========================================
+# Create Database Tables
+# ==========================================
+
+with app.app_context():
+
+    db.create_all()
+
+    print("CareerCompass database tables ready.")
 
 # ==========================================
 # File Paths
@@ -71,6 +322,266 @@ def home():
         "model_version": "V4"
     })
 
+
+# ==========================================
+# Signup Route
+# ==========================================
+
+@app.route("/api/signup", methods=["POST"])
+def signup():
+
+    if current_user.is_authenticated:
+        return jsonify({
+            "status": "error",
+            "message": "You are already logged in."
+        }), 400
+
+    data = get_json_body()
+
+    name = str(
+        data.get("name", "")
+    ).strip()
+
+    email = str(
+        data.get("email", "")
+    ).strip().lower()
+
+    password = str(
+        data.get("password", "")
+    )
+
+    education = str(
+        data.get("education", "")
+    ).strip()
+
+    course = str(
+        data.get("course", "")
+    ).strip()
+
+    semester = str(
+        data.get("semester", "")
+    ).strip()
+
+
+    if not name:
+        return jsonify({
+            "status": "error",
+            "message": "Full name is required."
+        }), 400
+
+
+    if (
+        not email
+        or "@" not in email
+        or "." not in email.split("@")[-1]
+    ):
+        return jsonify({
+            "status": "error",
+            "message": "Enter a valid email address."
+        }), 400
+
+
+    if len(password) < 8:
+        return jsonify({
+            "status": "error",
+            "message": (
+                "Password must contain at least "
+                "8 characters."
+            )
+        }), 400
+
+
+    if len(password) > 128:
+        return jsonify({
+            "status": "error",
+            "message": "Password is too long."
+        }), 400
+
+
+    existing_user = db.session.scalar(
+        db.select(User).where(
+            User.email == email
+        )
+    )
+
+    if existing_user:
+        return jsonify({
+            "status": "error",
+            "message": (
+                "An account with this email "
+                "already exists."
+            )
+        }), 409
+
+
+    user = User(
+        name=name,
+        email=email,
+        password_hash=generate_password_hash(
+            password
+        ),
+        education=education or None,
+        course=course or None,
+        semester=semester or None
+    )
+
+
+    try:
+        db.session.add(user)
+        db.session.flush()
+
+        profile = CareerProfile(
+            user_id=user.id,
+            onboarding_step="career-assessment"
+        )
+
+        db.session.add(profile)
+        db.session.commit()
+
+    except IntegrityError:
+        db.session.rollback()
+
+        return jsonify({
+            "status": "error",
+            "message": (
+                "An account with this email "
+                "already exists."
+            )
+        }), 409
+
+    except Exception as error:
+        db.session.rollback()
+
+        print("Signup error:", error)
+
+        return jsonify({
+            "status": "error",
+            "message": (
+                "Account could not be created."
+            )
+        }), 500
+
+
+    login_user(
+        user,
+        remember=True
+    )
+
+    return jsonify({
+        "status": "success",
+        "message": "Account created successfully.",
+        "user": serialize_user(user),
+        "redirect": "/pages/dashboard.html"
+    }), 201
+
+# ==========================================
+# Login Route
+# ==========================================
+
+@app.route("/api/login", methods=["POST"])
+def login():
+
+    if current_user.is_authenticated:
+        return jsonify({
+            "status": "success",
+            "message": "You are already logged in.",
+            "user": serialize_user(current_user),
+            "redirect": "/pages/dashboard.html"
+        }), 200
+
+    data = get_json_body()
+
+    email = str(
+        data.get("email", "")
+    ).strip().lower()
+
+    password = str(
+        data.get("password", "")
+    )
+
+    remember = bool(
+        data.get("remember", True)
+    )
+
+
+    if not email or not password:
+        return jsonify({
+            "status": "error",
+            "message": (
+                "Email and password are required."
+            )
+        }), 400
+
+
+    user = db.session.scalar(
+        db.select(User).where(
+            User.email == email
+        )
+    )
+
+
+    if (
+        user is None
+        or not check_password_hash(
+            user.password_hash,
+            password
+        )
+    ):
+        return jsonify({
+            "status": "error",
+            "message": "Invalid email or password."
+        }), 401
+
+
+    login_user(
+        user,
+        remember=remember
+    )
+
+    return jsonify({
+        "status": "success",
+        "message": "Login successful.",
+        "user": serialize_user(user),
+        "redirect": "/pages/dashboard.html"
+    }), 200
+
+# ==========================================
+# Logout Route
+# ==========================================
+
+@app.route("/api/logout", methods=["POST"])
+@login_required
+def logout():
+
+    logout_user()
+
+    return jsonify({
+        "status": "success",
+        "message": "Logout successful.",
+        "redirect": "/index.html"
+    }), 200
+
+
+# ==========================================
+# Current User Route
+# ==========================================
+
+@app.route("/api/me", methods=["GET"])
+def get_current_user():
+
+    if not current_user.is_authenticated:
+
+        return jsonify({
+            "status": "success",
+            "authenticated": False,
+            "user": None
+        }), 200
+
+    return jsonify({
+        "status": "success",
+        "authenticated": True,
+        "user": serialize_user(current_user)
+    }), 200
 
 # ==========================================
 # Health Check Route
