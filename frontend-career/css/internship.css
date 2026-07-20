@@ -1,4 +1,4 @@
-  :root{
+:root{
     --navy:#0f172a;
     --navy-light:#1a2540;
     --blue:#2563eb;
@@ -113,20 +113,22 @@
   /* Tabs */
   .tab-row{
     display:flex;
-    gap:8px;
+    gap:7px;
     margin-bottom:16px;
     flex-wrap:wrap;
+    row-gap:8px;
   }
   .tab{
-    padding:8px 16px;
+    padding:7px 13px;
     border-radius:20px;
-    font-size:13px;
+    font-size:12.5px;
     font-weight:600;
     background:var(--card);
     border:1px solid var(--border);
     color:var(--muted);
     cursor:pointer;
     transition:all .15s ease;
+    white-space:nowrap;
   }
   .tab:hover{ border-color:var(--blue); color:var(--blue); }
   .tab.active{ background:var(--blue); color:#fff; border-color:var(--blue); }
