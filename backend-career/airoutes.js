@@ -55,7 +55,6 @@ router.post('/chat', async (req, res) => {
     const reply = await chatReply(history, systemInstruction);
     res.json({ reply });
   } catch (err) {
-    console.error('Chat route error:', err.message);
     res.status(500).json({ error: 'Chat failed' });
   }
 });
