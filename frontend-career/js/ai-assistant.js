@@ -16,7 +16,7 @@ const el = (id) => document.getElementById(id);
    Returns the raw text of the model's reply.
    ========================================================= */
 async function askGemini(history, systemInstruction) {
-  const response = await fetch("http://localhost:5000/api/ai/chat", {
+  const response = await fetch("https://careercompass-s0jp.onrender.com/api/ai/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ history, systemInstruction })
