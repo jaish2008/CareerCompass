@@ -54,9 +54,10 @@ router.post('/chat', async (req, res) => {
     const { history, systemInstruction } = req.body;
     const reply = await chatReply(history, systemInstruction);
     res.json({ reply });
-  } catch (err) {
-    res.status(500).json({ error: 'Chat failed' });
-  }
+  }catch (err) {
+    console.error("Chat route error:", err);
+    res.status(500).json({ error: err.message });
+}
 });
 
 module.exports = router;
