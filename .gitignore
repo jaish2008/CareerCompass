@@ -4,3 +4,4 @@ frontend-career/pages/internship.html
 backend-python/.env
 backend-python/__pycache__/
 backend-python/venv/
+backend-python/serviceAccountKey.json
