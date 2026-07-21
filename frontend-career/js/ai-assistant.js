@@ -9,6 +9,9 @@
 
 const el = (id) => document.getElementById(id);
 
+function trimHistory(history, maxTurns = 8) {
+  if (history.length > maxTurns) history.splice(0, history.length - maxTurns);
+}
 /* =========================================================
    CORE GEMINI CALL
    history: [{ role: "user"|"model", parts: [{text}] }, ...]
@@ -16,7 +19,7 @@ const el = (id) => document.getElementById(id);
    Returns the raw text of the model's reply.
    ========================================================= */
 async function askGemini(history, systemInstruction) {
-  const response = await fetch("https://careercompass-s0jp.onrender.com/api/ai/chat", {
+  const response = await fetch("http://localhost:5000/api/ai/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ history, systemInstruction })
@@ -259,12 +262,14 @@ function createChatController({ windowEl, inputEl, micBtn, sendBtn, indicatorEl,
 
     renderMessage("user", text);
     history.push({ role: "user", parts: [{ text }] });
+trimHistory(history);
 
     const typingRow = renderTyping();
 
     try {
       const reply = await askGemini(history, systemInstruction);
       history.push({ role: "model", parts: [{ text: reply }] });
+trimHistory(history);
       typingRow.remove();
       const aiMsg = renderMessage("ai", reply);
 
