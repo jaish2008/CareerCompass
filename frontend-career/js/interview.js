@@ -68,22 +68,14 @@ Respond with ONLY a JSON array, no other text, in this exact shape:
 [{"text": "<question>", "keywords": ["<keyword>", "..."]}, ...]`;
 
   try {
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=" + GEMINI_API_KEY,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-  contents: [{ parts: [{ text: prompt }] }],
-  generationConfig: { thinkingConfig: { thinkingLevel: "minimal" } }
-})
-      }
-    );
-    if (!response.ok) throw new Error("Gemini request failed");
+   const response = await fetch("http://localhost:5000/api/ai/interview-questions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt, track, round, difficulty })
+    });
+    if (!response.ok) throw new Error("Request failed");
     const data = await response.json();
-    const raw = data.candidates[0].content.parts[0].text;
-    const clean = raw.replace(/```json|```/g, "").trim();
-    const parsed = JSON.parse(clean);
+    const parsed = data.questions;
     if (!Array.isArray(parsed) || parsed.length === 0) throw new Error("Empty question list");
     return parsed;
   } catch (err) {
@@ -175,8 +167,8 @@ const CODING_QUESTIONS = {
 
 function getQuestions(track, round, difficulty) {
   if (round === "HR") return HR_QUESTIONS;
-  if (round === "Technical") return TECHNICAL_QUESTIONS[track];
-  return CODING_QUESTIONS[track][difficulty];
+  if (round === "Technical") return TECHNICAL_QUESTIONS[track] || HR_QUESTIONS;
+  return (CODING_QUESTIONS[track] && CODING_QUESTIONS[track][difficulty]) || HR_QUESTIONS;
 }
 
 /* =========================================================
@@ -461,22 +453,13 @@ Read the answer for its actual meaning, not for exact keyword matches — a cand
 Respond with ONLY a JSON object, no other text, in this exact shape:
 {"communication": <1-5>, "technical": <1-5>, "confidence": <1-5>, "verdict": "<good|ok|weak>", "feedback": "<one sentence>", "missedKeywords": ["<concept>", "..."]}`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+const response = await fetch("http://localhost:5000/api/ai/grade-answer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }]
-      })
+      body: JSON.stringify({ prompt })
     });
-
     if (!response.ok) throw new Error("API request failed");
-    const data = await response.json();
-    const textBlock = (data.content || []).find(c => c.type === "text");
-    if (!textBlock) throw new Error("No text in response");
-    const clean = textBlock.text.replace(/```json|```/g, "").trim();
-    const parsed = JSON.parse(clean);
+    const parsed = await response.json();
 
     const communication = clamp(parsed.communication);
     const technical = clamp(parsed.technical);

@@ -180,4 +180,23 @@ async function chatReply(history, systemInstruction) {
     throw err;
   }
 }
-module.exports = { generateCareerQuiz, generateRecommendation, generateLearningPlan, chatReply };
+async function generateInterviewQuestions(track, round, difficulty, prompt) {
+  const response = await axios.post(
+    'https://api.groq.com/openai/v1/chat/completions',
+    { model: "llama-3.3-70b-versatile", messages: [{ role: "user", content: prompt }] },
+    { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` } }
+  );
+  const raw = response.data?.choices?.[0]?.message?.content;
+  return JSON.parse(raw.replace(/```json|```/g, '').trim());
+}
+
+async function gradeInterviewAnswer(prompt) {
+  const response = await axios.post(
+    'https://api.groq.com/openai/v1/chat/completions',
+    { model: "llama-3.3-70b-versatile", messages: [{ role: "user", content: prompt }] },
+    { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` } }
+  );
+  const raw = response.data?.choices?.[0]?.message?.content;
+  return JSON.parse(raw.replace(/```json|```/g, '').trim());
+}
+module.exports = { generateCareerQuiz, generateRecommendation, generateLearningPlan, chatReply, generateInterviewQuestions, gradeInterviewAnswer };

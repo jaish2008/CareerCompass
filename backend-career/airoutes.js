@@ -7,14 +7,15 @@
  *   app.use('/api/ai', aiRoutes);
  * ---------------------------------------------------------
  */
-
 const express = require('express');
 const router = express.Router();
 const {
   generateCareerQuiz,
   generateRecommendation,
   generateLearningPlan,
-  chatReply
+  chatReply,
+  generateInterviewQuestions,
+  gradeInterviewAnswer
 } = require('./geminiservice');
 
 router.get('/quiz', async (req, res) => {
@@ -54,11 +55,32 @@ router.post('/chat', async (req, res) => {
     const { history, systemInstruction } = req.body;
     const reply = await chatReply(history, systemInstruction);
     res.json({ reply });
-  }catch (err) {
+  } catch (err) {
     console.error("Chat route error:", err);
     res.status(500).json({ error: err.message });
-}
+  }
+});
+
+router.post('/interview-questions', async (req, res) => {
+  try {
+    const { prompt, track, round, difficulty } = req.body;
+    const questions = await generateInterviewQuestions(track, round, difficulty, prompt);
+    res.json({ questions });
+  } catch (err) {
+    console.error("Interview questions error:", err.message);
+    res.status(500).json({ error: 'Failed to generate questions' });
+  }
+});
+
+router.post('/grade-answer', async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    const grade = await gradeInterviewAnswer(prompt);
+    res.json(grade);
+  } catch (err) {
+    console.error("Grade answer error:", err.message);
+    res.status(500).json({ error: 'Failed to grade answer' });
+  }
 });
 
 module.exports = router;
-
