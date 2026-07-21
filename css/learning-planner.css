@@ -430,3 +430,234 @@ h1, h2, h3 { font-family: "Space Grotesk", sans-serif; margin: 0; }
   text-decoration: underline;
   opacity: 1;
 }
+
+/* ============================================================
+   RESPONSIVE IMPROVEMENTS
+   ============================================================ */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.task-title,
+.hero-sub,
+.hint,
+.category-row span {
+  overflow-wrap: anywhere;
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+  .hero {
+    padding: 30px 24px;
+  }
+
+  .layout {
+    padding: 0 24px;
+  }
+
+  .hero-right {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .quick-add-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .quick-add-form .btn-primary {
+    width: 100%;
+  }
+
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 640px) {
+  .hero {
+    padding: 24px 16px 34px;
+  }
+
+  .hero-inner {
+    gap: 20px;
+  }
+
+  .hero h1 {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .hero-sub {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .hero-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .hero-stat-num {
+    font-size: 18px;
+  }
+
+  .layout {
+    margin-top: -16px;
+    padding: 0 16px;
+    gap: 18px;
+  }
+
+  .card {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .quick-add-card {
+    padding: 16px;
+  }
+
+  .quick-add-form {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-add-form input,
+  .quick-add-form select,
+  .quick-add-form button {
+    width: 100%;
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .board-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .view-toggle {
+    width: 100%;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    min-height: 42px;
+  }
+
+  .day-board {
+    grid-template-columns: 1fr;
+    overflow-x: visible;
+    gap: 12px;
+  }
+
+  .day-column {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .task-top-row {
+    align-items: flex-start;
+  }
+
+  .task-check {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .task-delete {
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .task-meta {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .focus-btn {
+    min-height: 40px;
+  }
+
+  .bottom-grid {
+    gap: 14px;
+  }
+
+  .notif-panel {
+    position: fixed;
+    top: 88px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .modal-overlay {
+    padding: 16px;
+  }
+
+  .modal-box {
+    width: 100%;
+    max-width: 360px;
+    padding: 24px 18px;
+  }
+
+  .timer-display {
+    font-size: 36px;
+  }
+
+  .timer-options {
+    flex-wrap: wrap;
+  }
+
+  .timer-options button {
+    flex: 1;
+    min-width: 72px;
+    min-height: 42px;
+  }
+
+  .modal-actions button {
+    min-height: 44px;
+  }
+
+  .planner-back-link {
+    font-size: 13px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 400px) {
+  .hero-right {
+    justify-content: flex-start;
+  }
+
+  .hero-stat {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .level-badge,
+  .level-ring {
+    width: 56px;
+    height: 56px;
+  }
+
+  .bell-btn {
+    width: 42px;
+    height: 42px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .timer-display {
+    font-size: 32px;
+  }
+}
