@@ -20,8 +20,10 @@ require('dotenv').config();
 const axios = require('axios');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
+console.log("Gemini Key Loaded:", GEMINI_API_KEY ? "YES" : "NO");
 const GEMINI_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 /**
  * Low-level call to Gemini. Sends one prompt, returns the raw text reply.
@@ -138,15 +140,44 @@ Respond ONLY with valid JSON, no markdown, no preamble, in this exact shape:
   return JSON.parse(cleanJson(raw));
 }
 
-
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 async function chatReply(history, systemInstruction) {
-  const response = await axios.post(
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
-    { systemInstruction: { parts: [{ text: systemInstruction }] }, contents: history },
-    { headers: { 'Content-Type': 'application/json', 'X-goog-api-key': GEMINI_API_KEY } }
-  );
-  return response.data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't reply.";
-}
+  try {
+    // Groq uses OpenAI-style message format: {role, content} — convert from Gemini's {role, parts} shape
+    const messages = [
+      { role: "system", content: systemInstruction },
+      ...history.map(turn => ({
+        role: turn.role === "model" ? "assistant" : "user",
+        content: turn.parts.map(p => p.text).join(" ")
+      }))
+    ];
 
+    const response = await axios.post(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        model: "llama-3.3-70b-versatile",
+        messages
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${GROQ_API_KEY}`
+        }
+      }
+    );
+
+    const text = response.data?.choices?.[0]?.message?.content;
+
+    if (!text) {
+      throw new Error("Groq returned no text");
+    }
+
+    return text;
+
+  } catch (err) {
+    console.error("Chat Groq error:", err.response?.data || err.message);
+    throw err;
+  }
+}
 module.exports = { generateCareerQuiz, generateRecommendation, generateLearningPlan, chatReply };
