@@ -22,6 +22,7 @@ const FOCUS_BONUS_XP = 5;
 
 let tasks = [];
 let plannerReady = false;
+let plannerSaveTimer = null;
 let currentView = "week";
 let focusTaskId = null;
 let focusMinutes = 25;
@@ -52,6 +53,71 @@ function readStoredJSON(key, fallbackValue) {
   }
 }
 
+function getPlannerPayload() {
+  return {
+    tasks,
+    xp: readStoredJSON(XP_KEY, { xp: 0 }),
+    streak: readStoredJSON(STREAK_KEY, {
+      count: 0,
+      lastDate: null
+    })
+  };
+}
+
+async function loadPlannerDataFromServer() {
+  const response = await fetch(`${API_BASE_URL}/api/planner`, {
+    method: "GET",
+    credentials: "include"
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Unable to load Planner data.");
+  }
+
+  return result.planner || {
+    tasks: [],
+    xp: { xp: 0 },
+    streak: {
+      count: 0,
+      lastDate: null
+    }
+  };
+}
+
+async function savePlannerDataToServer() {
+  if (!plannerReady) {
+    return;
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/planner`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(getPlannerPayload())
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Unable to save Planner data.");
+  }
+}
+
+function schedulePlannerSave() {
+  clearTimeout(plannerSaveTimer);
+
+  plannerSaveTimer = setTimeout(() => {
+    savePlannerDataToServer().catch((error) => {
+      console.error("Planner database save failed:", error);
+    });
+  }, 400);
+}
+
+
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, (character) => {
     const entities = {
@@ -68,38 +134,133 @@ function escapeHTML(value) {
 
 async function initializePlanner() {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/me`, {
+    const authResponse = await fetch(`${API_BASE_URL}/api/me`, {
       method: "GET",
       credentials: "include"
     });
 
-    const result = await response.json();
+    const authResult = await authResponse.json();
 
-    if (!response.ok || !result.authenticated || !result.user) {
+    if (
+      !authResponse.ok ||
+      !authResult.authenticated ||
+      !authResult.user
+    ) {
       window.location.href = "login.html";
       return;
     }
 
-    const userId = result.user.id;
+    const userId = authResult.user.id;
 
     STORAGE_KEY = `careerCompassPlanner:${userId}`;
     STREAK_KEY = `careerCompassStreak:${userId}`;
     XP_KEY = `careerCompassXP:${userId}`;
 
-    tasks = readStoredJSON(STORAGE_KEY, []);
+    const localTasks = readStoredJSON(STORAGE_KEY, []);
+    const localXP = readStoredJSON(XP_KEY, { xp: 0 });
+    const localStreak = readStoredJSON(STREAK_KEY, {
+      count: 0,
+      lastDate: null
+    });
 
-    if (!Array.isArray(tasks)) {
-      tasks = [];
+    const serverPlanner = await loadPlannerDataFromServer();
+
+    const serverTasks = Array.isArray(serverPlanner.tasks)
+      ? serverPlanner.tasks
+      : [];
+
+    const serverXP =
+      serverPlanner.xp && typeof serverPlanner.xp === "object"
+        ? serverPlanner.xp
+        : { xp: 0 };
+
+    const serverStreak =
+      serverPlanner.streak && typeof serverPlanner.streak === "object"
+        ? serverPlanner.streak
+        : {
+            count: 0,
+            lastDate: null
+          };
+
+    const serverHasData =
+      serverTasks.length > 0 ||
+      Number(serverXP.xp) > 0 ||
+      Number(serverStreak.count) > 0 ||
+      Boolean(serverStreak.lastDate);
+
+    const localHasData =
+      Array.isArray(localTasks) &&
+      (
+        localTasks.length > 0 ||
+        Number(localXP.xp) > 0 ||
+        Number(localStreak.count) > 0 ||
+        Boolean(localStreak.lastDate)
+      );
+
+    if (serverHasData) {
+      tasks = serverTasks;
+
+      localStorage.setItem(
+        XP_KEY,
+        JSON.stringify(serverXP)
+      );
+
+      localStorage.setItem(
+        STREAK_KEY,
+        JSON.stringify(serverStreak)
+      );
+    } else {
+      tasks = Array.isArray(localTasks) ? localTasks : [];
+
+      localStorage.setItem(
+        XP_KEY,
+        JSON.stringify(localXP)
+      );
+
+      localStorage.setItem(
+        STREAK_KEY,
+        JSON.stringify(localStreak)
+      );
     }
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(tasks)
+    );
 
     document.getElementById("taskDay").value = todayName;
 
     plannerReady = true;
+
+    // Migrate existing browser Planner data into SQLite once.
+    if (!serverHasData && localHasData) {
+      await savePlannerDataToServer();
+    }
+
     renderAll();
   } catch (error) {
-    console.error("Planner authentication failed:", error);
-    window.location.href = "login.html";
-  }
+  console.error("Planner initialization failed:", error);
+
+  document.body.insertAdjacentHTML(
+    "afterbegin",
+    `
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        padding: 12px;
+        background: #fee2e2;
+        color: #b91c1c;
+        text-align: center;
+        font-weight: 600;
+      ">
+        Planner could not load. Check the browser Console.
+      </div>
+    `
+  );
+}
 }
 
 
@@ -179,7 +340,12 @@ function saveTasks() {
     return;
   }
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(tasks)
+  );
+
+  schedulePlannerSave();
 }
 
 // ============================================================

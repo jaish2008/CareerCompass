@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime, timezone
 
@@ -198,6 +199,120 @@ class CareerProfile(db.Model):
         back_populates="profile"
     )
 
+def get_or_create_career_profile(user_id):
+    """Return the authenticated user's career profile."""
+    profile = CareerProfile.query.filter_by(user_id=user_id).first()
+
+    if profile is None:
+        profile = CareerProfile(user_id=user_id)
+        db.session.add(profile)
+        db.session.commit()
+
+    return profile
+
+VALID_PLANNER_DAYS = {
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+}
+
+VALID_PLANNER_PRIORITIES = {"High", "Medium", "Low"}
+
+
+def validate_planner_payload(payload):
+    """Validate and clean Planner data before storing it."""
+
+    if not isinstance(payload, dict):
+        return None, "Planner data must be a JSON object."
+
+    raw_tasks = payload.get("tasks", [])
+
+    if not isinstance(raw_tasks, list):
+        return None, "Tasks must be a list."
+
+    if len(raw_tasks) > 250:
+        return None, "A maximum of 250 tasks is allowed."
+
+    clean_tasks = []
+
+    for index, task in enumerate(raw_tasks):
+        if not isinstance(task, dict):
+            return None, f"Task {index + 1} is invalid."
+
+        title = str(task.get("title", "")).strip()
+        category = str(task.get("category", "General")).strip()
+        day = str(task.get("day", "")).strip()
+        priority = str(task.get("priority", "Medium")).strip()
+
+        if not title:
+            return None, f"Task {index + 1} requires a title."
+
+        if len(title) > 120:
+            return None, f"Task {index + 1} title is too long."
+
+        if len(category) > 50:
+            return None, f"Task {index + 1} category is too long."
+
+        if day not in VALID_PLANNER_DAYS:
+            return None, f"Task {index + 1} contains an invalid day."
+
+        if priority not in VALID_PLANNER_PRIORITIES:
+            return None, f"Task {index + 1} contains an invalid priority."
+
+        try:
+            task_id = int(task.get("id"))
+        except (TypeError, ValueError):
+            return None, f"Task {index + 1} contains an invalid ID."
+
+        clean_tasks.append({
+            "id": task_id,
+            "title": title,
+            "category": category or "General",
+            "day": day,
+            "priority": priority,
+            "done": bool(task.get("done", False))
+        })
+
+    raw_xp = payload.get("xp", {})
+    raw_streak = payload.get("streak", {})
+
+    if not isinstance(raw_xp, dict):
+        raw_xp = {}
+
+    if not isinstance(raw_streak, dict):
+        raw_streak = {}
+
+    try:
+        xp_value = max(0, int(raw_xp.get("xp", 0)))
+    except (TypeError, ValueError):
+        xp_value = 0
+
+    try:
+        streak_count = max(0, int(raw_streak.get("count", 0)))
+    except (TypeError, ValueError):
+        streak_count = 0
+
+    last_date = raw_streak.get("lastDate")
+
+    if last_date is not None:
+        last_date = str(last_date)[:50]
+
+    clean_data = {
+        "tasks": clean_tasks,
+        "xp": {
+            "xp": min(xp_value, 1000000)
+        },
+        "streak": {
+            "count": min(streak_count, 100000),
+            "lastDate": last_date
+        }
+    }
+
+    return clean_data, None
 
 # ==========================================
 # Flask-Login User Loader
@@ -582,6 +697,83 @@ def get_current_user():
         "authenticated": True,
         "user": serialize_user(current_user)
     }), 200
+
+@app.route("/api/planner", methods=["GET"])
+@login_required
+def get_planner():
+    try:
+        profile = get_or_create_career_profile(current_user.id)
+
+        planner = {
+            "tasks": [],
+            "xp": {"xp": 0},
+            "streak": {
+                "count": 0,
+                "lastDate": None
+            }
+        }
+
+        if profile.planner_data:
+            try:
+                stored_data = json.loads(profile.planner_data)
+
+                if isinstance(stored_data, dict):
+                    planner.update(stored_data)
+            except (json.JSONDecodeError, TypeError):
+                app.logger.warning(
+                    "Invalid planner data for user %s",
+                    current_user.id
+                )
+
+        return jsonify({
+            "status": "success",
+            "planner": planner
+        }), 200
+
+    except Exception:
+        app.logger.exception("Unable to load Planner data")
+
+        return jsonify({
+            "status": "error",
+            "message": "Unable to load Planner data."
+        }), 500
+
+# authenticated API routes---------/
+@app.route("/api/planner", methods=["PUT"])
+@login_required
+def update_planner():
+    payload = request.get_json(silent=True)
+
+    clean_data, validation_error = validate_planner_payload(payload)
+
+    if validation_error:
+        return jsonify({
+            "status": "error",
+            "message": validation_error
+        }), 400
+
+    try:
+        profile = get_or_create_career_profile(current_user.id)
+
+        profile.planner_data = json.dumps(clean_data)
+        profile.updated_at = datetime.utcnow()
+
+        db.session.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "Planner saved successfully.",
+            "planner": clean_data
+        }), 200
+
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Unable to save Planner data")
+
+        return jsonify({
+            "status": "error",
+            "message": "Unable to save Planner data."
+        }), 500
 
 # ==========================================
 # Health Check Route
