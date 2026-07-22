@@ -145,3 +145,22 @@ if (chartCanvas) {
         }
     });
 }
+
+const logoutButton = document.getElementById("logoutButton");
+
+if (logoutButton) {
+  logoutButton.addEventListener("click", async () => {
+    logoutButton.disabled = true;
+
+    try {
+      await fetch(`${API_BASE_URL}/api/logout`, {
+        method: "POST",
+        credentials: "include"
+      });
+    } catch (error) {
+      console.error("Logout request failed:", error);
+    } finally {
+      window.location.replace("login.html");
+    }
+  });
+}
