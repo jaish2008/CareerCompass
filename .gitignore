@@ -1,0 +1,26 @@
+# Career Compass gitignore
+
+# Environment files (all locations)
+.env
+.env.local
+*.env
+
+# Firebase / service account keys
+serviceAccountKey.json
+**/serviceAccountKey.json
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Python
+__pycache__/
+**/__pycache__/
+*.pyc
+venv/
+**/venv/
+.venv/
+
+# Old specific entries (keep these too, no harm)
+backend-career/internship.js
+frontend-career/pages/internship.html

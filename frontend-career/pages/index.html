@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerCompass</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="icon" href="images/logo.png">
+    <style>
+        *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:#f8fafc;
+    color:#1e293b;
+}
+
+.section-container{
+    max-width:1200px;
+    margin:100px auto;
+    padding:0 40px;
+}
+
+header{
+    width:100%;
+    background:white;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+nav{
+    max-width: 1200px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 40px;
+    z-index: 1000;
+}
+
+.menu-toggle{
+    display:none;
+    background:none;
+    border:none;
+    font-size:1.7rem;
+    color:#2563eb;
+    cursor:pointer;
+}
+
+ .nav-brand .brand-link{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:inherit;
+    text-decoration:none;
+}
+
+.nav-brand .brand-link:hover{
+    text-decoration:none;
+}
+
+.logo-icon{
+    font-size: 2.3rem;
+}
+
+.logo-text{
+    font-size: 2rem;
+    font-weight:700;
+    color:#2563eb;
+}
+
+.nav-links ul{
+    display:flex;
+    list-style:none;
+    gap:35px;
+}
+.nav-links a{
+    text-decoration:none;
+    color:#334155;
+    font-weight:600;
+    transition:.3s ease;
+}
+.nav-links a:hover{
+    color:#2563eb;
+    background:#eff6ff;
+    padding-left:30px;
+    transform:translateY(-2px);
+}
+.nav-actions{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.nav-actions a:first-child{
+    text-decoration:none;
+    color:#2563eb;
+    font-weight:bold;
+    transition:.3s ease;
+}
+
+.nav-actions a:first-child:hover{
+    color:#1d4ed8;
+    transform:translateY(-2px);
+    transition:.3s ease;
+}
+
+.nav-actions a:last-child{
+    text-decoration:none;
+    background:#2563eb;
+    color:white;
+    padding:12px 22px;
+    border-radius:10px;
+    transition:.3s ease;
+}
+.nav-actions a:last-child:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+    transition:0.3s ease;
+}
+
+
+.hero{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap: 35px;
+
+}
+
+.hero-left{
+    flex:1;
+}
+
+.hero-left h2{
+    font-size:3rem;
+    line-height:1.2;
+    margin-bottom:25px;
+}
+
+.hero-left span{
+    color:#2563eb;
+}
+
+.hero-left p{
+    font-size:1.1rem;
+    line-height:1.7;
+    margin-bottom:35px;
+    color:#64748b;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:20px;
+    flex-direction:column;
+}
+
+.primary-btn{
+    text-decoration:none;
+    background:#2563eb;
+    color:white;
+    padding:15px 30px;
+    border-radius:10px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.primary-btn:hover{
+    background:#1d4ed8;
+    transform:translateY(-3px);
+}
+
+.secondary-btn:hover{
+    background:#2563eb;
+    color:white;
+    transform:translateY(-3px);
+}
+
+.secondary-btn{
+    text-decoration:none;
+    color:#2563eb;
+    padding:15px 30px;
+    border:2px solid #2563eb;
+    border-radius:10px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.hero-right{
+    flex:1;
+    display:flex;
+    justify-content:center;
+}
+
+.dashboard-card{
+    width:100%;
+    max-width:350px;
+    background:white;
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 15px 40px rgba(0,0,0,.12);
+}
+
+.dashboard-card h3{
+
+    margin-bottom:25px;
+
+    color:#2563eb;
+}
+
+.score{
+
+    display:flex;
+
+    justify-content:space-between;
+    align-items: center;
+    margin:18px 0;
+
+    padding:15px 0;
+
+    border-bottom:1px solid #e5e7eb;
+}
+/* Why CareerCompass Section */
+
+.why-header{
+    text-align:center;
+    margin-bottom:60px;
+}
+
+.why-header h2{
+    font-size:2rem;
+    color:#1e293b;
+    margin-bottom:20px;
+}
+
+.why-header p{
+    max-width:800px;
+    margin:auto;
+    font-size:1.1rem;
+    color:#64748b;
+    line-height:1.8;
+}
+
+.comparison-container{
+    display:flex;
+    gap:40px;
+}
+
+.comparison-card{
+    flex:1;
+    background:#ffffff;
+    padding:22px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.negative{
+    border-top:6px solid #ef4444;
+}
+
+.positive{
+    border-top:6px solid #22c55e;
+}
+
+.comparison-card h3{
+    margin-bottom:25px;
+}
+
+.comparison-card ul{
+    list-style:none;
+}
+
+.comparison-card li{
+    margin:18px 0;
+    font-size:1.05rem;
+}
+
+/* ===================================
+   FEATURES
+=================================== */
+
+.section-title{
+
+    text-align:center;
+
+    margin-bottom:60px;
+}
+
+.section-title h2{
+
+    font-size:2rem;
+
+    margin-bottom:20px;
+}
+
+.section-title p{
+
+    max-width:750px;
+
+    margin:auto;
+
+    color:#64748b;
+
+    line-height:1.8;
+}
+
+.feature-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:25px;
+}
+
+.feature-card{
+
+    background:white;
+
+    padding: 22px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+}
+
+.feature-card:hover{
+
+    transform:translateY(-8px);
+}
+
+.feature-icon{
+
+    font-size:2.5rem;
+
+    margin-bottom:20px;
+}
+
+.feature-card h3{
+
+    margin-bottom:15px;
+
+    color:#2563eb;
+}
+
+.feature-card p{
+
+    color:#64748b;
+
+    line-height:1.6;
+}
+
+/* ===================================
+   HOW IT WORKS
+=================================== */
+
+
+.steps-container{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:30px;
+}
+
+.step-card{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:22px;
+
+    text-align:center;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+}
+
+.step-card:hover{
+
+    transform:translateY(-8px);
+}
+
+.step-number{
+
+    width:60px;
+
+    height:60px;
+
+    margin:auto;
+
+    margin-bottom:20px;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:1.4rem;
+
+    font-weight:bold;
+}
+
+.step-card h3{
+
+    margin-bottom:15px;
+
+    color:#2563eb;
+}
+
+.step-card p{
+
+    color:#64748b;
+
+    line-height:1.6;
+}
+
+/* ===================================
+   TESTIMONIALS
+=================================== */
+
+.testimonial-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:30px;
+}
+
+.testimonial-card{
+
+    background:white;
+
+    padding:22px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    text-align:center;
+}
+
+.testimonial-card p{
+
+    margin:20px 0;
+
+    color:#64748b;
+
+    line-height:1.7;
+}
+
+.testimonial-card h4{
+
+    color:#2563eb;
+
+    margin-bottom:8px;
+}
+
+/* ===================================
+   FOOTER
+=================================== */
+
+footer{
+
+    background:#1e293b;
+
+    color:white;
+
+    margin-top:100px;
+
+    padding:60px 40px 30px;
+}
+
+.footer-content{
+
+    max-width:1200px;
+
+    margin:auto;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:60px;
+}
+
+.footer-content a{
+
+    display:block;
+
+    color:#cbd5e1;
+
+    text-decoration:none;
+
+    margin:10px 0;
+}
+
+.footer-content p{
+
+    color:#cbd5e1;
+
+    line-height:1.8;
+}
+
+footer hr{
+
+    margin:40px 0;
+
+    border:none;
+
+    border-top:1px solid #475569;
+}
+
+.copyright{
+
+    text-align:center;
+
+    color:#94a3b8;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+=================================== */
+
+@media (max-width: 992px){
+
+    nav{
+        padding:20px;
+    }
+
+    .hero{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .comparison-container{
+        flex-direction:column;
+    }
+
+    .feature-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .steps-container{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .testimonial-grid{
+        grid-template-columns:1fr;
+    }
+
+    .footer-content{
+        flex-direction:column;
+        text-align:center;
+    }
+
+}
+
+@media (max-width:768px){
+
+    .feature-grid{
+        grid-template-columns:1fr;
+    }
+    
+    .comparison-container{
+        flex-direction:column;
+    }
+
+    .comparison-card{
+        padding:22px;
+    }
+
+    .steps-container{
+        grid-template-columns:1fr;
+    }
+    
+    .step-card{
+        padding: 22px;
+    }
+    .nav-links ul{
+        flex-direction:column;
+        align-items:center;
+        gap:15px;
+    }
+
+    .nav-links a{
+
+        display:block;
+        width:100%;
+        padding:16px 20px;
+        text-decoration:none;
+
+         color:#334155;
+
+        border-bottom:1px solid #e5e7eb;
+
+        transition:.3s;
+
+    }
+
+    .nav-actions{
+        flex-direction:column;
+        width:100%;
+        display:none;
+    }
+    
+    .hamburger{
+        display:block;
+    }
+
+    .nav-actions a{
+        width:100%;
+        text-align:center;
+    }
+
+    .hero h2{
+        font-size:2.2rem;
+    }
+
+    .logo-text{
+    font-size:1.5rem;
+}
+
+    .logo-icon{
+    font-size:1.8rem;
+}
+
+    .hero{
+    padding:40px 20px;
+    text-align:center;
+    flex-direction:column;
+}
+
+    .footer-content{
+    flex-direction:column;
+    text-align:center;
+}
+    
+    .footer-content div{
+        text-align:center;
+    }
+
+    .features{
+    padding:0 20px;}
+
+    .feature-card{
+    padding:22px;
+    }
+
+    .why{
+    padding:0 20px;
+}
+    
+    .why-header h2{
+    font-size:2rem;
+    }
+    .how-it-works{
+    padding:0 20px;
+}
+
+    .testimonials{
+    padding:0 20px;
+
+}
+
+    .testimonial-grid{
+    grid-template-columns:1fr;
+}
+
+    .testimonial-card{
+    padding:22px;
+    }
+    .dashboard-card{
+    width:100%;
+    max-width:350px;
+}
+
+    .hero-buttons{
+    flex-direction:column;      
+    gap:15px;
+}
+
+    .section-title h2{
+    font-size:2rem;
+    }
+   
+    .menu-toggle{
+
+    display:block;
+}
+
+.nav-links{
+
+
+    display:block;
+
+    width:100%;
+
+    max-height:0;
+
+    overflow:hidden;
+
+    opacity:0;
+
+    transition:all .35s ease;
+
+    background:white;
+
+    border-radius:12px;
+
+    margin-top:15px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.nav-links.active{
+
+    max-height:500px;
+
+    opacity:1;
+
+}
+
+.nav-links ul{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+
+}
+
+.nav-links li{
+    width:100%;
+}
+
+.nav-links a:hover{
+
+     background:#f1f5f9;
+
+    color:#2563eb;
+}
+.nav-actions{
+
+    display:none;
+
+}
+
+.mobile-only{
+    display:block;
+}
+
+}
+
+.mobile-only{
+    display:none;
+}
+
+.feature-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.feature-link:hover {
+    transform: translateY(-6px);
+}
+
+.feature-action {
+    display: inline-block;
+    margin-top: 14px;
+    color: #2563eb;
+    font-weight: 600;
+}
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <nav aria-label="Main Navigation">
+
+        <!-- Brand -->
+        <div class="nav-brand">
+            <a href="index.html" class="brand-link">
+            <span class="logo-icon">🧭</span>
+        <span class="logo-text">CareerCompass</span>
+            </a>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="nav-links">
+
+            <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="ai-assistant.html">Career Quiz</a></li>
+                    <li><a href="roadmap.html">Roadmap</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li class="mobile-only"><a href=login.html">Login</a></li>
+                    <li class="mobile-only"><a href="signup.html">Get Started</a></li>
+            </ul>
+        </div>
+
+
+        <button class="menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <!-- Navigation Actions -->
+        <div class="nav-actions">
+            <a href=login.html>Login</a>
+            <a href=signup.html>Get Started</a>
+        </div>
+
+        
+    </nav>
+</header>
+     <main>
+<!-- Hero Section  -->
+<section class="hero">
+
+    <div class="hero-left">
+
+        <h2>
+            One Platform to Plan,
+            <span> Build, Track & </span>
+            Launch Your Career
+        </h2>
+
+        <p>
+            CareerCompass helps students prepare for internships,
+            placements, and software engineering careers by
+            organizing everything in one place.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="pages/signup.html" class="primary-btn">
+                Get Started
+            </a>
+
+            <a href="pages/career-quiz.html" class="secondary-btn">
+    Take Career Quiz
+</a>
+
+            <a href="#about" class="secondary-btn">
+                Learn More
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="hero-right">
+<div class="dashboard-card">
+
+<h3>Career Dashboard</h3>
+
+<div class="score">
+
+Placement Readiness
+
+<span>78%</span>
+
+</div>
+
+<div class="score">
+
+Resume Score
+
+<span>84%</span>
+
+</div>
+
+<div class="score">
+
+GitHub Health
+
+<span>91%</span>
+
+</div>
+
+<div class="score">
+
+Today's Goal
+
+<span>Finish JavaScript</span>
+
+</div>
+</div>
+    </div>
+
+</section>
+ <!-- Why CareerCompass -->
+  <section class="why" id="about">
+    <div class="section-container">
+    <div class="why-header">
+
+        <h2>Why CareerCompass?</h2>
+
+        <p>
+            Students often waste time switching between multiple websites for resumes,
+            projects, GitHub, interview preparation, learning roadmaps, and placement tracking.
+            CareerCompass brings everything together in one smart platform.
+        </p>
+
+    </div>
+
+    <div class="comparison-container">
+
+        <div class="comparison-card negative">
+
+            <h3>Without CareerCompass</h3>
+
+            <ul>
+
+                <li>❌ Confused about what to learn next</li>
+
+                <li>❌ Resume scattered across different versions</li>
+
+                <li>❌ GitHub portfolio incomplete</li>
+
+                <li>❌ No structured placement preparation</li>
+
+                <li>❌ Internship applications difficult to track</li>
+
+            </ul>
+
+        </div>
+
+        <div class="comparison-card positive">
+
+            <h3>With CareerCompass</h3>
+
+            <ul>
+
+                <li>✅ Personalized Learning Roadmap</li>
+
+                <li>✅ Smart Resume Builder</li>
+
+                <li>✅ GitHub Portfolio Analyzer</li>
+
+                <li>✅ Internship Tracker</li>
+
+                <li>✅ Placement Readiness Dashboard</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+    </div>
+
+  </section>
+
+  <!-- ================= FEATURES ================= -->
+
+<section class="features" id="features">
+    <div class="section-container">
+
+    <div class="section-title">
+
+        <h2>Powerful Features</h2>
+
+        <p>
+            Everything you need for placements, internships, skill development,
+            and career growth — all in one place.
+        </p>
+
+    </div>
+
+    <div class="feature-grid">
+
+       <a href="pages/career-quiz.html" class="feature-card feature-link">
+    <div class="feature-icon">🎯</div>
+    <h3>AI Career Quiz</h3>
+    <p>
+        Answer 15 questions and discover your top three
+        technology career matches.
+    </p>
+
+    <span class="feature-action">
+        Take Career Quiz →
+    </span>
+</a>
+
+        <div class="feature-card">
+            <div class="feature-icon">📄</div>
+            <h3>Resume Builder</h3>
+            <p>Create ATS-friendly resumes with live scoring.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🐙</div>
+            <h3>GitHub Analyzer</h3>
+            <p>Analyze repositories and improve your developer profile.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🛣️</div>
+            <h3>Skill Roadmap</h3>
+            <p>Get a personalized roadmap based on your career goal.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3>Learning Planner</h3>
+            <p>Generate weekly study plans automatically.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">💼</div>
+            <h3>Internship Tracker</h3>
+            <p>Track applications, interviews and placement status.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🎤</div>
+            <h3>Interview Preparation</h3>
+            <p>Practice HR, aptitude and technical interview questions.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Analytics Dashboard</h3>
+            <p>Visualize your complete learning and placement progress.</p>
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+
+<section class="how-it-works">
+
+    <div class="section-container">
+
+    <div class="section-title">
+        <h2>How CareerCompass Works</h2>
+        <p>
+            Follow these simple steps to become placement ready.
+        </p>
+    </div>
+
+    <div class="steps-container">
+
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Create Account</h3>
+            <p>Sign up and create your CareerCompass profile.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Complete Assessment</h3>
+            <p>Evaluate your current skills and career readiness.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Build Resume</h3>
+            <p>Create a professional ATS-friendly resume.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">4</div>
+            <h3>Follow Roadmap</h3>
+            <p>Learn the right skills in the right order.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">5</div>
+            <h3>Apply</h3>
+            <p>Track internships and placement applications.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">6</div>
+            <h3>Get Hired</h3>
+            <p>Monitor progress and become placement ready.</p>
+        </div>
+
+    </div>
+    </div>
+
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+
+<section class="testimonials">
+
+<div class="section-container">
+
+    <div class="section-title">
+    
+        <h2>What Students Say</h2>
+        <p>
+            CareerCompass helps students stay organized and placement focused.
+        </p>
+    </div>
+
+    <div class="testimonial-grid">
+
+        <div class="testimonial-card">
+            ⭐⭐⭐⭐⭐
+            <p>"CareerCompass made my placement preparation much more organized."</p>
+            <h4>Rahul Sharma</h4>
+            <span>Computer Science Student</span>
+        </div>
+
+        <div class="testimonial-card">
+            ⭐⭐⭐⭐⭐
+            <p>"The roadmap and internship tracker saved me a lot of time."</p>
+            <h4>Priya Singh</h4>
+            <span>Information Technology Student</span>
+        </div>
+
+        <div class="testimonial-card">
+            ⭐⭐⭐⭐⭐
+            <p>"Everything I needed for placements was available in one place."</p>
+            <h4>Aman Verma</h4>
+            <span>Electronics Student</span>
+        </div>
+
+    </div>
+    </div>
+
+</section>
+
+
+</main>
+
+
+<footer id="contact">
+
+    <div class="footer-content">
+
+        <div>
+
+            <h2>🧭 CareerCompass</h2>
+
+            <p>
+                One platform to plan, build, track, and launch your career.
+            </p>
+
+        </div>
+
+        <div>
+
+            <h3>Quick Links</h3>
+
+            <a href="index.html">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+
+        </div>
+
+        <div>
+
+            <h3>Contact</h3>
+
+            <a href="mailto:careercompass@gmail.com">Email: careercompass@gmail.com</a>
+            <a href="#">GitHub</a>
+            <a href="#">LinkedIn</a>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <p class="copyright">
+        © 2026 CareerCompass. All Rights Reserved.
+    </p>
+
+</footer>
+
+   <script src="js/script.js"></script>
+   <script>
+    const menuToggle = document.querySelector(".menu-toggle");
+const navLinks = document.querySelector(".nav-links");
+const menuIcon = menuToggle.querySelector("i");
+
+menuToggle.addEventListener("click", () => {
+
+    navLinks.classList.toggle("active");
+
+    if (navLinks.classList.contains("active")) {
+
+        menuIcon.classList.remove("fa-bars");
+        menuIcon.classList.add("fa-xmark");
+
+    } else {
+
+        menuIcon.classList.remove("fa-xmark");
+        menuIcon.classList.add("fa-bars");
+
+    }
+
+});
+
+const navItems = document.querySelectorAll(".nav-links a");
+
+navItems.forEach(item => {
+
+    item.addEventListener("click", () => {
+
+        navLinks.classList.remove("active");
+
+        menuIcon.classList.remove("fa-xmark");
+        menuIcon.classList.add("fa-bars");
+
+    });
+
+});
+   </script>
+</body>
+</html>

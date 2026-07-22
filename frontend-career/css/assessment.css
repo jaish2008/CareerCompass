@@ -1,0 +1,250 @@
+/* ===========================
+   GENERAL
+=========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f5f7fb;
+    padding:30px;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+
+.page-header{
+    background:#fff;
+    padding:25px 35px;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    margin-bottom:30px;
+}
+
+.page-header h1{
+    color:#2563eb;
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+.page-header p{
+    color:#666;
+    font-size:18px;
+}
+
+/* ===========================
+   MAIN CONTAINER
+=========================== */
+
+.container{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:30px;
+
+    align-items:start;
+
+}
+
+/* ===========================
+   LEFT CARD
+=========================== */
+
+.assessment-form{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    border-left:6px solid #2563eb;
+
+}
+
+.assessment-form h2{
+
+    color:#2563eb;
+
+    margin-bottom:25px;
+
+}
+
+.assessment-form h3{
+
+    margin-top:30px;
+
+    margin-bottom:15px;
+
+    color:#222;
+
+}
+
+.assessment-form label{
+
+    display:block;
+
+    margin-top:15px;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+}
+
+.assessment-form input,
+
+.assessment-form select{
+
+    width:100%;
+
+    padding:14px;
+
+    border:1px solid #dcdcdc;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+}
+
+.assessment-form input:focus,
+
+.assessment-form select:focus{
+
+    outline:none;
+
+    border-color:#2563eb;
+
+}
+
+/* ===========================
+   BUTTON
+=========================== */
+
+#analyzeBtn{
+
+    margin-top:35px;
+
+    width:100%;
+
+    padding:16px;
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+}
+
+#analyzeBtn:hover{
+
+    background:#174bc8;
+
+}
+
+/* ===========================
+   RIGHT CARD
+=========================== */
+
+.assessment-preview{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    border-left:6px solid #2563eb;
+
+    position:sticky;
+
+    top:30px;
+
+}
+
+.assessment-preview h2{
+
+    color:#2563eb;
+
+    font-size:34px;
+
+    margin-bottom:15px;
+
+}
+
+.assessment-preview h3{
+
+    margin-top:20px;
+
+    margin-bottom:12px;
+
+}
+
+.assessment-preview p{
+
+    margin:10px 0;
+
+    color:#444;
+
+    line-height:1.6;
+
+}
+
+.assessment-preview hr{
+
+    margin:18px 0;
+
+    border:none;
+
+    border-top:1px solid #ddd;
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:1000px){
+
+.container{
+
+grid-template-columns:1fr;
+
+}
+
+.assessment-preview{
+
+position:static;
+
+}
+
+.page-header h1{
+
+font-size:32px;
+
+}
+
+}
