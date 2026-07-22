@@ -23,9 +23,13 @@
 
     <nav class="sidebar-menu">
 
-        <a href="pages/dashboard.html" class="active"><i class="fa-solid fa-house"></i> Dashboard</a>
+        <a href="dashboard.html" class="active">
+  <i class="fa-solid fa-house"></i> Dashboard
+</a>
 
-        <a href="assessment.html"><i class="fa-solid fa-bullseye"></i> Career Assessment</a>
+        <a href="career-quiz.html">
+  <i class="fa-solid fa-bullseye"></i> Career Quiz
+</a>
 
         <a href="resume.html"><i class="fa-solid fa-file-lines"></i> Resume Builder</a>
 
@@ -33,13 +37,21 @@
 <a href="github.html"><i class="fa-brands fa-github"></i> GitHub Analyzer</a>
         <a href="roadmap.html"><i class="fa-solid fa-road"></i> Skill Roadmap</a>
 
-        <a href="#"><i class="fa-solid fa-calendar-days"></i> Learning Planner</a>
+        <a href="learning-planner.html">
+  <i class="fa-solid fa-calendar-days"></i> Learning Planner
+</a>
 
-        <a href="#"><i class="fa-solid fa-briefcase"></i> Internship Tracker</a>
+        <a href="interview-trainer.html"><i class="fa-solid fa-comments"></i> Interview Trainer</a>
+        <!--<a href="internship-tracker.html"><i class="fa-solid fa-briefcase"></i> Internship Tracker</a>
 
         <a href="#"><i class="fa-solid fa-robot"></i> AI Assistant</a>
 
-        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a> -->
+
+        <button type="button" id="logoutButton" class="sidebar-logout">
+  <i class="fa-solid fa-right-from-bracket"></i>
+  Logout
+</button>
 
     </nav>
 
@@ -91,9 +103,8 @@
 
         <h3>Placement Readiness</h3>
 
-        <h2>78%</h2>
-
-        <p>+8% this month</p>
+        <h2>Not calculated</h2>
+        <p>Complete the Career Quiz</p>
 
     </div>
 
@@ -101,9 +112,8 @@
 
         <h3>Resume Score</h3>
 
-        <h2>84%</h2>
-
-        <p>ATS Friendly</p>
+        <h2>Not analyzed</h2>
+        <p>Analyze your resume</p>
 
     </div>
 
@@ -111,9 +121,8 @@
 
         <h3>GitHub Health</h3>
 
-        <h2>91%</h2>
-
-        <p>Excellent Profile</p>
+        <h2>Not connected</h2>
+        <p>Analyze your GitHub profile</p>
 
     </div>
 
@@ -344,11 +353,11 @@
     <div class="notification-list">
 
         <div class="notification-item">
-            🎉 Resume Score improved to <strong>84%</strong>
+            🎯 Complete your Career Quiz to receive career recommendations.
         </div>
 
         <div class="notification-item">
-            💼 New Frontend Internship available.
+            📄 Analyze your resume to generate an ATS-readiness score.
         </div>
 
         <div class="notification-item">

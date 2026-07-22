@@ -1,6 +1,10 @@
 "use strict";
 
-const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL =
+  ["127.0.0.1", "localhost"].includes(window.location.hostname) &&
+  window.location.port !== "5000"
+    ? "http://127.0.0.1:5000"
+    : window.location.origin;
 
 
 /* =====================================================
@@ -144,4 +148,23 @@ if (chartCanvas) {
             }
         }
     });
+}
+
+const logoutButton = document.getElementById("logoutButton");
+
+if (logoutButton) {
+  logoutButton.addEventListener("click", async () => {
+    logoutButton.disabled = true;
+
+    try {
+      await fetch(`${API_BASE_URL}/api/logout`, {
+        method: "POST",
+        credentials: "include"
+      });
+    } catch (error) {
+      console.error("Logout request failed:", error);
+    } finally {
+      window.location.replace("login.html");
+    }
+  });
 }
