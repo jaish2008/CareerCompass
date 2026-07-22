@@ -175,3 +175,22 @@ textarea { resize: vertical; margin-top: 4px; }
 .interview-back-link:hover {
   text-decoration: underline;
 }
+
+.interview-load-error {
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.history-empty {
+  margin: 0;
+  padding: 14px 0;
+  color: #64748b;
+  font-size: 14px;
+  text-align: center;
+}

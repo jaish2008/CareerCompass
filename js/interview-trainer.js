@@ -1,3 +1,5 @@
+
+
 /* =========================================================
    QUESTION BANK
    Each question carries "keywords": concepts a strong answer
@@ -148,6 +150,9 @@ function getQuestions(track, round, difficulty) {
   return CODING_QUESTIONS[track][difficulty];
 }
 
+const API_BASE_URL = "http://127.0.0.1:5000";
+
+let interviewReady = false;
 /* =========================================================
    STATE
    ========================================================= */
@@ -193,6 +198,95 @@ const sumCareer = el("sumCareer");
 const sumRound = el("sumRound");
 const sumProgress = el("sumProgress");
 const historyList = el("historyList");
+startBtn.disabled = true;
+startBtn.textContent = "Loading Interview Trainer...";
+
+async function requestJSON(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: "include",
+    ...options
+  });
+
+  let result = {};
+
+  try {
+    result = await response.json();
+  } catch (error) {
+    throw new Error("The server returned an invalid response.");
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      result.message || "The request could not be completed."
+    );
+  }
+
+  return result;
+}
+
+
+async function loadInterviewHistory() {
+  const result = await requestJSON(
+    `${API_BASE_URL}/api/interview-attempts`
+  );
+
+  return Array.isArray(result.attempts)
+    ? result.attempts
+    : [];
+}
+
+
+async function saveInterviewAttempt(attemptData) {
+  const result = await requestJSON(
+    `${API_BASE_URL}/api/interview-attempts`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(attemptData)
+    }
+  );
+
+  return result.attempt;
+}
+
+
+async function initializeInterviewTrainer() {
+  try {
+    const authResult = await requestJSON(
+      `${API_BASE_URL}/api/me`
+    );
+
+    if (!authResult.authenticated || !authResult.user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    state.history = await loadInterviewHistory();
+
+    interviewReady = true;
+    startBtn.disabled = false;
+    startBtn.textContent = "Start Interview";
+
+    renderHistory();
+  } catch (error) {
+    console.error(
+      "Interview Trainer initialization failed:",
+      error
+    );
+
+    startBtn.disabled = true;
+    startBtn.textContent = "Interview Trainer Unavailable";
+
+    const warning = document.createElement("div");
+    warning.className = "interview-load-error";
+    warning.textContent =
+      "The Interview Trainer could not connect to the server.";
+
+    setupPanel.prepend(warning);
+  }
+}
 
 /* =========================================================
    SPEECH SYNTHESIS (reads the question aloud)
@@ -289,6 +383,10 @@ stopVoiceBtn.addEventListener("click", () => {
    INTERVIEW FLOW
    ========================================================= */
   startBtn.addEventListener("click", async () => {
+      if (!interviewReady) {
+    return;
+  }
+
   state.track = careerSelect.value;
   state.round = roundSelect.value;
   state.difficulty = difficultySelect.value;
@@ -523,7 +621,7 @@ function heuristicGrade(question, answer) {
 /* =========================================================
    FINAL REPORT
    ========================================================= */
-function finishInterview() {
+async function finishInterview() {
   window.speechSynthesis.cancel();
   questionPanel.classList.add("hidden");
   reportPanel.classList.remove("hidden");
@@ -565,14 +663,38 @@ function finishInterview() {
   fillList("strengthsList", strengths);
   fillList("improveList", improvements);
 
-  state.history.push({
-    track: state.track,
-    round: state.round,
-    difficulty: state.difficulty,
-    readinessScore,
-    date: new Date().toLocaleDateString()
+  const attemptPayload = {
+  track: state.track,
+  round: state.round,
+  difficulty: state.difficulty,
+  readinessScore,
+  communication: Number(comm.toFixed(2)),
+  technical: Number(tech.toFixed(2)),
+  confidence: Number(conf.toFixed(2)),
+  strengths,
+  improvements
+};
+
+try {
+  const savedAttempt = await saveInterviewAttempt(
+    attemptPayload
+  );
+
+  state.history.unshift(savedAttempt);
+} catch (error) {
+  console.error(
+    "Interview attempt database save failed:",
+    error
+  );
+
+  // Keep the current result visible even if saving fails.
+  state.history.unshift({
+    ...attemptPayload,
+    date: new Date().toISOString()
   });
-  renderHistory();
+}
+
+renderHistory();
 }
 
 function starString(avg) {
@@ -591,12 +713,42 @@ function fillList(id, items) {
 }
 
 function renderHistory() {
-  if (state.history.length === 0) return;
-  historyList.innerHTML = "";
-  state.history.slice().reverse().forEach(attempt => {
+  historyList.replaceChildren();
+
+  if (state.history.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.className = "history-empty";
+    emptyMessage.textContent =
+      "No completed interview attempts yet.";
+
+    historyList.appendChild(emptyMessage);
+    return;
+  }
+
+  state.history.slice(0, 20).forEach((attempt) => {
     const row = document.createElement("div");
     row.className = "history-row";
-    row.innerHTML = `<span>${attempt.date} · ${attempt.track} (${attempt.round})</span><strong>${attempt.readinessScore}%</strong>`;
+
+    const details = document.createElement("span");
+
+    let formattedDate = "Unknown date";
+
+    if (attempt.date) {
+      const parsedDate = new Date(attempt.date);
+
+      if (!Number.isNaN(parsedDate.getTime())) {
+        formattedDate = parsedDate.toLocaleDateString();
+      }
+    }
+
+    details.textContent =
+      `${formattedDate} · ${attempt.track} (${attempt.round})`;
+
+    const score = document.createElement("strong");
+    score.textContent =
+      `${Number(attempt.readinessScore) || 0}%`;
+
+    row.append(details, score);
     historyList.appendChild(row);
   });
 }
@@ -608,3 +760,5 @@ el("retryBtn").addEventListener("click", () => {
   reportPanel.classList.add("hidden");
   setupPanel.classList.remove("hidden");
 });
+
+initializeInterviewTrainer();
