@@ -695,47 +695,8 @@
       backdrop.addEventListener('click', closeSidebar);
 
       // ---- Search bar (live filter — actually works now) ----
-      console.log('[CareerCompass] Phase 3 script loaded.');
-
-      const searchInput = document.getElementById('dashboardSearch');
-      console.log('[CareerCompass] search input element found:', searchInput);
-
-      if (!searchInput) {
-        console.error('[CareerCompass] ERROR: no element with id="dashboardSearch" exists on this page. The search box in your HTML is missing that id attribute, or this script is running on the wrong page.');
-      } else {
-        const searchableSelectors = [
-          '#taskList li',
-          '#recommendationGrid .recommendation-card',
-          '#deadlinesGrid .deadline-card',
-          '#notificationList .notification-item'
-        ];
-
-        // sanity-check each target list exists and log how many items it found
-        searchableSelectors.forEach(sel=>{
-          const count = document.querySelectorAll(sel).length;
-          console.log(`[CareerCompass] selector "${sel}" matched ${count} element(s)`);
-        });
-
-        searchInput.addEventListener('input', ()=>{
-          const query = searchInput.value.trim().toLowerCase();
-          console.log('[CareerCompass] search fired, query =', JSON.stringify(query));
-          let anyVisible = false;
-
-          searchableSelectors.forEach(sel=>{
-            document.querySelectorAll(sel).forEach(el=>{
-              const haystack = (el.dataset.searchable || el.textContent).toLowerCase();
-              const matches = query === '' || haystack.includes(query);
-              el.style.display = matches ? '' : 'none';
-              if(matches) anyVisible = true;
-            });
-          });
-
-          document.getElementById('noResultsMsg').style.display =
-            (query !== '' && !anyVisible) ? 'block' : 'none';
-        });
-
-        console.log('[CareerCompass] search listener attached successfully.');
-      }
+     
+       
 
       // ---- confetti ----
       const canvas = document.getElementById('confettiCanvas');

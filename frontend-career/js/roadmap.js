@@ -4,23 +4,108 @@
 // Edit roadmap-data.js to change page content — never edit the HTML.
 // ===========================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-  if (typeof roadmapData === "undefined") {
-    console.error("roadmap-data.js not loaded — nothing to render.");
-    return;
-  }
+    // Existing project-timeline sections (from roadmap-data.js)
+    if (typeof roadmapData !== "undefined") {
+        renderScopeBanner(roadmapData.scope);
+        renderStats(computeStats(roadmapData));
+        renderTeam(roadmapData.team);
+        renderTimeline(roadmapData.timeline);
+        renderFutureScope(roadmapData.futureScope);
+        initTimelineReveal();
+        initStatCounters();
+    }
 
-  renderScopeBanner(roadmapData.scope);
-  renderStats(computeStats(roadmapData));
-  renderTeam(roadmapData.team);
-  renderTimeline(roadmapData.timeline);
-  renderFutureScope(roadmapData.futureScope);
+    // Personalized career roadmap (from latest assessment)
+    await loadPersonalizedRoadmap();
 
-  initTimelineReveal();
-  initStatCounters();
 });
 
+
+async function loadPersonalizedRoadmap() {
+    const container = document.getElementById("personalized-roadmap-container");
+    if (!container) return;
+
+    try {
+        const response = await fetch("http://127.0.0.1:5002/api/roadmap/latest");
+        const data = await response.json();
+
+        if (!data.has_assessment) {
+            renderNoAssessmentCard(container);
+            return;
+        }
+
+        renderPersonalizedRoadmap(container, data);
+
+    } catch (error) {
+        console.error(error);
+        renderNoAssessmentCard(container);
+    }
+}
+
+
+function renderNoAssessmentCard(container) {
+    container.innerHTML = `
+        <div class="no-assessment-card">
+            <div class="no-assessment-icon">🧭</div>
+            <h3>Personalized Roadmap Not Available</h3>
+            <p>Complete your Career Assessment first so CareerCompass can generate a
+               personalized learning roadmap based on your skills, strengths, and career goals.</p>
+            <a href="assessment.html" class="take-assessment-btn">Take Career Assessment</a>
+        </div>
+    `;
+}
+
+
+function renderPersonalizedRoadmap(container, data) {
+    const stepsHtml = data.roadmap_steps.map(step => `
+        <div class="roadmap-step-card">
+            <span class="roadmap-step-number">${escapeHtml(step.step_number)}</span>
+            <h4>${escapeHtml(step.title)}</h4>
+            <p>${escapeHtml(step.description)}</p>
+        </div>
+    `).join("");
+
+    const suggestionsHtml = (data.suggestions || []).map(s => `<li>${escapeHtml(s)}</li>`).join("");
+
+    container.innerHTML = `
+        <div class="roadmap-summary-card">
+            <div class="summary-item">
+                <span class="summary-label">Domain</span>
+                <span class="summary-value">${escapeHtml(data.recommended_domain)}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Status</span>
+                <span class="summary-value">${escapeHtml(data.placement_status)}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Readiness</span>
+                <span class="summary-value">${escapeHtml(data.placement_readiness)}%</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Confidence</span>
+                <span class="summary-value">${escapeHtml(data.confidence_score)}%</span>
+            </div>
+        </div>
+
+        <span class="suggestion-toggle" id="suggestion-toggle">💡 Show suggestions</span>
+        <ul class="suggestion-list" id="suggestion-list">${suggestionsHtml}</ul>
+
+        <div class="roadmap-steps-grid">
+            ${stepsHtml}
+        </div>
+    `;
+
+    const toggle = document.getElementById("suggestion-toggle");
+    const list = document.getElementById("suggestion-list");
+    toggle.addEventListener("click", () => {
+        list.classList.toggle("open");
+        toggle.textContent = list.classList.contains("open")
+            ? "💡 Hide suggestions"
+            : "💡 Show suggestions";
+    });
+}
 
 // ---------------------------------------------------------
 // Derive the 4 stat cards from the timeline + team, unless

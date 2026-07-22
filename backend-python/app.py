@@ -4,9 +4,15 @@ from dotenv import load_dotenv
 import os
 import requests
 
+from assessment_routes import assessment_bp
+from roadmap_routes import roadmap_bp
+
 load_dotenv()
 app = Flask(__name__)
 CORS(app)
+
+app.register_blueprint(assessment_bp, url_prefix="/api/assessment")
+app.register_blueprint(roadmap_bp, url_prefix="/api/roadmap")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
@@ -36,5 +42,5 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 5001))
+    port = int(os.getenv("PORT", 5002))
     app.run(port=port, debug=True)

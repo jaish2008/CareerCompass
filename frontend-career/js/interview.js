@@ -68,7 +68,7 @@ Respond with ONLY a JSON array, no other text, in this exact shape:
 [{"text": "<question>", "keywords": ["<keyword>", "..."]}, ...]`;
 
   try {
-   const response = await fetch("http://localhost:5000/api/ai/interview-questions", {
+   const response = await fetch("http://localhost:5002/api/ai/interview-questions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt, track, round, difficulty })
@@ -453,7 +453,7 @@ Read the answer for its actual meaning, not for exact keyword matches — a cand
 Respond with ONLY a JSON object, no other text, in this exact shape:
 {"communication": <1-5>, "technical": <1-5>, "confidence": <1-5>, "verdict": "<good|ok|weak>", "feedback": "<one sentence>", "missedKeywords": ["<concept>", "..."]}`;
 
-const response = await fetch("http://localhost:5000/api/ai/grade-answer", {
+const response = await fetch("http://localhost:5002/api/ai/grade-answer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt })

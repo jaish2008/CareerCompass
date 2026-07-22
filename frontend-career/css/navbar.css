@@ -1,0 +1,108 @@
+/* ===========================
+   CareerCompass — Top Navbar
+   Self-contained, no dependency on dashboard.css
+   =========================== */
+
+.cc-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 12px 28px;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.cc-navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    text-decoration: none;
+}
+
+.cc-navbar-brand span {
+    font-size: 20px;
+}
+
+.cc-navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cc-navbar-links a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4b5563;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+}
+
+.cc-navbar-links a:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.cc-navbar-links a.active {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.cc-navbar-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+}
+
+.cc-navbar-toggle span {
+    width: 22px;
+    height: 2px;
+    background: #111827;
+    border-radius: 2px;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 900px) {
+    .cc-navbar-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 10px 16px;
+        gap: 2px;
+        display: none;
+    }
+
+    .cc-navbar-links.open {
+        display: flex;
+    }
+
+    .cc-navbar-links a {
+        padding: 12px 14px;
+    }
+
+    .cc-navbar-toggle {
+        display: flex;
+    }
+}

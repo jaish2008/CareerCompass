@@ -1,0 +1,21 @@
+{
+  "coding_skill_score": [
+    20.0,
+    63.48670901383727,
+    76.41558586119984,
+    100.0
+  ],
+  "communication_skill_score": [
+    20.0,
+    61.98672329697697,
+    74.00980106122064,
+    100.0
+  ],
+  "logical_reasoning_score": [
+    20.0,
+    59.5438032630749,
+    72.45091466272294,
+    100.0
+  ],
+  "note": "1=Beginner range, 2=Intermediate range, 3=Advanced range"
+}

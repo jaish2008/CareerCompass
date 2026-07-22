@@ -3,14 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareerCompass — Project Roadmap</title>
+    <title>CareerCompass — My Career Roadmap</title>
 
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/roadmap.css">
+    <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
 <body>
+
+    <nav class="cc-navbar">
+    <a href="dashboard.html" class="cc-navbar-brand">
+        <span>🧭</span> CareerCompass
+    </a>
+
+    <div class="cc-navbar-links" id="cc-navbar-links">
+        <a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a>
+        <a href="assessment.html"><i class="fa-solid fa-bullseye"></i> Assessment</a>
+        <a href="resume.html"><i class="fa-solid fa-file-lines"></i> Resume</a>
+        <a href="github.html"><i class="fa-brands fa-github"></i> GitHub</a>
+        <a href="interview.html"><i class="fa-solid fa-microphone"></i> Interview</a>
+        <a href="roadmap.html"><i class="fa-solid fa-road"></i> Roadmap</a>
+        <a href="planner.html"><i class="fa-solid fa-calendar-days"></i> Planner</a>
+    </div>
+
+    <button class="cc-navbar-toggle" id="cc-navbar-toggle">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
 
     <div class="dashboard-container">
 
@@ -28,7 +49,7 @@
                 <a href="resume.html"><i class="fa-solid fa-file-lines"></i> Resume Builder</a>
                 <a href="github.html"><i class="fa-brands fa-github"></i> GitHub Analyzer</a>
                 <a href="interview.html"><i class="fa-solid fa-microphone"></i> Interview Prep</a>
-                <a href="roadmap.html" class="active"><i class="fa-solid fa-road"></i> Project Roadmap</a>
+                <a href="roadmap.html" class="active"><i class="fa-solid fa-road"></i> My Roadmap</a>
                 <a href="planner.html"><i class="fa-solid fa-calendar-days"></i> Learning Planner</a>
                 <a href="#"><i class="fa-solid fa-briefcase"></i> Internship Tracker</a>
                 <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
@@ -42,8 +63,8 @@
             <!-- Top Navigation -->
             <header class="topbar">
                 <div class="welcome">
-                    <h1>Project Roadmap 🧭</h1>
-                    <p>Development plan, scope and milestones for CareerCompass.</p>
+                    <h1>My Career Roadmap 🧭</h1>
+                    <p>Your personalized progress across quiz, resume, GitHub, interviews and internships.</p>
                 </div>
 
                 <div class="topbar-actions">
@@ -51,46 +72,45 @@
                     <div class="profile">👤</div>
                 </div>
             </header>
-
-            <!-- Scope Banner (rendered from roadmapData.scope) -->
+             <!-- Personalized Career Roadmap (from latest assessment) -->
+            <section class="personalized-roadmap">
+                <h2 class="section-heading">🎯 Your Personalized Roadmap</h2>
+                <div id="personalized-roadmap-container">
+                    <!-- filled by roadmap.js: either roadmap steps or the CTA card -->
+                </div>
+            <!-- Scope Banner (your overall progress summary) -->
             <section class="scope-banner" id="scope-banner">
                 <!-- filled by roadmap.js -->
             </section>
 
-            <!-- Milestone Stats (derived from roadmapData.timeline / team) -->
+            <!-- Milestone Stats -->
             <section class="stats" id="stats">
                 <!-- filled by roadmap.js -->
             </section>
 
-            <!-- Team Split -->
-            <section class="team-section">
-                <h2 class="section-heading">Team &amp; Ownership</h2>
-                <div class="team-grid" id="team-grid">
-                    <!-- filled by roadmap.js -->
-                </div>
-            </section>
-
-            <!-- Timeline -->
+            <!-- Timeline: your 5 career steps -->
             <section class="timeline-section">
-                <h2 class="section-heading">Development Timeline</h2>
+                <h2 class="section-heading">Your Career Steps</h2>
                 <div class="timeline" id="timeline">
                     <!-- filled by roadmap.js -->
                 </div>
             </section>
 
-            <!-- Future Scope -->
+            <!-- What to do next -->
             <section class="recommendations">
-                <h2>🚀 Future Scope</h2>
+                <h2>🚀 What To Do Next</h2>
                 <div class="recommendation-grid" id="recommendation-grid">
                     <!-- filled by roadmap.js -->
                 </div>
             </section>
-
+            <!-- Personalized Career Roadmap (from latest assessment) -->
+           
         </main>
 
     </div>
 
     <script src="../js/roadmap-data.js"></script>
     <script src="../js/roadmap.js"></script>
+    <script src="../js/navbar.js"></script>
 </body>
 </html>
