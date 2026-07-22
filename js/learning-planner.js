@@ -9,7 +9,11 @@
    Storage keys: careerCompassPlanner, careerCompassStreak, careerCompassXP
    ============================================================ */
 
-const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL =
+  ["127.0.0.1", "localhost"].includes(window.location.hostname) &&
+  window.location.port !== "5000"
+    ? "http://127.0.0.1:5000"
+    : window.location.origin;
 
 let STORAGE_KEY = "";
 let STREAK_KEY = "";

@@ -1,13 +1,13 @@
 import json
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 
-from flask import Flask
 import joblib
 import pandas as pd
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from flask_login import (
     LoginManager,
@@ -30,6 +30,8 @@ from werkzeug.security import (
 # ==========================================
 
 load_dotenv()
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -597,16 +599,55 @@ except FileNotFoundError as error:
 
 
 # ==========================================
-# Home Route
+# Frontend Routes
 # ==========================================
 
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({
-        "message": "CareerCompass ML API is running",
-        "status": "success",
-        "model_version": "V4"
-    })
+    return send_from_directory(
+        str(PROJECT_ROOT),
+        "index.html"
+    )
+
+
+@app.route("/pages/<path:filename>", methods=["GET"])
+def serve_page(filename):
+    return send_from_directory(
+        str(PROJECT_ROOT / "pages"),
+        filename
+    )
+
+
+@app.route("/css/<path:filename>", methods=["GET"])
+def serve_css(filename):
+    return send_from_directory(
+        str(PROJECT_ROOT / "css"),
+        filename
+    )
+
+
+@app.route("/js/<path:filename>", methods=["GET"])
+def serve_javascript(filename):
+    return send_from_directory(
+        str(PROJECT_ROOT / "js"),
+        filename
+    )
+
+
+@app.route("/assets/<path:filename>", methods=["GET"])
+def serve_asset(filename):
+    return send_from_directory(
+        str(PROJECT_ROOT / "assets"),
+        filename
+    )
+
+
+@app.route("/images/<path:filename>", methods=["GET"])
+def serve_image(filename):
+    return send_from_directory(
+        str(PROJECT_ROOT / "images"),
+        filename
+    )
 
 
 # ==========================================

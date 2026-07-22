@@ -10,7 +10,11 @@ const analyzeBtn = document.getElementById("analyzeBtn");
 
 let repositories = [];
 
-const CAREER_API_URL = "http://127.0.0.1:5000/predict";
+const CAREER_API_URL =
+  ["127.0.0.1", "localhost"].includes(window.location.hostname) &&
+  window.location.port !== "5000"
+    ? "http://127.0.0.1:5000/predict"
+    : `${window.location.origin}/predict`;
 
 /* ===============================
    Analyze Button
