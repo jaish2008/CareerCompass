@@ -6,8 +6,6 @@ from firebase_admin import credentials
 import os
 import json
 import traceback
-from assessment_routes import assessment_bp
-from roadmap_routes import roadmap_bp
 
 load_dotenv()
 
@@ -25,8 +23,6 @@ firebase_admin.initialize_app(cred)
 app = Flask(__name__)
 CORS(app)
 
-app.register_blueprint(assessment_bp, url_prefix="/api/assessment")
-app.register_blueprint(roadmap_bp, url_prefix="/api/roadmap")
 
 # --- Routes (to be created) ---
 from internship_routes import internship_bp
