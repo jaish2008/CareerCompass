@@ -347,31 +347,6 @@ VALID_INTERVIEW_DIFFICULTIES = {
     "Advanced"
 }
 
-def serialize_interview_attempt(attempt):
-    try:
-        strengths = json.loads(attempt.strengths or "[]")
-    except (json.JSONDecodeError, TypeError):
-        strengths = []
-
-    try:
-        improvements = json.loads(attempt.improvements or "[]")
-    except (json.JSONDecodeError, TypeError):
-        improvements = []
-
-    return {
-        "id": attempt.id,
-        "track": attempt.track,
-        "round": attempt.round_type,
-        "difficulty": attempt.difficulty,
-        "readinessScore": attempt.readiness_score,
-        "communication": attempt.communication_score,
-        "technical": attempt.technical_score,
-        "confidence": attempt.confidence_score,
-        "strengths": strengths,
-        "improvements": improvements,
-        "date": attempt.created_at.isoformat()
-    }
-
 def get_or_create_career_profile(user_id):
     """Return the authenticated user's career profile."""
     profile = CareerProfile.query.filter_by(user_id=user_id).first()
@@ -603,6 +578,7 @@ except FileNotFoundError as error:
 # ==========================================
 
 @app.route("/", methods=["GET"])
+@app.route("/index.html", methods=["GET"])
 def home():
     return send_from_directory(
         str(PROJECT_ROOT),
@@ -885,7 +861,7 @@ def logout():
     return jsonify({
         "status": "success",
         "message": "Logout successful.",
-        "redirect": "/index.html"
+        "redirect": "/"
     }), 200
 
 
@@ -926,16 +902,21 @@ def get_planner():
         }
 
         if profile.planner_data:
-            try:
-                stored_data = json.loads(profile.planner_data)
+            stored_data = profile.planner_data
 
-                if isinstance(stored_data, dict):
-                    planner.update(stored_data)
-            except (json.JSONDecodeError, TypeError):
-                app.logger.warning(
-                    "Invalid planner data for user %s",
-                    current_user.id
-                )
+            if isinstance(stored_data, str):
+                try:
+                    stored_data = json.loads(stored_data)
+                except (json.JSONDecodeError, TypeError):
+                    stored_data = {}
+
+                    app.logger.warning(
+                        "Invalid planner data for user %s",
+                        current_user.id
+                    )
+
+            if isinstance(stored_data, dict):
+                planner.update(stored_data)
 
         return jsonify({
             "status": "success",
@@ -967,8 +948,8 @@ def update_planner():
     try:
         profile = get_or_create_career_profile(current_user.id)
 
-        profile.planner_data = json.dumps(clean_data)
-        profile.updated_at = datetime.utcnow()
+        profile.planner_data = clean_data
+        profile.updated_at = datetime.now(timezone.utc)
 
         db.session.commit()
 
