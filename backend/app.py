@@ -1,5 +1,6 @@
 import json
 import os
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -276,13 +277,11 @@ class InterviewAttempt(db.Model):
         nullable=False
     )
 
-    VALID_INTERVIEW_TRACKS = {
+VALID_INTERVIEW_TRACKS = {
     "Frontend Developer",
     "Backend Developer",
     "Data Analyst / ML"
 }
-
-
 
 VALID_INTERVIEW_ROUNDS = {
     "HR",
@@ -328,24 +327,6 @@ def serialize_interview_attempt(attempt):
         )
     }
 
-VALID_INTERVIEW_TRACKS = {
-    "Frontend Developer",
-    "Backend Developer",
-    "Data Analyst / ML"
-}
-
-
-VALID_INTERVIEW_ROUNDS = {
-    "HR",
-    "Technical",
-    "Coding"
-}
-
-VALID_INTERVIEW_DIFFICULTIES = {
-    "Beginner",
-    "Intermediate",
-    "Advanced"
-}
 
 def get_or_create_career_profile(user_id):
     """Return the authenticated user's career profile."""
@@ -551,26 +532,51 @@ FEATURE_FILE = os.path.join(
 
 
 # ==========================================
-# Load Model and Feature Schema
+# Load Model and Feature Schema in Background
 # ==========================================
 
-print("Loading CareerCompass ML model...")
+model = None
+features = []
+model_loading = True
+model_load_error = None
 
-try:
-    model = joblib.load(MODEL_FILE)
 
-    features = joblib.load(FEATURE_FILE)
+def load_model_in_background():
+    """Load the large ML model without blocking Render port startup."""
+    global model, features, model_loading, model_load_error
 
-    print("Model loaded successfully.")
-    print("Model file:", MODEL_FILE)
-    print("Number of features:", len(features))
+    print("Loading CareerCompass ML model in background...")
 
-except FileNotFoundError as error:
-    print("Model file was not found.")
-    print(error)
+    try:
+        loaded_model = joblib.load(MODEL_FILE)
+        loaded_features = joblib.load(FEATURE_FILE)
 
-    model = None
-    features = []
+        model = loaded_model
+        features = loaded_features
+        model_load_error = None
+
+        print("Model loaded successfully.")
+        print("Model file:", MODEL_FILE)
+        print("Number of features:", len(features))
+
+    except Exception as error:
+        model = None
+        features = []
+        model_load_error = str(error)
+
+        print("Model loading failed.")
+        print(error)
+
+    finally:
+        model_loading = False
+
+
+model_loader_thread = threading.Thread(
+    target=load_model_in_background,
+    name="career-model-loader",
+    daemon=True
+)
+model_loader_thread.start()
 
 
 # ==========================================
@@ -904,12 +910,12 @@ def get_planner():
         if profile.planner_data:
             stored_data = profile.planner_data
 
+            # Backward compatibility for records saved as JSON strings.
             if isinstance(stored_data, str):
                 try:
                     stored_data = json.loads(stored_data)
                 except (json.JSONDecodeError, TypeError):
                     stored_data = {}
-
                     app.logger.warning(
                         "Invalid planner data for user %s",
                         current_user.id
@@ -931,7 +937,7 @@ def get_planner():
             "message": "Unable to load Planner data."
         }), 500
 
-# authenticated API routes---------/
+# Authenticated Planner API routes
 @app.route("/api/planner", methods=["PUT"])
 @login_required
 def update_planner():
@@ -974,11 +980,22 @@ def update_planner():
 
 @app.route("/health", methods=["GET"])
 def health():
+    if model_load_error:
+        return jsonify({
+            "status": "error",
+            "model_loaded": False,
+            "model_loading": False,
+            "model_error": model_load_error,
+            "feature_count": 0
+        }), 500
+
     return jsonify({
         "status": "healthy",
         "model_loaded": model is not None,
+        "model_loading": model_loading,
+        "model_error": None,
         "feature_count": len(features)
-    })
+    }), 200
 
 
 # ==========================================
@@ -987,10 +1004,27 @@ def health():
 
 @app.route("/features", methods=["GET"])
 def get_features():
+    if model_loading:
+        return jsonify({
+            "status": "loading",
+            "message": "ML model is still loading.",
+            "feature_count": 0,
+            "features": []
+        }), 503
+
+    if model_load_error:
+        return jsonify({
+            "status": "error",
+            "message": "ML model could not be loaded.",
+            "feature_count": 0,
+            "features": []
+        }), 500
+
     return jsonify({
+        "status": "success",
         "feature_count": len(features),
         "features": features
-    })
+    }), 200
 
 
 # ==========================================
@@ -1000,11 +1034,26 @@ def get_features():
 @app.route("/predict", methods=["POST"])
 def predict_career():
 
-    if model is None:
+    if model_loading:
+        return jsonify({
+            "status": "loading",
+            "message": (
+                "The ML model is still loading. "
+                "Please try again shortly."
+            )
+        }), 503
+
+    if model_load_error:
         return jsonify({
             "status": "error",
-            "message": "ML model is not loaded"
+            "message": "The ML model could not be loaded."
         }), 500
+
+    if model is None or not features:
+        return jsonify({
+            "status": "error",
+            "message": "ML model is unavailable."
+        }), 503
 
     try:
         input_data = request.get_json()
