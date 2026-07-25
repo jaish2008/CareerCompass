@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Career Assessment | CareerCompass</title>
+
+    <link rel="stylesheet" href="../css/assessment.css">
+
+</head>
+
+<body>
+
+    <!-- Header -->
+
+    <header class="page-header">
+
+        <h1>🧭 CareerCompass Career Assessment</h1>
+
+        <p>Evaluate your skills and discover your career readiness.</p>
+
+    </header>
+
+
+    <div class="container">
+
+        <!-- ================= LEFT SIDE ================= -->
+
+        <div class="assessment-form">
+
+            <h2>Career Assessment</h2>
+
+            <!-- Personal Information -->
+
+            <h3>Personal Information</h3>
+
+            <label>Full Name</label>
+            <input type="text" id="name" placeholder="Enter your full name">
+
+            <label>Department</label>
+            <input type="text" id="department" placeholder="Computer Science Engineering">
+
+            <label>Semester</label>
+            <input type="number" id="semester" placeholder="3">
+
+            <label>CGPA</label>
+            <input type="number" step="0.01" id="cgpa" placeholder="8.50">
+
+
+            <!-- Technical Skills -->
+
+            <h3>Technical Skills</h3>
+
+            <label>Programming Skill</label>
+
+            <select id="programming">
+
+                <option value="">Select</option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Advanced</option>
+
+            </select>
+
+
+            <label>DSA Knowledge</label>
+
+            <select id="dsa">
+
+                <option value="">Select</option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Advanced</option>
+
+            </select>
+
+
+            <label>Web Development</label>
+
+            <select id="web">
+
+                <option value="">Select</option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Advanced</option>
+
+            </select>
+
+
+            <label>Database Knowledge</label>
+
+            <select id="database">
+
+                <option value="">Select</option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Advanced</option>
+
+            </select>
+
+
+            <!-- Communication -->
+
+            <h3>Communication Skills</h3>
+
+            <select id="communication">
+
+                <option value="">Select</option>
+                <option>Poor</option>
+                <option>Average</option>
+                <option>Good</option>
+                <option>Excellent</option>
+
+            </select>
+
+
+            <!-- Career Goal -->
+
+            <h3>Career Goal</h3>
+
+            <label>Preferred Career</label>
+
+            <select id="career">
+
+                <option value="">Select Career</option>
+                <option>Software Developer</option>
+                <option>Frontend Developer</option>
+                <option>Backend Developer</option>
+                <option>Full Stack Developer</option>
+                <option>Data Scientist</option>
+                <option>AI / ML Engineer</option>
+                <option>Cyber Security</option>
+                <option>Cloud Engineer</option>
+
+            </select>
+
+
+            <!-- Additional Information -->
+
+            <h3>Additional Information</h3>
+
+            <label>Study Hours Per Day</label>
+
+            <input type="number"
+                   id="hours"
+                   placeholder="5">
+
+
+            <label>Projects Completed</label>
+
+            <input type="number"
+                   id="projects"
+                   placeholder="3">
+
+
+            <label>GitHub Experience</label>
+
+            <select id="github">
+
+                <option value="">Select</option>
+                <option>Yes</option>
+                <option>No</option>
+
+            </select>
+
+
+            <button id="analyzeBtn">
+
+                Analyze My Career
+
+            </button>
+
+        </div>
+
+
+
+        <!-- ================= RIGHT SIDE ================= -->
+
+        <div class="assessment-preview">
+
+            <h2 id="previewName">
+
+                Your Name
+
+            </h2>
+
+            <hr>
+
+            <h3>Assessment Summary</h3>
+
+            <p><strong>Department:</strong> <span id="previewDepartment">-</span></p>
+
+            <p><strong>Semester:</strong> <span id="previewSemester">-</span></p>
+
+            <p><strong>CGPA:</strong> <span id="previewCGPA">-</span></p>
+
+            <hr>
+
+            <h3>Technical Skills</h3>
+
+            <p><strong>Programming:</strong> <span id="previewProgramming">-</span></p>
+
+            <p><strong>DSA:</strong> <span id="previewDSA">-</span></p>
+
+            <p><strong>Web Development:</strong> <span id="previewWeb">-</span></p>
+
+            <p><strong>Database:</strong> <span id="previewDatabase">-</span></p>
+
+            <p><strong>Communication:</strong> <span id="previewCommunication">-</span></p>
+
+            <hr>
+
+            <h3>Career Goal</h3>
+
+            <p id="previewCareer">-</p>
+
+            <hr>
+
+            <h3>ML Prediction (Coming Soon)</h3>
+
+            <p><strong>Placement Readiness:</strong> --</p>
+
+            <p><strong>Recommended Domain:</strong> --</p>
+
+            <p><strong>Confidence Score:</strong> --</p>
+
+        </div>
+
+    </div>
+
+    <script src="../js/assessment.js"></script>
+
+</body>
+
+</html>

@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CareerCompass</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="icon" href="images/logo.png">
 </head>
 
 <body>
 
 <header>
 
-    <nav>
+    <nav aria-label="Main Navigation">
 
         <!-- Brand -->
         <div class="nav-brand">
@@ -27,27 +29,38 @@
             <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="#features">Features</a></li>
-                    <li><a href="roadmap.html">Roadmap</a></li>
+                    <li><a href="pages/career-quiz.html">Career Quiz</a></li>
+                    <li><a href="pages/roadmap.html">Roadmap</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#contact">Contact</a></li>
+                    <li class="mobile-only"><a href="pages/login.html">Login</a></li>
+                    <li class="mobile-only"><a href="pages/signup.html">Get Started</a></li>
             </ul>
         </div>
+
+
+        <button class="menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         <!-- Navigation Actions -->
         <div class="nav-actions">
-            <a href="#">Login</a>
-            <a href="#">Get Started</a>
+            <a href="pages/login.html">Login</a>
+            <a href="pages/signup.html">Get Started</a>
         </div>
-    </nav>
-     <main>
 
+        
+    </nav>
+</header>
+     <main>
+<!-- Hero Section  -->
 <section class="hero">
 
     <div class="hero-left">
 
         <h2>
-            One Platform to
-            <span>Plan, Build, Track & Launch</span>
-            Your Career
+            One Platform to Plan,
+            <span> Build, Track & </span>
+            Launch Your Career
         </h2>
 
         <p>
@@ -58,11 +71,15 @@
 
         <div class="hero-buttons">
 
-            <a href="#" class="primary-btn">
+            <a href="pages/signup.html" class="primary-btn">
                 Get Started
             </a>
 
-            <a href="#" class="secondary-btn">
+            <a href="pages/career-quiz.html" class="secondary-btn">
+    Take Career Quiz
+</a>
+
+            <a href="#about" class="secondary-btn">
                 Learn More
             </a>
 
@@ -110,11 +127,292 @@ Today's Goal
     </div>
 
 </section>
+ <!-- Why CareerCompass -->
+  <section class="why" id="about">
+    <div class="section-container">
+    <div class="why-header">
+
+        <h2>Why CareerCompass?</h2>
+
+        <p>
+            Students often waste time switching between multiple websites for resumes,
+            projects, GitHub, interview preparation, learning roadmaps, and placement tracking.
+            CareerCompass brings everything together in one smart platform.
+        </p>
+
+    </div>
+
+    <div class="comparison-container">
+
+        <div class="comparison-card negative">
+
+            <h3>Without CareerCompass</h3>
+
+            <ul>
+
+                <li>❌ Confused about what to learn next</li>
+
+                <li>❌ Resume scattered across different versions</li>
+
+                <li>❌ GitHub portfolio incomplete</li>
+
+                <li>❌ No structured placement preparation</li>
+
+                <li>❌ Internship applications difficult to track</li>
+
+            </ul>
+
+        </div>
+
+        <div class="comparison-card positive">
+
+            <h3>With CareerCompass</h3>
+
+            <ul>
+
+                <li>✅ Personalized Learning Roadmap</li>
+
+                <li>✅ Smart Resume Builder</li>
+
+                <li>✅ GitHub Portfolio Analyzer</li>
+
+                <li>✅ Internship Tracker</li>
+
+                <li>✅ Placement Readiness Dashboard</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+    </div>
+
+  </section>
+
+  <!-- ================= FEATURES ================= -->
+
+<section class="features" id="features">
+    <div class="section-container">
+
+    <div class="section-title">
+
+        <h2>Powerful Features</h2>
+
+        <p>
+            Everything you need for placements, internships, skill development,
+            and career growth — all in one place.
+        </p>
+
+    </div>
+
+    <div class="feature-grid">
+
+       <a href="pages/career-quiz.html" class="feature-card feature-link">
+    <div class="feature-icon">🎯</div>
+    <h3>AI Career Quiz</h3>
+    <p>
+        Answer 15 questions and discover your top three
+        technology career matches.
+    </p>
+
+    <span class="feature-action">
+        Take Career Quiz →
+    </span>
+</a>
+
+        <div class="feature-card">
+            <div class="feature-icon">📄</div>
+            <h3>Resume Builder</h3>
+            <p>Create ATS-friendly resumes with live scoring.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🐙</div>
+            <h3>GitHub Analyzer</h3>
+            <p>Analyze repositories and improve your developer profile.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🛣️</div>
+            <h3>Skill Roadmap</h3>
+            <p>Get a personalized roadmap based on your career goal.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3>Learning Planner</h3>
+            <p>Generate weekly study plans automatically.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">💼</div>
+            <h3>Internship Tracker</h3>
+            <p>Track applications, interviews and placement status.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🎤</div>
+            <h3>Interview Preparation</h3>
+            <p>Practice HR, aptitude and technical interview questions.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Analytics Dashboard</h3>
+            <p>Visualize your complete learning and placement progress.</p>
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+
+<section class="how-it-works">
+
+    <div class="section-container">
+
+    <div class="section-title">
+        <h2>How CareerCompass Works</h2>
+        <p>
+            Follow these simple steps to become placement ready.
+        </p>
+    </div>
+
+    <div class="steps-container">
+
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Create Account</h3>
+            <p>Sign up and create your CareerCompass profile.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Complete Assessment</h3>
+            <p>Evaluate your current skills and career readiness.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Build Resume</h3>
+            <p>Create a professional ATS-friendly resume.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">4</div>
+            <h3>Follow Roadmap</h3>
+            <p>Learn the right skills in the right order.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">5</div>
+            <h3>Apply</h3>
+            <p>Track internships and placement applications.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">6</div>
+            <h3>Get Hired</h3>
+            <p>Monitor progress and become placement ready.</p>
+        </div>
+
+    </div>
+    </div>
+
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+
+<section class="testimonials">
+
+<div class="section-container">
+
+    <div class="section-title">
+    
+        <h2>What Students Say</h2>
+        <p>
+            CareerCompass helps students stay organized and placement focused.
+        </p>
+    </div>
+
+    <div class="testimonial-grid">
+
+        <div class="testimonial-card">
+            ⭐⭐⭐⭐⭐
+            <p>"CareerCompass made my placement preparation much more organized."</p>
+            <h4>Rahul Sharma</h4>
+            <span>Computer Science Student</span>
+        </div>
+
+        <div class="testimonial-card">
+            ⭐⭐⭐⭐⭐
+            <p>"The roadmap and internship tracker saved me a lot of time."</p>
+            <h4>Priya Singh</h4>
+            <span>Information Technology Student</span>
+        </div>
+
+        <div class="testimonial-card">
+            ⭐⭐⭐⭐⭐
+            <p>"Everything I needed for placements was available in one place."</p>
+            <h4>Aman Verma</h4>
+            <span>Electronics Student</span>
+        </div>
+
+    </div>
+    </div>
+
+</section>
+
 
 </main>
 
-</header>
 
+<footer id="contact">
+
+    <div class="footer-content">
+
+        <div>
+
+            <h2>🧭 CareerCompass</h2>
+
+            <p>
+                One platform to plan, build, track, and launch your career.
+            </p>
+
+        </div>
+
+        <div>
+
+            <h3>Quick Links</h3>
+
+            <a href="index.html">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+
+        </div>
+
+        <div>
+
+            <h3>Contact</h3>
+
+            <a href="mailto:careercompass@gmail.com">Email: careercompass@gmail.com</a>
+            <a href="#">GitHub</a>
+            <a href="#">LinkedIn</a>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <p class="copyright">
+        © 2026 CareerCompass. All Rights Reserved.
+    </p>
+
+</footer>
 
    <script src="js/script.js"></script>
 </body>

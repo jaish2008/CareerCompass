@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CareerCompass API Test</title>
+</head>
+
+<body>
+
+    <h2>Career Prediction Test</h2>
+
+    <button onclick="predictCareer()">
+        Predict Career
+    </button>
+
+    <pre id="output"></pre>
+
+<script>
+
+async function predictCareer(){
+
+    const sampleData = {
+
+        html_css:1,
+        javascript:1,
+        typescript:1,
+        python:0,
+        java:0,
+        sql:1,
+        csharp:0,
+        cpp:0,
+        php:0,
+        go:0,
+        rust:0,
+        r_language:0,
+
+        react:1,
+        angular:0,
+        vue:0,
+        nodejs:1,
+        express:1,
+        django:0,
+        flask:0,
+        spring_boot:0,
+        aspnet:0,
+
+        mysql:1,
+        postgresql:0,
+        mongodb:1,
+        sqlite:0,
+        redis:0,
+        microsoft_sql_server:0,
+
+        docker:1,
+        aws:1,
+        azure:0,
+        gcp:0,
+        kubernetes:0,
+        terraform:0,
+
+        language_count:4,
+        framework_count:3,
+        database_count:2,
+        platform_count:2
+    };
+
+    const response = await fetch(
+        "http://127.0.0.1:5000/predict",
+        {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify(sampleData)
+
+        }
+    );
+
+    const result = await response.json();
+
+    document.getElementById("output").textContent =
+        JSON.stringify(result,null,4);
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2351 @@
+
+/* ===========================================
+   CareerCompass - GitHub Analyzer V2
+   PART 1
+=========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+
+    background:#f4f7fc;
+
+    color:#222;
+
+}
+
+/* ===========================
+   HEADER
+=========================== */
+
+.github-header{
+
+    width:100%;
+
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+
+    color:white;
+
+    padding:60px 10%;
+
+}
+
+.header-content{
+
+    max-width:1200px;
+
+    margin:auto;
+
+}
+
+.header-content h1{
+
+    font-size:45px;
+
+    margin-bottom:15px;
+
+    font-weight:700;
+
+}
+
+.header-content p{
+
+    font-size:18px;
+
+    line-height:1.7;
+
+    max-width:700px;
+
+}
+
+/* ===========================
+   MAIN CONTAINER
+=========================== */
+
+.github-container{
+
+    width:90%;
+
+    max-width:1400px;
+
+    margin:40px auto;
+
+}
+
+/* ===========================
+   COMMON SECTION TITLE
+=========================== */
+
+.section-title{
+
+    margin-bottom:25px;
+
+}
+
+.section-title h2{
+
+    font-size:30px;
+
+    color:#1e3a8a;
+
+    margin-bottom:8px;
+
+}
+
+.section-title p{
+
+    color:#666;
+
+    font-size:16px;
+
+}
+
+/* ===========================
+   SEARCH SECTION
+=========================== */
+
+.search-section{
+
+    margin-bottom:40px;
+
+}
+
+.search-box{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    display:flex;
+
+    gap:20px;
+
+}
+
+.search-box input{
+
+    flex:1;
+
+    padding:16px;
+
+    border:2px solid #dbeafe;
+
+    border-radius:12px;
+
+    font-size:17px;
+
+    transition:.3s;
+
+}
+
+.search-box input:focus{
+
+    outline:none;
+
+    border-color:#2563eb;
+
+}
+
+.search-box button{
+
+    padding:16px 35px;
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    font-weight:600;
+
+}
+
+.search-box button:hover{
+
+    background:#1d4ed8;
+
+    transform:translateY(-2px);
+
+}
+
+/* ===========================
+   PROFILE SECTION
+=========================== */
+
+.profile-section{
+
+    margin-bottom:40px;
+
+}
+
+.profile-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:40px;
+
+    background:white;
+
+    padding:35px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    
+    transition:.3s;
+
+}
+
+.profile-left{
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+}
+
+.profile-left img{
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:6px solid #2563eb;
+
+}
+
+.profile-right{
+
+    flex:3;
+
+}
+
+.profile-right h2{
+
+    font-size:34px;
+
+    color:#1e3a8a;
+
+    margin-bottom:8px;
+
+}
+
+.profile-right p{
+
+    color:#555;
+
+    margin-bottom:10px;
+
+}
+
+.profile-details{
+
+    margin-top:25px;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+}
+
+.profile-details div{
+
+    background:#f8fbff;
+
+    padding:15px;
+
+    border-radius:12px;
+
+}
+
+.profile-details strong{
+
+    display:block;
+
+    color:#2563eb;
+
+    margin-bottom:6px;
+
+}
+
+/* ===========================
+   PROFESSIONAL SCORE
+=========================== */
+
+.score-section{
+
+    margin-bottom:40px;
+
+}
+
+.score-card{
+
+    background:white;
+
+    padding:40px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    text-align:center;
+
+    transition:.35s;
+
+}
+
+.score-card h2{
+
+    color:#1e3a8a;
+
+    margin-bottom:30px;
+
+}
+
+.score-circle{
+
+    width:220px;
+
+    height:220px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    border:12px solid #2563eb;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:50px;
+
+    font-weight:bold;
+
+    color:#2563eb;
+
+    margin-bottom:25px;
+
+}
+
+.score-card h3{
+
+    font-size:28px;
+
+    color:#16a34a;
+
+    margin-bottom:15px;
+
+}
+
+.score-card p{
+
+    color:#666;
+
+    line-height:1.8;
+
+}
+
+/* ===========================
+   QUICK STATISTICS
+=========================== */
+
+.stats-section{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:25px;
+
+    margin-bottom:50px;
+
+}
+
+.stat-card{
+
+    background:white;
+
+    padding:30px;
+
+    text-align:center;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.stat-card h3{
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.stat-card h2{
+
+    font-size:38px;
+
+    color:#111827;
+}
+
+/* ===========================================
+   PART 2
+   LANGUAGE DISTRIBUTION
+   REPOSITORY ANALYSIS
+   REPOSITORY TABLE
+===========================================*/
+
+/* ===========================
+   LANGUAGE SECTION
+=========================== */
+
+.languages-section{
+
+    margin-bottom:50px;
+
+}
+
+.language-container{
+
+    display:grid;
+
+    grid-template-columns:1.5fr 1fr;
+
+    gap:30px;
+
+}
+
+.chart-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.chart-card canvas{
+
+    width:100% !important;
+
+    max-height:420px;
+
+}
+
+.language-summary{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.language-item{
+
+    background:white;
+
+    padding:18px 22px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    font-weight:600;
+
+}
+
+.language-item:hover{
+
+    transform:translateX(8px);
+
+}
+
+.language-item span:first-child{
+
+    color:#2563eb;
+
+}
+
+/* ===========================
+   REPOSITORY ANALYSIS
+=========================== */
+
+.repository-analysis{
+
+    margin-bottom:50px;
+
+}
+
+.analysis-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:30px;
+
+}
+
+.analysis-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.analysis-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.analysis-card h2{
+
+    margin-bottom:20px;
+
+}
+
+.analysis-card h3{
+
+    color:#1e3a8a;
+
+    margin-bottom:18px;
+
+    font-size:28px;
+
+}
+
+.analysis-card p{
+
+    margin-bottom:12px;
+
+    color:#555;
+
+}
+
+.analysis-card h4{
+
+    margin-top:20px;
+
+    margin-bottom:10px;
+
+}
+
+.analysis-card ul{
+
+    padding-left:20px;
+
+}
+
+.analysis-card li{
+
+    margin-bottom:8px;
+
+    color:#444;
+
+}
+
+/* Best Repository */
+
+.best-project{
+
+    border-left:8px solid #16a34a;
+
+}
+
+/* Weak Repository */
+
+.weak-project{
+
+    border-left:8px solid #dc2626;
+
+}
+
+/* ===========================
+   REPOSITORY TABLE
+=========================== */
+
+.repository-table{
+
+    margin-bottom:60px;
+
+}
+
+.repository-table table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    background:white;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.repository-table thead{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+.repository-table th{
+
+    padding:18px;
+
+    text-align:left;
+
+    font-size:16px;
+
+}
+
+.repository-table td{
+
+    padding:18px;
+
+    border-bottom:1px solid #edf2f7;
+
+}
+
+.repository-table tbody tr{
+
+    transition:.25s;
+
+}
+
+.repository-table tbody tr:hover{
+
+    background:#f4f8ff;
+
+}
+
+/* Quality Score Badge */
+
+.score-badge{
+
+    display:inline-block;
+
+    padding:6px 14px;
+
+    border-radius:30px;
+
+    color:white;
+
+    font-weight:600;
+
+    font-size:14px;
+
+}
+
+.score-high{
+
+    background:#22c55e;
+
+    color:white;
+
+}
+
+.score-medium{
+
+    background:#f59e0b;
+
+    color:white;
+
+}
+
+.score-low{
+
+    background:#ef4444;
+
+    color:white;
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:992px){
+
+.language-container{
+
+grid-template-columns:1fr;
+
+}
+
+.analysis-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.repository-table{
+
+overflow-x:auto;
+
+}
+
+.repository-table table{
+
+min-width:700px;
+
+}
+
+}
+
+
+/* ===========================================
+   PART 3
+   AI REPORT
+   CAREER READINESS
+   RECOMMENDATIONS
+   RECRUITER VIEW
+   RESUME SECTION
+===========================================*/
+
+/* ===========================
+   AI CAREER REPORT
+=========================== */
+
+.career-report{
+
+    margin-bottom:60px;
+
+}
+
+.report-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+
+    gap:25px;
+
+}
+
+.report-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.report-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.report-card h3{
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.report-card h2{
+
+    font-size:30px;
+
+    color:#1e293b;
+
+    margin-bottom:15px;
+
+}
+
+.report-card p{
+
+    color:#555;
+
+    line-height:1.7;
+
+}
+
+/* ===========================
+   CAREER READINESS
+=========================== */
+
+.career-readiness{
+
+    margin-bottom:60px;
+
+}
+
+.readiness-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+    gap:25px;
+
+}
+
+.readiness-card{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.readiness-card h3{
+
+    margin-bottom:20px;
+
+    color:#1e3a8a;
+
+}
+
+.readiness-card progress{
+
+    width:100%;
+
+    height:18px;
+
+    margin-bottom:15px;
+
+}
+
+.readiness-card span{
+
+    font-weight:bold;
+
+    color:#2563eb;
+
+    font-size:18px;
+
+}
+
+/* Progress Color */
+
+progress::-webkit-progress-bar{
+
+    background:#e5e7eb;
+
+    border-radius:30px;
+
+}
+
+progress::-webkit-progress-value{
+
+    background:#2563eb;
+
+    border-radius:30px;
+
+}
+
+/* ===========================
+   AI RECOMMENDATIONS
+=========================== */
+
+.recommendation-section{
+
+    margin-bottom:60px;
+
+}
+
+.recommendation-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.recommendation-item{
+
+    background:white;
+
+    padding:20px 25px;
+
+    border-left:6px solid #16a34a;
+
+    border-radius:12px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    font-weight:500;
+
+}
+
+.recommendation-item:hover{
+
+    transform:translateX(10px);
+
+}
+
+/* ===========================
+   RECRUITER VIEW
+=========================== */
+
+.recruiter-view{
+
+    margin-bottom:60px;
+
+}
+
+.recruiter-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+    gap:25px;
+
+}
+
+.review-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.review-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.review-card h3{
+
+    color:#2563eb;
+
+    margin-bottom:20px;
+
+}
+
+.review-card h2{
+
+    font-size:30px;
+
+    color:#111827;
+
+}
+
+/* ===========================
+   RESUME SECTION
+=========================== */
+
+.resume-projects{
+
+    margin-bottom:80px;
+
+}
+
+.resume-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:30px;
+
+}
+
+.resume-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.resume-card h3{
+
+    margin-bottom:20px;
+
+    color:#2563eb;
+
+}
+
+.resume-card ul{
+
+    padding-left:20px;
+
+}
+
+.resume-card li{
+
+    margin-bottom:12px;
+
+    color:#444;
+
+}
+
+/* ===========================
+   SMOOTH ANIMATION
+=========================== */
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(40px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+.github-container section{
+
+    animation:fadeUp .8s ease;
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:900px){
+
+.profile-card{
+
+flex-direction:column;
+
+text-align:center;
+
+transition:.35s;
+
+}
+
+.resume-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:600px){
+
+.github-header{
+
+padding:40px 20px;
+
+}
+
+.header-content h1{
+
+font-size:34px;
+
+}
+
+.search-box{
+
+flex-direction:column;
+
+}
+
+.score-circle{
+
+width:170px;
+
+height:170px;
+
+font-size:38px;
+
+}
+
+.stats-section{
+
+grid-template-columns:1fr;
+
+}
+
+.report-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.readiness-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.recruiter-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+#avatar{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid #2563eb;
+    box-shadow:0 8px 20px rgba(37,99,235,.25);
+    transition:.3s ;
+}
+
+#avatar:hover{
+    transform:scale(1.05);
+}
+
+.ai-card{
+
+    transition:.35s;
+}
+
+.profile-card:hover,
+.score-card:hover,
+.stat-card:hover,
+.repo-card:hover,
+.ai-card:hover,
+.recruiter-card:hover,
+.resume-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+
+}
+
+.progress{
+
+    width:0;
+
+    animation:fillBar 2s forwards;
+
+}
+
+@keyframes fillBar{
+
+    from{
+
+        width:0;
+
+    }
+
+}
+
+.repo-link{
+
+    color:#2563eb;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.repo-link:hover{
+
+    color:#1d4ed8;
+
+    text-decoration:underline;
+
+}
+
+.language-item{
+
+    margin-bottom:18px;
+
+}
+
+.language-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+}
+
+.language-progress{
+
+    width:100%;
+
+    height:10px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.language-bar{
+
+    height:100%;
+
+    width:0%;
+
+    border-radius:20px;
+
+    transition:width 1s ease;
+
+}
+
+.language-item{
+
+    margin-bottom:22px;
+
+}
+
+.language-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+}
+
+.language-progress{
+
+    width:100%;
+
+    height:12px;
+
+    background:#e5e7eb;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    margin-bottom:6px;
+
+}
+
+.language-bar{
+
+    height:100%;
+
+    border-radius:30px;
+
+    transition:width 1s ease;
+
+}
+
+.language-item small{
+
+    color:#666;
+
+    font-size:13px;
+
+}
+
+/* ==========================
+Repository Cards
+========================== */
+
+.repository-section{
+
+    margin-top:40px;
+
+}
+
+.repository-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(330px,1fr));
+
+    gap:25px;
+
+}
+
+.repository-card{
+
+    background:#fff;
+
+    border-radius:16px;
+
+    padding:22px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+    border:1px solid #e5e7eb;
+     
+    opacity:0;
+
+    transform:translateY(30px);
+
+    animation:fadeUp .5s ease forwards;
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+}
+
+.repository-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 18px 35px rgba(0,0,0,.12);
+
+}
+
+.repository-card h3{
+
+    color:#2563eb;
+
+    margin-bottom:18px;
+
+}
+
+.repository-info{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin:10px 0;
+
+}
+
+.repository-info span{
+
+    color:#555;
+
+}
+
+.repository-actions{
+
+    margin-top:18px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.repository-link{
+
+    text-decoration:none;
+
+    background:#2563eb;
+
+    color:white;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+    transition:.3s;
+
+}
+
+.repository-link:hover{
+
+    background:#1d4ed8;
+
+}
+
+.repository-score{
+
+    font-weight:bold;
+
+    color:#16a34a;
+
+}
+
+/* ==========================
+Repository Quality Badge
+========================== */
+
+.badge{
+
+    text-align:center;
+
+    padding:10px 15px;
+
+    border-radius:12px;
+
+    min-width:150px;
+
+}
+
+.badge p{
+
+    margin-top:6px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.excellent{
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+}
+
+.good{
+
+    background:#dbeafe;
+
+    color:#2563eb;
+
+}
+
+.average{
+
+    background:#fef3c7;
+
+    color:#ca8a04;
+
+}
+
+.improve{
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+}
+
+/* ==============================
+Recruiter Verdict
+============================== */
+
+.recruiter-review{
+
+    margin-top:18px;
+
+    padding:18px;
+
+    background:#eef6ff;
+
+    border-left:5px solid #2563eb;
+
+    border-radius:12px;
+
+}
+
+.recruiter-review h4{
+
+    color:#2563eb;
+
+    margin-bottom:10px;
+
+}
+
+.hire-score{
+
+    font-size:34px;
+
+    font-weight:bold;
+
+    color:#16a34a;
+
+    margin-bottom:10px;
+
+}
+
+/* ==========================
+AI Recruiter Report
+========================== */
+
+.ai-recruiter-report{
+
+    margin-top:40px;
+
+}
+
+.report-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+}
+
+.report-card{
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:20px;
+
+    text-align:center;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.report-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.report-card h3{
+
+    margin-bottom:12px;
+
+    color:#2563eb;
+
+}
+
+.report-card p{
+
+    font-size:20px;
+
+    font-weight:bold;
+
+}
+
+/*==============================
+Skill Gap Detector
+==============================*/
+
+.skill-gap-section{
+
+    margin-top:40px;
+
+}
+
+.skill-gap-card{
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:25px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.skill-list{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+
+    margin:15px 0 30px;
+
+}
+
+.skill-tag{
+
+    background:#dcfce7;
+
+    color:#166534;
+
+    padding:10px 16px;
+
+    border-radius:25px;
+
+    font-weight:600;
+
+}
+
+.missing-skill{
+
+    background:#fee2e2;
+
+    color:#b91c1c;
+
+    padding:10px 16px;
+
+    border-radius:25px;
+
+    font-weight:600;
+
+}
+
+#nextStep{
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    color:#2563eb;
+
+}
+
+.loading-spinner{
+
+    display:none;
+
+    text-align:center;
+
+    padding:20px;
+
+    font-size:20px;
+
+    color:#2563eb;
+
+    font-weight:bold;
+
+}
+
+/*==============================
+Professional Circular Score
+==============================*/
+
+.professional-score-card{
+
+    text-align:center;
+
+    margin:40px auto;
+
+}
+
+.progress-ring{
+
+    position:relative;
+
+    width:180px;
+
+    height:180px;
+
+    margin:auto;
+
+}
+
+.progress-ring svg{
+
+    transform:rotate(-90deg);
+
+}
+
+.bg-circle{
+
+    fill:none;
+
+    stroke:#e5e7eb;
+
+    stroke-width:12;
+
+}
+
+.progress-circle{
+
+    fill:none;
+
+    stroke:#2563eb;
+
+    stroke-width:12;
+
+    stroke-linecap:round;
+
+    stroke-dasharray:471;
+
+    stroke-dashoffset:471;
+
+    transition:stroke-dashoffset 1.2s ease;
+
+}
+
+.progress-text{
+
+    position:absolute;
+
+    top:50%;
+
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+}
+
+.progress-text h2{
+
+    font-size:34px;
+
+    color:#2563eb;
+
+}
+
+.progress-text p{
+
+    color:#666;
+
+    font-size:14px;
+
+}
+
+#scoreLevel{
+
+    margin-top:20px;
+
+    color:#16a34a;
+
+}
+
+/* ===========================================
+   Portfolio Health Dashboard
+===========================================*/
+
+.health-section{
+
+    margin: 35px auto;
+
+    width:90%;
+
+}
+
+.health-section h2{
+
+    text-align:center;
+
+    margin-bottom:30px;
+
+    font-size:2rem;
+
+    color:#24292f;
+
+}
+
+.health-card{
+
+    background:#ffffff;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.health-item{
+
+    margin:25px 0;
+
+}
+
+.health-item span{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    font-weight:600;
+
+    margin-bottom:10px;
+
+}
+
+.health-bar{
+
+    width:100%;
+
+    height:14px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.health-fill{
+
+    width:0%;
+
+    height:100%;
+
+    border-radius:20px;
+
+    background:linear-gradient(
+        90deg,
+        #2563eb,
+        #06b6d4
+    );
+
+    transition:width 1.5s ease;
+
+}
+
+
+/* ===========================================
+   Activity Analytics
+===========================================*/
+
+.activity-section{
+
+    width:90%;
+
+    margin:40px auto;
+
+}
+
+.activity-section h2{
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+}
+
+.activity-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+}
+
+.activity-card{
+
+    background:#fff;
+
+    border-radius:16px;
+
+    padding:20px;
+
+    text-align:center;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.activity-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.activity-card h3{
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.activity-card p{
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+
+
+/* ===========================================
+   Repository Insights
+=========================================== */
+
+.insights-section{
+    width:90%;
+    margin:35px auto;
+}
+
+.insights-section h2{
+    text-align:center;
+    margin-bottom:22px;
+    color:#1e293b;
+    font-size:1.8rem;
+}
+
+.insights-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.insight-card{
+    background:#ffffff;
+    padding:22px;
+    border-radius:16px;
+    text-align:center;
+    box-shadow:0 8px 22px rgba(0,0,0,.08);
+    border:1px solid #e2e8f0;
+    transition:transform .3s ease, box-shadow .3s ease;
+}
+
+.insight-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 14px 30px rgba(0,0,0,.12);
+}
+
+.insight-card h3{
+    color:#2563eb;
+    font-size:1rem;
+    margin-bottom:12px;
+}
+
+.insight-card p{
+    color:#0f172a;
+    font-size:1.05rem;
+    font-weight:700;
+    line-height:1.45;
+    overflow-wrap:anywhere;
+}
+
+/* Different accent borders */
+
+.insight-card:nth-child(1){
+    border-top:5px solid #2563eb;
+}
+
+.insight-card:nth-child(2){
+    border-top:5px solid #f59e0b;
+}
+
+.insight-card:nth-child(3){
+    border-top:5px solid #16a34a;
+}
+
+.insight-card:nth-child(4){
+    border-top:5px solid #7c3aed;
+}
+
+/* Mobile */
+
+@media(max-width:600px){
+
+    .insights-section{
+        width:94%;
+        margin:28px auto;
+    }
+
+    .insights-grid{
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+    }
+
+    .insight-card{
+        padding:16px 10px;
+    }
+
+    .insight-card h3{
+        font-size:.82rem;
+    }
+
+    .insight-card p{
+        font-size:.9rem;
+    }
+}
+
+/* ===========================================
+   Portfolio SWOT Analysis
+=========================================== */
+
+.swot-section{
+    width:90%;
+    margin:40px auto;
+}
+
+.swot-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:22px;
+}
+
+.swot-card{
+    background:#fff;
+    padding:24px;
+    border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+
+.swot-card h3{
+    margin-bottom:16px;
+}
+
+.swot-card ul{
+    padding-left:20px;
+}
+
+.swot-card li{
+    margin-bottom:10px;
+    line-height:1.5;
+}
+
+.strength-card{
+    border-left:6px solid #16a34a;
+}
+
+.weakness-card{
+    border-left:6px solid #f59e0b;
+}
+
+.opportunity-card{
+    border-left:6px solid #2563eb;
+}
+
+.threat-card{
+    border-left:6px solid #dc2626;
+}
+
+@media(max-width:768px){
+    .swot-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+#topCareerCard{
+
+    margin-top:25px;
+
+}
+
+.prediction-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:10px 0;
+
+    border-bottom:1px solid #ddd;
+
+}
+
+.prediction-title{
+
+    font-weight:bold;
+
+}
+
+.prediction-score{
+
+    color:#2563eb;
+
+    font-weight:bold;
+
+}
+
+.confidence-bar{
+
+    width:100%;
+
+    height:30px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin-top:15px;
+
+}
+
+.confidence-progress{
+
+    height:100%;
+
+    width:0%;
+
+    background:linear-gradient(
+        90deg,
+        #2563eb,
+        #06b6d4
+    );
+
+    color:white;
+
+    font-weight:bold;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    transition:width 1.2s ease;
+
+}
+
+.roadmap-step{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:12px;
+
+    padding:12px;
+
+    margin:12px 0;
+
+    border-left:4px solid #2563eb;
+
+    background:#f8fafc;
+
+    border-radius:10px;
+
+}
+
+.roadmap-icon{
+
+    font-size:24px;
+
+}
+
+.roadmap-content h4{
+
+    margin-bottom:5px;
+
+}
+
+.roadmap-content p{
+
+    color:#555;
+
+    margin:0;
+
+}
+
+ .assessment-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+
+.assessment-grid ul{
+
+    padding-left:20px;
+
+}
+
+.assessment-grid li{
+
+    margin:8px 0;
+
+}
+
+.card{
+
+    background:linear-gradient(
+        135deg,
+        #ffffff,
+        #f8fbff
+    );
+
+    border-radius:20px;
+
+    padding:25px;
+
+    margin:25px 0;
+
+    border:1px solid rgba(37,99,235,0.15);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.08);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+
+}
+
+.card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:
+        0 18px 40px rgba(37,99,235,.18);
+
+}
+
+/* ===============================
+   AI Career Report Card
+================================ */
+
+#downloadReportBtn{
+
+    padding:12px 25px;
+
+    margin-top:15px;
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+#downloadReportBtn:hover{
+
+    background:#1d4ed8;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 20px rgba(37,99,235,.25);
+
+}
+
+#downloadReportBtn:active{
+
+    transform:scale(0.98);
+
+}
