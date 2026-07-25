@@ -25,7 +25,7 @@ from werkzeug.security import (
     check_password_hash,
     generate_password_hash
 )
-
+from ai_routes import ai_bp
 # ==========================================
 # Flask Application
 # ==========================================
@@ -64,7 +64,7 @@ CORS(app,
 db = SQLAlchemy(app)
 
 login_manager = LoginManager(app)
-
+app.register_blueprint(ai_bp, url_prefix="/api/ai")
 # ==========================================
 # Database Models
 # ==========================================
