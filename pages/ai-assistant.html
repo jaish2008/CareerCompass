@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareerCompass | AI Assistant</title>
+<link rel="stylesheet" href="../css/ai-assistant.css">
+</head>
+<body>
+
+  <header class="page-header">
+    <div class="page-header-inner">
+      <span class="logo-icon">🧭</span>
+      <div>
+        <h1>CareerCompass AI Assistant</h1>
+        <p>Discover your fit, talk it through, and learn what you're missing — all in one place.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <!-- TAB NAV -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="quiz">🧩 Career Quiz</button>
+      <button class="tab-btn" data-tab="recommend">💬 AI Recommendation</button>
+      <button class="tab-btn" data-tab="learn">🎓 Learning Hub</button>
+    </nav>
+
+    <!-- =========================================================
+         TAB 1: CAREER QUIZ
+         ========================================================= -->
+    <section class="card tab-panel" id="tab-quiz">
+
+      <div id="quizIntro">
+        <h2 class="card-title">Find your best-fit career track</h2>
+        <p class="hint">Answer a short set of questions about how you like to work and think. We'll match you to a track and hand you off to the AI Recommendation chat to go deeper.</p>
+        <button id="quizStartBtn" class="btn-primary">Start Quiz</button>
+      </div>
+
+      <div id="quizQuestionPanel" class="hidden">
+        <div class="q-top-row">
+          <span id="quizCounter">Question 1 of 6</span>
+        </div>
+        <h2 id="quizQuestionText" class="question-text">—</h2>
+        <div id="quizOptions" class="quiz-options"></div>
+      </div>
+
+      <div id="quizResultPanel" class="hidden">
+        <h2 class="card-title">🎯 Your Match</h2>
+        <div class="result-hero">
+          <span class="result-role" id="resultRole">—</span>
+          <span class="result-confidence" id="resultConfidence"></span>
+        </div>
+        <p id="resultBlurb" class="result-blurb"></p>
+
+        <div class="two-col">
+          <div class="list-box strengths">
+            <h3>✅ Your strengths point to</h3>
+            <ul id="resultStrengths"></ul>
+          </div>
+          <div class="list-box improve">
+            <h3>📚 Worth developing</h3>
+            <ul id="resultGaps"></ul>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button id="discussResultBtn" class="btn-primary">Discuss this in AI Recommendation →</button>
+          <button id="retakeQuizBtn" class="btn-secondary">Retake Quiz</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================
+         TAB 2: AI RECOMMENDATION (chat)
+         ========================================================= -->
+    <section class="card tab-panel hidden" id="tab-recommend">
+      <h2 class="card-title">💬 AI Recommendation</h2>
+      <p class="hint">Talk through your skills, interests, and goals. Ask "what should I learn next" or "compare frontend vs backend for me" — it remembers the conversation.</p>
+
+      <div class="chat-window" id="recommendChatWindow"></div>
+
+      <div class="chat-input-area">
+        <p class="speaking-indicator" id="recommendSpeakingIndicator"></p>
+        <div class="chat-input-row">
+          <textarea id="recommendInput" rows="1" placeholder="Ask about a role, your skill gaps, or paste your resume bullet points..."></textarea>
+          <button id="recommendMicBtn" type="button" class="btn-icon" title="Speak your message">🎤</button>
+          <button id="recommendSendBtn" type="button" class="btn-icon send" title="Send">➤</button>
+        </div>
+        <button type="button" id="recommendAutoRead" class="speaker-mode-btn" data-mode="auto"></button>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         TAB 3: LEARNING HUB (chat tutor)
+         ========================================================= -->
+    <section class="card tab-panel hidden" id="tab-learn">
+      <h2 class="card-title">🎓 Learning Hub</h2>
+      <p class="hint">A tutor, not a syntax dump. Ask it to explain something, quiz you, or walk through an example step by step.</p>
+
+      <div class="topic-chips" id="learnTopicChips">
+        <button class="chip" data-topic="Explain Python variables and control flow like I'm learning it for the first time, with a small real-world example.">Python basics</button>
+        <button class="chip" data-topic="Teach me data structures — start with arrays and linked lists, and check my understanding as we go.">Data structures</button>
+        <button class="chip" data-topic="Walk me through how React hooks work, especially useState and useEffect, with a simple example.">React hooks</button>
+        <button class="chip" data-topic="Help me understand REST APIs from scratch, like I've never built one before.">REST APIs</button>
+      </div>
+
+      <div class="chat-window" id="learnChatWindow"></div>
+
+      <div class="chat-input-area">
+        <p class="speaking-indicator" id="learnSpeakingIndicator"></p>
+        <div class="chat-input-row">
+          <textarea id="learnInput" rows="1" placeholder="Ask a concept, or say 'quiz me on...' "></textarea>
+          <button id="learnMicBtn" type="button" class="btn-icon" title="Speak your message">🎤</button>
+          <button id="learnSendBtn" type="button" class="btn-icon send" title="Send">➤</button>
+        </div>
+        <button type="button" id="learnAutoRead" class="speaker-mode-btn" data-mode="auto"></button>
+      </div>
+    </section>
+
+  </main>
+
+<script src="../js/ai-assistant.js"></script>
+</body>
+</html>
