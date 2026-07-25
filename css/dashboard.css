@@ -8,10 +8,47 @@
     box-sizing:border-box;
 }
 
+:root{
+
+    --bg:#f4f7fc;
+
+    --card:#ffffff;
+
+    --text:#222;
+
+    --sidebar:#1d3557;
+
+    --sidebarText:#fff;
+
+    --shadow:0 10px 25px rgba(0,0,0,.08);
+
+    --accent:#4f46e5;
+
+}
+
+.dark-mode{
+
+    --bg:#121212;
+
+    --card:#1f1f1f;
+
+    --text:#ffffff;
+
+    --sidebar:#0d1117;
+
+    --sidebarText:#ffffff;
+
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+
+    --accent:#7c3aed;
+
+}
+
 body{
     font-family:Arial, Helvetica, sans-serif;
-    background:#f8fafc;
-    color:#1e293b;
+    background:var(--bg);
+    color:var(--text);
+    transition:0.3s ease;
 }
 
 /* ===========================
@@ -29,8 +66,8 @@ body{
 
 .sidebar{
     width:260px;
-    background:#1e293b;
-    color:white;
+    background:var(--sidebar);
+    color:var(--sidebarText);
     padding:30px 20px;
 }
 
@@ -113,9 +150,8 @@ body{
 .welcome h1{
 
     font-size:2rem;
-
-    color:#1e293b;
-
+    color:var(--text);
+opacity:.7;
 }
 
 .welcome p{
@@ -148,7 +184,7 @@ body{
 
     border-radius:10px;
 
-    background:white;
+    background:var(--card);
 
     box-shadow:0 5px 15px rgba(0,0,0,.08);
 
@@ -158,7 +194,8 @@ body{
 
     border:none;
 
-    background:white;
+    background:var(--card);
+    color:var(--text);
 
     width:45px;
 
@@ -206,7 +243,7 @@ body{
 
     cursor:pointer;
 
-    trabnsition:.3s ease;
+    transition:.3s ease;
 
 }
 
@@ -234,7 +271,7 @@ body{
 
 .stat-card{
 
-    background:white;
+    background:var(--card);
 
     padding:25px;
 
@@ -298,7 +335,7 @@ body{
 .tasks,
 .activity{
 
-    background:white;
+    background:var(--card);
 
     padding:30px;
 
@@ -335,6 +372,46 @@ body{
 
 }
 
+/* Interactive task checkboxes */
+
+.tasks li label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    cursor:pointer;
+
+    width:100%;
+
+}
+
+.tasks li input.task-check{
+
+    width:20px;
+
+    height:20px;
+
+    accent-color:#2563eb;
+
+    cursor:pointer;
+
+    flex-shrink:0;
+
+}
+
+.tasks li label.completed{
+
+    color:#22c55e;
+
+    text-decoration:line-through;
+
+    opacity:.7;
+
+}
+
 /* ===========================
    Progress Section
 =========================== */
@@ -347,7 +424,7 @@ body{
 
 .progress-card{
 
-    background:white;
+    background:var(--card);
 
     padding:30px;
 
@@ -410,7 +487,7 @@ progress{
 .chart-card,
 .calendar-card{
 
-    background:white;
+    background:var(--card);
 
     padding:30px;
 
@@ -496,7 +573,7 @@ progress{
 
 .recommendation-card{
 
-    background:white;
+    background:var(--card);
 
     padding:25px;
 
@@ -562,7 +639,7 @@ progress{
 
 .deadline-card{
 
-    background:#fff;
+    background:var(--card);
 
     padding:25px;
 
@@ -660,7 +737,7 @@ progress{
 
 .notification-item{
 
-    background:#fff;
+    background:var(--card);
 
     padding:18px 22px;
 
@@ -699,4 +776,219 @@ progress{
 .sidebar-logout:hover {
   background: rgba(239, 68, 68, 0.1);
   color: #dc2626;
+}
+
+.theme-toggle{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    background:var(--card);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    font-size:22px;
+
+    margin-right:15px;
+
+    box-shadow:var(--shadow);
+
+    transition:.3s;
+
+}
+
+.theme-toggle:hover{
+
+    transform:rotate(25deg) scale(1.1);
+
+}
+
+body,
+.sidebar,
+.stat-card,
+.tasks,
+.activity,
+.progress-card,
+.chart-card,
+.calendar-card,
+.recommendation-card,
+.deadline-card,
+.notification-item,
+.topbar-actions input,
+.notification-btn{
+    transition:background .35s,color .35s,box-shadow .35s;
+}
+
+/* ===========================
+   RESPONSIVE DESIGN
+=========================== */
+
+.menu-btn{
+    display:none;
+    font-size:24px;
+    cursor:pointer;
+    background:var(--card);
+    color:var(--text);
+    padding:10px;
+    border-radius:10px;
+    box-shadow:var(--shadow);
+}
+
+/* Tablet */
+
+@media(max-width:1024px){
+
+.stats{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+.analytics{
+
+grid-template-columns:1fr;
+
+}
+
+.dashboard-bottom{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.menu-btn{
+
+display:block;
+
+}
+
+.sidebar{
+
+position:fixed;
+
+left:-280px;
+
+top:0;
+
+height:100%;
+
+z-index:1000;
+
+transition:.35s;
+
+}
+
+.sidebar.show{
+
+left:0;
+
+}
+
+.main-content{
+
+padding:20px;
+
+}
+
+.topbar{
+
+flex-wrap:wrap;
+
+gap:20px;
+
+}
+
+.topbar-actions{
+
+width:100%;
+
+justify-content:space-between;
+
+}
+
+.topbar-actions input{
+
+width:100%;
+
+}
+
+.stats{
+
+grid-template-columns:1fr;
+
+}
+
+.analytics{
+
+grid-template-columns:1fr;
+
+}
+
+.dashboard-bottom{
+
+grid-template-columns:1fr;
+
+}
+
+.recommendation-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.deadlines-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+/* Small Phones */
+
+@media(max-width:480px){
+
+.welcome h1{
+
+font-size:26px;
+
+}
+
+.sidebar{
+
+width:240px;
+
+}
+
+.profile{
+
+width:42px;
+
+height:42px;
+
+}
+
+.notification-btn{
+
+width:42px;
+
+height:42px;
+
+}
+
 }

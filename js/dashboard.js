@@ -150,6 +150,68 @@ if (chartCanvas) {
     });
 }
 
+
+/* =====================================================
+   TODAY'S TASKS -> GOAL COUNTER -> CONFETTI
+   ===================================================== */
+
+const taskList = document.getElementById("taskList");
+const goalCount = document.getElementById("goalCount");
+
+if (taskList && goalCount) {
+
+    const checkboxes = taskList.querySelectorAll(".task-check");
+    const totalTasks = checkboxes.length;
+
+    function updateGoalCount() {
+
+        const completed = taskList.querySelectorAll(".task-check:checked").length;
+
+        goalCount.textContent = `${completed} / ${totalTasks}`;
+
+        // fire confetti the moment every task gets checked
+        if (completed === totalTasks && totalTasks > 0) {
+            fireConfetti();
+        }
+    }
+
+    function fireConfetti() {
+
+        if (typeof confetti !== "function") {
+            console.warn("canvas-confetti library not loaded");
+            return;
+        }
+
+        confetti({
+            particleCount: 150,
+            spread: 80,
+            origin: { y: 0.6 }
+        });
+    }
+
+    checkboxes.forEach((checkbox) => {
+
+        checkbox.addEventListener("change", () => {
+
+            const label = checkbox.closest("label");
+
+            if (label) {
+                label.classList.toggle("completed", checkbox.checked);
+            }
+
+            updateGoalCount();
+        });
+    });
+
+    // set the initial count on page load
+    updateGoalCount();
+}
+
+
+/* =====================================================
+   LOGOUT + THEME TOGGLE
+   ===================================================== */
+
 const logoutButton = document.getElementById("logoutButton");
 
 if (logoutButton) {
@@ -167,4 +229,46 @@ if (logoutButton) {
       window.location.replace("login.html");
     }
   });
+
+  const toggle=document.getElementById("themeToggle");
+
+if(localStorage.getItem("theme")=="dark"){
+
+    document.body.classList.add("dark-mode");
+
+    toggle.innerHTML="☀️";
+
 }
+
+toggle.onclick=function(){
+
+    document.body.classList.toggle("dark-mode");
+
+    if(document.body.classList.contains("dark-mode")){
+
+        localStorage.setItem("theme","dark");
+
+        toggle.innerHTML="☀️";
+
+    }
+
+    else{
+
+        localStorage.setItem("theme","light");
+
+        toggle.innerHTML="🌙";
+
+    }
+
+}
+}
+
+const menuBtn=document.getElementById("menuBtn");
+
+const sidebar=document.getElementById("sidebar");
+
+menuBtn.addEventListener("click",()=>{
+
+sidebar.classList.toggle("show");
+
+});

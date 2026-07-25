@@ -14,49 +14,46 @@
     <div class="dashboard-container">
 
         <!-- Sidebar -->
-         <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
 
-    <div class="sidebar-logo">
-        <span>🧭</span>
-        <h2>CareerCompass</h2>
-    </div>
+            <div class="sidebar-logo">
+                <span>🧭</span>
+                <h2>CareerCompass</h2>
+            </div>
 
-    <nav class="sidebar-menu">
+            <nav class="sidebar-menu">
 
-        <a href="dashboard.html" class="active">
-  <i class="fa-solid fa-house"></i> Dashboard
-</a>
+                <a href="dashboard.html" class="active">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
 
-        <a href="career-quiz.html">
-  <i class="fa-solid fa-bullseye"></i> Career Quiz
-</a>
+                <a href="career-quiz.html">
+                    <i class="fa-solid fa-bullseye"></i> Career Quiz
+                </a>
 
-        <a href="resume.html"><i class="fa-solid fa-file-lines"></i> Resume Builder</a>
+                <a href="resume.html"><i class="fa-solid fa-file-lines"></i> Resume Builder</a>
 
-        <a href="resume-analyzer.html"><i class="fa-solid fa-binoculars"></i> Resume Analyzer</a>
-<a href="github.html"><i class="fa-brands fa-github"></i> GitHub Analyzer</a>
-        <a href="roadmap.html"><i class="fa-solid fa-road"></i> Skill Roadmap</a>
+                <a href="resume-analyzer.html"><i class="fa-solid fa-binoculars"></i> Resume Analyzer</a>
 
-        <a href="learning-planner.html">
-  <i class="fa-solid fa-calendar-days"></i> Learning Planner
-</a>
+                <a href="github.html"><i class="fa-brands fa-github"></i> GitHub Analyzer</a>
 
-        <a href="interview-trainer.html"><i class="fa-solid fa-comments"></i> Interview Trainer</a>
-        <a href="ai-assistant.html"><i class="fa-solid fa-robot"></i> AI Assistant</a>
-        <!--<a href="internship-tracker.html"><i class="fa-solid fa-briefcase"></i> Internship Tracker</a>
+                <a href="roadmap.html"><i class="fa-solid fa-road"></i> Skill Roadmap</a>
 
-        <a href="#"><i class="fa-solid fa-robot"></i> AI Assistant</a>
+                <a href="learning-planner.html">
+                    <i class="fa-solid fa-calendar-days"></i> Learning Planner
+                </a>
 
-        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a> -->
+                <a href="interview-trainer.html"><i class="fa-solid fa-comments"></i> Interview Trainer</a>
 
-        <button type="button" id="logoutButton" class="sidebar-logout">
-  <i class="fa-solid fa-right-from-bracket"></i>
-  Logout
-</button>
+                <a href="ai-assistant.html"><i class="fa-solid fa-road"></i>Ai Assistant</a>
+                <button type="button" id="logoutButton" class="sidebar-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </button>
 
-    </nav>
+            </nav>
 
-</aside>
+        </aside>
 
 
         <!-- Main Content -->
@@ -66,6 +63,10 @@
     <!-- Top Navigation -->
 
     <header class="topbar">
+
+<div class="menu-btn" id="menuBtn">
+    <i class="fa-solid fa-bars"></i>
+</div>
 
         <div class="welcome">
 
@@ -77,20 +78,17 @@
 
         <div class="topbar-actions">
 
-            <input
-                type="text"
-                placeholder="Search..."
-            >
-
             <button class="notification-btn">
                 🔔
             </button>
 
-            <div class="profile">
+            <div class="theme-toggle" id="themeToggle">
+    🌙
+</div>
 
-                👤
-
-            </div>
+<div class="profile">
+    👤
+</div>
 
         </div>
 
@@ -131,7 +129,7 @@
 
         <h3>Today's Goal</h3>
 
-        <h2>4 / 6</h2>
+        <h2 id="goalCount">0 / 4</h2>
 
         <p>Tasks Completed</p>
 
@@ -179,15 +177,15 @@
 
         <h2>Today's Tasks</h2>
 
-        <ul>
+        <ul id="taskList">
 
-            <li>☐ Complete JavaScript Module</li>
+            <li><label><input type="checkbox" class="task-check"> Complete JavaScript Module</label></li>
 
-            <li>☐ Solve 2 DSA Problems</li>
+            <li><label><input type="checkbox" class="task-check"> Solve 2 DSA Problems</label></li>
 
-            <li>☐ Upload Resume</li>
+            <li><label><input type="checkbox" class="task-check"> Upload Resume</label></li>
 
-            <li>☐ Apply for Internship</li>
+            <li><label><input type="checkbox" class="task-check"> Apply for Internship</label></li>
 
         </ul>
 
@@ -378,6 +376,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script src="../js/dashboard.js"></script>
 
 </body>
