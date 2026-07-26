@@ -6,6 +6,12 @@
 (function () {
   "use strict";
 
+  const API_BASE_URL =
+    ["127.0.0.1", "localhost"].includes(window.location.hostname) &&
+    window.location.port !== "5000"
+      ? "http://127.0.0.1:5000"
+      : window.location.origin;
+
   // ------- PDF.js worker -------
   if (window.pdfjsLib) {
     window.pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -470,7 +476,15 @@
   function renderResults(a) {
     // ATS score circle
     animateScore(a.score);
-    els.scoreLabel.textContent = a.label;
+
+    fetch(`${API_BASE_URL}/api/profile/score`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ resumeScore: a.score })
+    }).catch(err => console.error("Could not save resume score:", err));
+    
+  els.scoreLabel.textContent = a.label;
     els.atsBadge.textContent = a.badge;
     els.atsBadge.className = "status-badge " + a.badgeClass;
     els.scoreExplanation.textContent = a.explanation;

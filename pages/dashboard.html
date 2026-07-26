@@ -155,16 +155,8 @@
 
         <h2>Upcoming Goals</h2>
 
-        <ul>
-
-            <li>📅 Complete JavaScript - Monday</li>
-
-            <li>📄 Update Resume - Tuesday</li>
-
-            <li>💼 Internship Application - Wednesday</li>
-
-            <li>🎯 Mock Interview - Friday</li>
-
+        <ul id="upcomingGoalsList">
+            <li class="goals-loading">Loading your planner tasks…</li>
         </ul>
 
     </div>
@@ -201,16 +193,8 @@
 
         <h2>Recent Activity</h2>
 
-        <ul>
-
-            <li>✅ Resume Updated</li>
-
-            <li>✅ GitHub Profile Synced</li>
-
-            <li>✅ Roadmap Generated</li>
-
-            <li>✅ Career Assessment Completed</li>
-
+        <ul id="recentActivityList">
+            <li class="activity-loading">Loading your recent activity…</li>
         </ul>
 
     </div>
@@ -225,24 +209,26 @@
 
         <h2>Skill Progress</h2>
 
+        <p class="hint" id="skillProgressCareerLabel">Select a career on your Skill Roadmap to see progress here.</p>
+
         <div class="progress-item">
-            <span>HTML</span>
-            <progress value="90" max="100"></progress>
+            <span>Skills</span>
+            <progress id="skillsProgressBar" value="0" max="100"></progress>
         </div>
 
         <div class="progress-item">
-            <span>CSS</span>
-            <progress value="80" max="100"></progress>
+            <span>Stages</span>
+            <progress id="stagesProgressBar" value="0" max="100"></progress>
         </div>
 
         <div class="progress-item">
-            <span>JavaScript</span>
-            <progress value="45" max="100"></progress>
+            <span>Projects</span>
+            <progress id="projectsProgressBar" value="0" max="100"></progress>
         </div>
 
         <div class="progress-item">
-            <span>DSA</span>
-            <progress value="30" max="100"></progress>
+            <span>Overall</span>
+            <progress id="overallProgressBarDash" value="0" max="100"></progress>
         </div>
 
     </div>
@@ -309,37 +295,9 @@
 
     <h2>📅 Upcoming Deadlines</h2>
 
-    <div class="deadlines-grid">
+    <div class="deadlines-grid" id="deadlinesGrid">
 
-        <div class="deadline-card">
-
-            <h3>JavaScript Assignment</h3>
-
-            <p>Due Tomorrow</p>
-
-            <span class="deadline urgent">1 Day Left</span>
-
-        </div>
-
-        <div class="deadline-card">
-
-            <h3>Resume Submission</h3>
-
-            <p>College Placement Cell</p>
-
-            <span class="deadline medium">3 Days Left</span>
-
-        </div>
-
-        <div class="deadline-card">
-
-            <h3>Hackathon Registration</h3>
-
-            <p>TechFest 2026</p>
-
-            <span class="deadline normal">7 Days Left</span>
-
-        </div>
+        <p class="deadline-loading" id="deadlinesLoading">Loading your upcoming tasks…</p>
 
     </div>
 

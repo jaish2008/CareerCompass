@@ -1,5 +1,11 @@
 "use strict";
 
+const API_BASE_URL =
+  ["127.0.0.1", "localhost"].includes(window.location.hostname) &&
+  window.location.port !== "5000"
+    ? "http://127.0.0.1:5000"
+    : window.location.origin;
+
 const $ = (id) => document.getElementById(id);
 
 /* =====================================================
@@ -993,6 +999,27 @@ const skillCompletionCount = $("skillCompletionCount");
 
 let selectedCareerKey = "frontend";
 let quizResult = null;
+let roadmapReady = false;
+let roadmapSaveTimer = null;
+
+/* =====================================================
+   GENERIC STORAGE HELPER
+   ===================================================== */
+
+function readStoredJSON(key, fallbackValue) {
+    try {
+        const storedValue = localStorage.getItem(key);
+
+        if (!storedValue) {
+            return fallbackValue;
+        }
+
+        return JSON.parse(storedValue);
+    } catch (error) {
+        console.error(`Unable to read ${key}:`, error);
+        return fallbackValue;
+    }
+}
 
 /* =====================================================
    LOAD QUIZ RESULT
@@ -1034,30 +1061,11 @@ function loadQuizResult() {
 }
 
 /* =====================================================
-   PROGRESS STORAGE
+   PROGRESS STORAGE (BROWSER)
    ===================================================== */
 
 function getAllProgress() {
-
-    const saved =
-        localStorage.getItem(
-            "careerCompassRoadmapProgress"
-        );
-
-    if (!saved) {
-        return {};
-    }
-
-    try {
-        return JSON.parse(saved);
-    } catch (error) {
-        console.error(
-            "Unable to load roadmap progress:",
-            error
-        );
-
-        return {};
-    }
+    return readStoredJSON("careerCompassRoadmapProgress", {});
 }
 
 function getCareerProgress(careerKey) {
@@ -1084,6 +1092,61 @@ function saveCareerProgress(
         "careerCompassRoadmapProgress",
         JSON.stringify(allProgress)
     );
+}
+
+/* =====================================================
+   PROGRESS STORAGE (ACCOUNT / BACKEND)
+   ===================================================== */
+
+async function loadRoadmapDataFromServer() {
+    const response = await fetch(`${API_BASE_URL}/api/roadmap`, {
+        method: "GET",
+        credentials: "include"
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message || "Unable to load Roadmap data.");
+    }
+
+    return result.roadmap || { allProgress: {}, summary: null };
+}
+
+async function saveRoadmapDataToServer() {
+    if (!roadmapReady) {
+        return;
+    }
+
+    const payload = {
+        allProgress: getAllProgress(),
+        summary: readStoredJSON("careerCompassRoadmapSummary", null)
+    };
+
+    const response = await fetch(`${API_BASE_URL}/api/roadmap`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message || "Unable to save Roadmap data.");
+    }
+}
+
+function scheduleRoadmapSave() {
+    clearTimeout(roadmapSaveTimer);
+
+    roadmapSaveTimer = setTimeout(() => {
+        saveRoadmapDataToServer().catch((error) => {
+            console.error("Roadmap database save failed:", error);
+        });
+    }, 400);
 }
 
 /* =====================================================
@@ -1465,6 +1528,21 @@ function updateProgressDisplay() {
     skillCompletionCount.textContent =
         `${completedSkills} / ${career.skills.length} completed`;
 
+    const skillsPercentage =
+        career.skills.length === 0
+            ? 0
+            : Math.round((completedSkills / career.skills.length) * 100);
+
+    const stagesPercentage =
+        career.stages.length === 0
+            ? 0
+            : Math.round((completedStages / career.stages.length) * 100);
+
+    const projectsPercentage =
+        career.projects.length === 0
+            ? 0
+            : Math.round((completedProjects / career.projects.length) * 100);
+
     localStorage.setItem(
         "careerCompassRoadmapSummary",
         JSON.stringify({
@@ -1472,9 +1550,14 @@ function updateProgressDisplay() {
             careerName: career.name,
             percentage: percentage,
             completedItems: completedItems,
-            totalItems: totalItems
+            totalItems: totalItems,
+            skillsPercentage: skillsPercentage,
+            stagesPercentage: stagesPercentage,
+            projectsPercentage: projectsPercentage
         })
     );
+
+    scheduleRoadmapSave();
 }
 
 /* =====================================================
@@ -1538,18 +1621,93 @@ menuToggle.addEventListener(
 );
 
 /* =====================================================
-   INITIALIZE PAGE
+   INITIALIZE PAGE (WITH ACCOUNT SYNC)
    ===================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+async function initializeRoadmap() {
 
-        const hasCareer =
-            loadQuizResult();
+    let hasCareer = false;
+
+    try {
+
+        const authResponse = await fetch(`${API_BASE_URL}/api/me`, {
+            method: "GET",
+            credentials: "include"
+        });
+
+        const authResult = await authResponse.json();
+
+        if (
+            !authResponse.ok ||
+            !authResult.authenticated ||
+            !authResult.user
+        ) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        hasCareer = loadQuizResult();
+
+        const localAllProgress = getAllProgress();
+        const localSummary = readStoredJSON("careerCompassRoadmapSummary", null);
+
+        const localHasData =
+            Object.keys(localAllProgress).length > 0 ||
+            localSummary !== null;
+
+        const serverRoadmap = await loadRoadmapDataFromServer();
+
+        const serverAllProgress =
+            serverRoadmap.allProgress &&
+            typeof serverRoadmap.allProgress === "object"
+                ? serverRoadmap.allProgress
+                : {};
+
+        const serverSummary = serverRoadmap.summary || null;
+
+        const serverHasData =
+            Object.keys(serverAllProgress).length > 0 ||
+            serverSummary !== null;
+
+        if (serverHasData) {
+
+            localStorage.setItem(
+                "careerCompassRoadmapProgress",
+                JSON.stringify(serverAllProgress)
+            );
+
+            if (serverSummary) {
+                localStorage.setItem(
+                    "careerCompassRoadmapSummary",
+                    JSON.stringify(serverSummary)
+                );
+            }
+        }
+
+        roadmapReady = true;
+
+        // Migrate existing browser Roadmap data into the account once.
+        if (!serverHasData && localHasData) {
+            await saveRoadmapDataToServer();
+        }
+
+        if (hasCareer) {
+            renderRoadmap();
+        }
+
+    } catch (error) {
+
+        console.error("Roadmap initialization failed:", error);
+
+        roadmapReady = true;
 
         if (hasCareer) {
             renderRoadmap();
         }
     }
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    initializeRoadmap
 );
