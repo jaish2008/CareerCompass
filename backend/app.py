@@ -18,14 +18,20 @@ from flask_login import (
     login_user,
     logout_user
 )
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 
 from werkzeug.security import (
     check_password_hash,
     generate_password_hash
 )
+
+from extensions import db
+from models import Internship
+
 from ai_routes import ai_bp
+from internship_routes import internship_bp
+from adzuna_integration import start_scheduled_sync
+
 # ==========================================
 # Flask Application
 # ==========================================
@@ -36,8 +42,10 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv( "DATABASE_URL",
-    "sqlite:///careercompass.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+    "DATABASE_URL",
+    "sqlite:///careercompass.db"
+)
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -61,19 +69,13 @@ CORS(app,
     ]
     )
 
-from extensions import db
-from models import Internship
-
 db.init_app(app)
 
 login_manager = LoginManager(app)
+
 app.register_blueprint(ai_bp, url_prefix="/api/ai")
-
-from internship_routes import internship_bp
-from adzuna_integration import start_scheduled_sync
-
 app.register_blueprint(internship_bp, url_prefix="/api/internships")
-start_scheduled_sync()
+
 # ==========================================
 # Database Models
 # ==========================================
@@ -286,7 +288,7 @@ class InterviewAttempt(db.Model):
         nullable=False
     )
 
-    
+
 VALID_INTERVIEW_TRACKS = {
     "Frontend Developer",
     "Backend Developer",
@@ -453,6 +455,119 @@ def validate_planner_payload(payload):
 
     return clean_data, None
 
+
+VALID_ROADMAP_CAREER_KEYS = {
+    "frontend",
+    "backend",
+    "fullstack",
+    "software",
+    "aiml",
+    "analyst",
+    "scientist",
+    "devops",
+    "cloud",
+    "cybersecurity"
+}
+
+
+def validate_roadmap_payload(payload):
+    """Validate and clean Roadmap progress data before storing it."""
+
+    if not isinstance(payload, dict):
+        return None, "Roadmap data must be a JSON object."
+
+    raw_all_progress = payload.get("allProgress", {})
+
+    if not isinstance(raw_all_progress, dict):
+        return None, "Roadmap progress must be an object."
+
+    clean_all_progress = {}
+
+    for career_key, progress in raw_all_progress.items():
+
+        if career_key not in VALID_ROADMAP_CAREER_KEYS:
+            continue
+
+        if not isinstance(progress, dict):
+            continue
+
+        def clean_index_list(raw_list):
+            if not isinstance(raw_list, list):
+                return []
+
+            clean_list = []
+
+            for item in raw_list[:200]:
+                try:
+                    clean_list.append(int(item))
+                except (TypeError, ValueError):
+                    continue
+
+            return clean_list
+
+        clean_all_progress[career_key] = {
+            "skills": clean_index_list(progress.get("skills")),
+            "stages": clean_index_list(progress.get("stages")),
+            "projects": clean_index_list(progress.get("projects"))
+        }
+
+    raw_summary = payload.get("summary")
+    clean_summary = None
+
+    if isinstance(raw_summary, dict):
+
+        career_key = str(raw_summary.get("careerKey", "")).strip()
+        career_name = str(raw_summary.get("careerName", "")).strip()[:100]
+
+        try:
+            percentage = max(0, min(100, int(raw_summary.get("percentage", 0))))
+        except (TypeError, ValueError):
+            percentage = 0
+
+        try:
+            completed_items = max(0, int(raw_summary.get("completedItems", 0)))
+        except (TypeError, ValueError):
+            completed_items = 0
+
+        try:
+            total_items = max(0, int(raw_summary.get("totalItems", 0)))
+        except (TypeError, ValueError):
+            total_items = 0
+
+        try:
+            skills_percentage = max(0, min(100, int(raw_summary.get("skillsPercentage", 0))))
+        except (TypeError, ValueError):
+            skills_percentage = 0
+
+        try:
+            stages_percentage = max(0, min(100, int(raw_summary.get("stagesPercentage", 0))))
+        except (TypeError, ValueError):
+            stages_percentage = 0
+
+        try:
+            projects_percentage = max(0, min(100, int(raw_summary.get("projectsPercentage", 0))))
+        except (TypeError, ValueError):
+            projects_percentage = 0
+
+        if career_key in VALID_ROADMAP_CAREER_KEYS:
+            clean_summary = {
+                "careerKey": career_key,
+                "careerName": career_name,
+                "percentage": percentage,
+                "completedItems": completed_items,
+                "totalItems": total_items,
+                "skillsPercentage": skills_percentage,
+                "stagesPercentage": stages_percentage,
+                "projectsPercentage": projects_percentage
+            }
+
+    clean_data = {
+        "allProgress": clean_all_progress,
+        "summary": clean_summary
+    }
+
+    return clean_data, None
+
 # ==========================================
 # Flask-Login User Loader
 # ==========================================
@@ -519,6 +634,8 @@ with app.app_context():
     db.create_all()
 
     print("CareerCompass database tables ready.")
+
+    start_scheduled_sync()
 
 # ==========================================
 # File Paths
@@ -902,6 +1019,68 @@ def get_current_user():
         "user": serialize_user(current_user)
     }), 200
 
+
+# ==========================================
+# Profile Score Route (Placement Readiness)
+# ==========================================
+
+@app.route("/api/profile/score", methods=["PUT"])
+@login_required
+def update_profile_score():
+
+    data = get_json_body()
+    profile = get_or_create_career_profile(current_user.id)
+
+    if "resumeScore" in data:
+        try:
+            profile.resume_score = float(data["resumeScore"])
+        except (TypeError, ValueError):
+            pass
+
+    if "githubScore" in data:
+        try:
+            profile.github_score = float(data["githubScore"])
+        except (TypeError, ValueError):
+            pass
+
+    if "careerResult" in data:
+        profile.career_result = data["careerResult"]
+
+    profile.updated_at = datetime.now(timezone.utc)
+    db.session.commit()
+
+    return jsonify({"status": "success"}), 200
+
+
+# ==========================================
+# Dashboard Data Route
+# ==========================================
+
+@app.route("/api/dashboard", methods=["GET"])
+@login_required
+def get_dashboard_data():
+
+    profile = get_or_create_career_profile(current_user.id)
+
+    scores = [
+        s for s in [profile.resume_score, profile.github_score]
+        if s is not None
+    ]
+
+    placement_readiness = (
+        round(sum(scores) / len(scores)) if scores else None
+    )
+
+    return jsonify({
+        "status": "success",
+        "resumeScore": profile.resume_score,
+        "githubScore": profile.github_score,
+        "placementReadiness": placement_readiness,
+        "careerResult": profile.career_result,
+        "roadmapProgress": profile.roadmap_progress or {}
+    }), 200
+
+
 @app.route("/api/planner", methods=["GET"])
 @login_required
 def get_planner():
@@ -983,6 +1162,89 @@ def update_planner():
             "status": "error",
             "message": "Unable to save Planner data."
         }), 500
+
+
+# ==========================================
+# Roadmap Progress Routes (Skill Progress)
+# ==========================================
+
+@app.route("/api/roadmap", methods=["GET"])
+@login_required
+def get_roadmap():
+    try:
+        profile = get_or_create_career_profile(current_user.id)
+
+        roadmap = {
+            "allProgress": {},
+            "summary": None
+        }
+
+        if profile.roadmap_progress:
+            stored_data = profile.roadmap_progress
+
+            if isinstance(stored_data, str):
+                try:
+                    stored_data = json.loads(stored_data)
+                except (json.JSONDecodeError, TypeError):
+                    stored_data = {}
+                    app.logger.warning(
+                        "Invalid roadmap data for user %s",
+                        current_user.id
+                    )
+
+            if isinstance(stored_data, dict):
+                roadmap.update(stored_data)
+
+        return jsonify({
+            "status": "success",
+            "roadmap": roadmap
+        }), 200
+
+    except Exception:
+        app.logger.exception("Unable to load Roadmap data")
+
+        return jsonify({
+            "status": "error",
+            "message": "Unable to load Roadmap data."
+        }), 500
+
+
+@app.route("/api/roadmap", methods=["PUT"])
+@login_required
+def update_roadmap():
+    payload = request.get_json(silent=True)
+
+    clean_data, validation_error = validate_roadmap_payload(payload)
+
+    if validation_error:
+        return jsonify({
+            "status": "error",
+            "message": validation_error
+        }), 400
+
+    try:
+        profile = get_or_create_career_profile(current_user.id)
+
+        profile.roadmap_progress = clean_data
+        profile.updated_at = datetime.now(timezone.utc)
+
+        db.session.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "Roadmap progress saved successfully.",
+            "roadmap": clean_data
+        }), 200
+
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Unable to save Roadmap data")
+
+        return jsonify({
+            "status": "error",
+            "message": "Unable to save Roadmap data."
+        }), 500
+
 
 # ==========================================
 # Health Check Route
@@ -1277,8 +1539,6 @@ def create_interview_attempt():
             "status": "error",
             "message": "Unable to save interview attempt."
         }), 500
-
-
 
 
 # ==========================================
