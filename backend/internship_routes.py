@@ -27,4 +27,4 @@ def sync():
         return jsonify({"message": "Sync complete"})
     except Exception as e:
         print("SYNC ERROR:", str(e))
-        return jsonify({"error": "Sync failed"}), 500
+        return jsonify({"error": "Sync failed", "detail": str(e)}), 500

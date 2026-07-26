@@ -73,7 +73,8 @@ def fetch_listings_for_role(role_type, search_term):
 
 def sync_all_internships():
     # Deferred import avoids a circular import with app.py
-    from app import db, Internship
+    from extensions import db
+    from models import Internship
 
     print("[Adzuna Sync] Starting scheduled sync...")
     total_fetched = 0
@@ -130,7 +131,8 @@ def calculate_match_score(student_skills, listing_skills):
 
 
 def get_matched_internships_for_student(student_skills, role_type=None):
-    from app import Internship
+    from extensions import db
+    from models import Internship
 
     query = Internship.query
     if role_type and role_type != "all":
