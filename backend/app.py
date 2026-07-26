@@ -1019,6 +1019,52 @@ def get_current_user():
         "user": serialize_user(current_user)
     }), 200
 
+@app.route("/api/profile", methods=["PUT"])
+@login_required
+def update_profile():
+
+    data = get_json_body()
+
+    name = str(data.get("name", "")).strip()
+    education = str(data.get("education", "")).strip()
+    course = str(data.get("course", "")).strip()
+    semester = str(data.get("semester", "")).strip()
+
+    if not name:
+        return jsonify({
+            "status": "error",
+            "message": "Full name is required."
+        }), 400
+
+    if len(name) > 100:
+        return jsonify({
+            "status": "error",
+            "message": "Name is too long."
+        }), 400
+
+    current_user.name = name
+    current_user.education = education or None
+    current_user.course = course or None
+    current_user.semester = semester or None
+
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Unable to update profile")
+        return jsonify({
+            "status": "error",
+            "message": "Unable to save profile changes."
+        }), 500
+
+    return jsonify({
+        "status": "success",
+        "message": "Profile updated successfully.",
+        "user": serialize_user(current_user)
+    }), 200
+
+
+     
 
 # ==========================================
 # Profile Score Route (Placement Readiness)
@@ -1077,9 +1123,11 @@ def get_dashboard_data():
         "githubScore": profile.github_score,
         "placementReadiness": placement_readiness,
         "careerResult": profile.career_result,
-        "roadmapProgress": profile.roadmap_progress or {}
+        "roadmapProgress": profile.roadmap_progress or {},
+        "hasQuizResult": profile.career_result is not None,
+        "hasResumeScore": profile.resume_score is not None,
+        "hasGithubScore": profile.github_score is not None
     }), 200
-
 
 @app.route("/api/planner", methods=["GET"])
 @login_required

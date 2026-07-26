@@ -78,6 +78,12 @@ if (
         document.title =
             `${firstName}'s Dashboard | CareerCompass`;
 
+            const profileIcon = document.getElementById("profileIcon");
+
+        if (profileIcon) {
+            profileIcon.textContent = firstName.charAt(0).toUpperCase();
+        }
+
     } catch (error) {
 
         console.error(
@@ -463,6 +469,39 @@ async function loadDashboardData() {
     renderUpcomingDeadlines(plannerTasks);
     renderUpcomingGoals(plannerTasks);
     renderWeeklyProgressChart(plannerTasks);
+    renderNotifications(dashboardData);
+}
+
+
+function renderNotifications(dashboardData) {
+
+    const list = document.getElementById("notificationList");
+
+    if (!list) {
+        return;
+    }
+
+    const notifications = [];
+
+    if (!dashboardData.hasQuizResult) {
+        notifications.push("🎯 Complete your Career Quiz to receive career recommendations.");
+    }
+
+    if (!dashboardData.hasResumeScore) {
+        notifications.push("📄 Analyze your resume to generate an ATS-readiness score.");
+    }
+
+    if (!dashboardData.hasGithubScore) {
+        notifications.push("🐙 Analyze your GitHub profile to see your portfolio health.");
+    }
+
+    if (notifications.length === 0) {
+        notifications.push("✅ You're all caught up — nice work!");
+    }
+
+    list.innerHTML = notifications
+        .map(text => `<div class="notification-item">${text}</div>`)
+        .join("");
 }
 
 loadDashboardData();
