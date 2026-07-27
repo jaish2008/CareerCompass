@@ -4,12 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Internship Tracker | CareerCompass</title>
-
+ 
 <link rel="stylesheet" href="../css/internship.css">
-
+<style>
+  .hidden{display:none;}
+  .intern-bell-wrap{position:relative;}
+  .intern-bell-btn{position:relative;background:none;border:none;font-size:20px;cursor:pointer;padding:6px;}
+  .intern-bell-badge{position:absolute;top:0;right:0;background:#dc2626;color:#fff;font-size:11px;font-weight:700;border-radius:20px;padding:1px 6px;}
+  .intern-notif-panel{position:absolute;right:0;top:38px;width:280px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 10px 30px rgba(15,23,42,.12);padding:14px;z-index:20;}
+  .intern-notif-panel h4{font-size:13px;margin-bottom:8px;}
+  .intern-notif-item{font-size:12.5px;padding:8px 0;border-bottom:1px solid #eef1f5;}
+  .intern-notif-item:last-child{border-bottom:none;}
+  .intern-notif-empty{font-size:12.5px;color:#64748b;}
+</style>
 </head>
 <body>
-
+ 
 <div class="sidebar">
   <div class="logo"><span class="dot"></span> CareerCompass</div>
   <a class="nav-item" href="dashboard.html">🏠 <span>Dashboard</span></a>
@@ -22,16 +32,26 @@
   <a class="nav-item" href="ai-assistant.html">🤖 <span>AI Assistant</span></a>
   <a class="nav-item" href="settings.html">⚙️ <span>Settings</span></a>
 </div>
-
+ 
 <div class="main">
-
+ 
   <div class="topbar">
     <div>
       <h1>Internship Opportunities</h1>
       <p>Matched to your skills, marks and daily practice — updated live as seats fill.</p>
     </div>
+    <div class="intern-bell-wrap">
+      <button id="internBellBtn" class="intern-bell-btn" aria-label="Notifications">
+        🔔
+        <span id="internBellBadge" class="intern-bell-badge hidden">0</span>
+      </button>
+      <div id="internNotifPanel" class="intern-notif-panel hidden">
+        <h4>Top Matches (85%+)</h4>
+        <div id="internNotifList"></div>
+      </div>
+    </div>
   </div>
-
+ 
   <div class="stats-row">
     <div class="stat-card">
       <div class="label">Eligible Internships</div>
@@ -54,7 +74,7 @@
       <div class="sub warn">Apply before they close</div>
     </div>
   </div>
-
+ 
   <div class="content-grid">
     <div>
       <div class="tab-row">
@@ -71,17 +91,17 @@
       <div class="tab-row" style="margin-bottom:18px;">
         <div class="search-box" style="margin-left:0;"><input type="text" id="searchInput" placeholder="Search company or role"></div>
       </div>
-
+ 
       <div class="internship-list" id="jobList"></div>
     </div>
-
+ 
     <div class="side-panel">
       <h4>Why these matches</h4>
       <div class="why-item"><span class="why-icon">✅</span><div><b>JavaScript</b> is your strongest tracked skill — boosting Frontend & Backend matches.</div></div>
       <div class="why-item"><span class="why-icon">⚠️</span><div><b>DSA</b> is below the cutoff for 2 Backend roles — practice daily to unlock them.</div></div>
       <div class="why-item"><span class="why-icon">🐍</span><div><b>Python</b> isn't tracked yet — add it in Settings to unlock Data Science & AI/ML matching.</div></div>
       <div class="why-item"><span class="why-icon">🔒</span><div><b>Networking</b> and <b>Cloud basics</b> aren't tracked yet — add them to unlock Cyber Security & Cloud matches.</div></div>
-
+ 
       <div class="legend">
         <h4>Seat status</h4>
         <div class="legend-row"><span class="legend-dot" style="background:var(--blue)"></span> Seats open</div>
@@ -91,8 +111,9 @@
     </div>
   </div>
 </div>
-
+ 
 <script src="../js/internship.js"></script>
-
+ 
 </body>
 </html>
+ 

@@ -1,5 +1,3 @@
-
-
 /* =========================================================
    QUESTION BANK
    Each question carries "keywords": concepts a strong answer
@@ -20,6 +18,18 @@
 ];
 
 const TECHNICAL_QUESTIONS = {
+  "Software Developer": [
+    { text: "How would you decide between using an array and a linked list for a given problem?",
+      keywords: ["array", "linked list", "access", "insertion", "deletion", "memory", "contiguous", "pointer"] },
+    { text: "Explain the difference between object-oriented and functional programming.",
+      keywords: ["object-oriented", "functional", "state", "immutability", "class", "pure function", "side effect", "encapsulation"] },
+    { text: "What is Big O notation and why does it matter?",
+      keywords: ["big o", "complexity", "time", "space", "scale", "growth", "worst case", "efficiency"] },
+    { text: "How do you approach debugging a piece of code that's failing intermittently?",
+      keywords: ["debug", "reproduce", "log", "race condition", "isolate", "test", "breakpoint", "intermittent"] },
+    { text: "Explain the difference between unit testing and integration testing.",
+      keywords: ["unit test", "integration test", "isolate", "mock", "dependency", "coverage", "end-to-end", "component"] }
+  ],
   "Frontend Developer": [
     { text: "Explain the difference between the virtual DOM and the real DOM.",
       keywords: ["virtual dom", "real dom", "diff", "reconciliation", "render", "performance", "update", "batch"] },
@@ -44,26 +54,157 @@ const TECHNICAL_QUESTIONS = {
     { text: "How would you handle a service that needs to scale to 10x its current traffic overnight?",
       keywords: ["scale", "load balancer", "horizontal", "cache", "queue", "autoscale", "bottleneck", "database"] }
   ],
-  "Data Analyst / ML": [
-    { text: "Explain the bias-variance tradeoff in machine learning.",
-      keywords: ["bias", "variance", "overfitting", "underfitting", "generalize", "complexity", "error", "model"] },
-    { text: "How would you handle missing data in a dataset before training a model?",
-      keywords: ["missing data", "imputation", "drop", "mean", "median", "null", "impute", "outlier"] },
-    { text: "What's the difference between precision and recall, and when does each matter more?",
-      keywords: ["precision", "recall", "false positive", "false negative", "trade-off", "f1", "threshold", "class"] },
-    { text: "Explain how you'd evaluate whether a model is overfitting.",
-      keywords: ["overfitting", "validation", "train", "test", "cross-validation", "gap", "regularization", "curve"] },
-    { text: "Walk through how you'd approach an A/B test for a new product feature.",
-      keywords: ["a/b test", "hypothesis", "control", "sample size", "significance", "metric", "randomize", "variant"] }
+  "Full Stack Developer": [
+    { text: "How would you structure communication between a frontend and backend in a full-stack app?",
+      keywords: ["api", "rest", "frontend", "backend", "request", "response", "json", "endpoint"] },
+    { text: "Explain how you'd handle authentication across a full-stack application.",
+      keywords: ["authentication", "token", "session", "jwt", "cookie", "login", "frontend", "backend"] },
+    { text: "What's your approach to keeping frontend and backend validation in sync?",
+      keywords: ["validation", "frontend", "backend", "duplicate", "schema", "consistency", "client", "server"] },
+    { text: "How would you handle state that needs to be shared between multiple pages of a web app?",
+      keywords: ["state", "global", "context", "store", "session", "local storage", "shared"] },
+    { text: "Explain the tradeoffs between server-side rendering and client-side rendering.",
+      keywords: ["server-side rendering", "client-side rendering", "seo", "performance", "hydration", "load time", "javascript"] }
+  ],
+  "Data Scientist": [
+    { text: "Explain the difference between supervised and unsupervised learning.",
+      keywords: ["supervised", "unsupervised", "label", "cluster", "prediction", "training data", "classification"] },
+    { text: "How would you handle an imbalanced dataset in a classification problem?",
+      keywords: ["imbalance", "oversample", "undersample", "smote", "weight", "class", "minority"] },
+    { text: "What's the difference between correlation and causation, and why does it matter in analysis?",
+      keywords: ["correlation", "causation", "confound", "relationship", "experiment", "bias"] },
+    { text: "How would you explain a complex model's results to a non-technical stakeholder?",
+      keywords: ["explain", "stakeholder", "simplify", "visualization", "interpret", "communicate", "non-technical"] },
+    { text: "Explain the bias-variance tradeoff.",
+      keywords: ["bias", "variance", "overfitting", "underfitting", "generalize", "complexity", "error"] }
+  ],
+  "AI/ML Engineer": [
+    { text: "Explain the difference between training, validation, and test sets.",
+      keywords: ["training", "validation", "test", "split", "overfit", "evaluate", "generalize"] },
+    { text: "How would you decide when to fine-tune a pretrained model versus training from scratch?",
+      keywords: ["fine-tune", "pretrained", "transfer learning", "scratch", "data", "compute", "cost"] },
+    { text: "What's the purpose of regularization in machine learning models?",
+      keywords: ["regularization", "overfitting", "l1", "l2", "penalty", "generalize", "dropout"] },
+    { text: "Explain how gradient descent optimizes a model's parameters.",
+      keywords: ["gradient descent", "learning rate", "loss", "minimize", "parameter", "weight", "optimize"] },
+    { text: "How would you monitor a deployed ML model for performance degradation?",
+      keywords: ["monitor", "drift", "degradation", "production", "metric", "alert", "retrain"] }
+  ],
+  "Cybersecurity": [
+    { text: "Explain the difference between symmetric and asymmetric encryption.",
+      keywords: ["symmetric", "asymmetric", "key", "encryption", "public key", "private key", "cipher"] },
+    { text: "What is a man-in-the-middle attack, and how can it be prevented?",
+      keywords: ["man-in-the-middle", "intercept", "encryption", "certificate", "tls", "prevent"] },
+    { text: "Explain the principle of least privilege.",
+      keywords: ["least privilege", "access", "permission", "minimal", "role", "restrict"] },
+    { text: "How would you respond to discovering a data breach in progress?",
+      keywords: ["breach", "respond", "contain", "incident", "investigate", "notify", "isolate"] },
+    { text: "What's the difference between authentication and authorization in a security context?",
+      keywords: ["authentication", "authorization", "identity", "permission", "access", "verify"] }
+  ],
+  "Cloud Engineering": [
+    { text: "Explain the difference between horizontal and vertical scaling.",
+      keywords: ["horizontal", "vertical", "scaling", "instance", "capacity", "load"] },
+    { text: "What's the difference between IaaS, PaaS, and SaaS?",
+      keywords: ["iaas", "paas", "saas", "infrastructure", "platform", "software", "service"] },
+    { text: "How would you design a system for high availability across multiple regions?",
+      keywords: ["high availability", "region", "failover", "redundancy", "replication", "disaster recovery"] },
+    { text: "Explain the purpose of a load balancer in a cloud architecture.",
+      keywords: ["load balancer", "distribute", "traffic", "availability", "scaling", "health check"] },
+    { text: "How would you approach cost optimization for a cloud infrastructure?",
+      keywords: ["cost", "optimize", "resource", "scaling", "reserved", "usage", "budget"] }
   ]
 };
 
 
+/* =========================================================
+   AI CALLS
+   Same backend endpoint the chat tabs use (/api/ai/chat).
+   Used to generate fresh, current questions and to grade
+   answers based on actual content — not just keyword matching.
+   ========================================================= */
+async function askAI(history, systemInstruction) {
+  const response = await fetch(`${API_BASE_URL}/api/ai/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ history, systemInstruction })
+  });
+  const data = await response.json();
+  if (!data.reply) throw new Error("Empty AI response");
+  return data.reply;
+}
+
+async function askAIJSON(history, systemInstruction) {
+  const raw = await askAI(history, systemInstruction + "\n\nRespond with ONLY valid JSON, no markdown fences, no other text.");
+  const clean = raw.replace(/```json|```/g, "").trim();
+  return JSON.parse(clean);
+}
+
+/* Generates 5 fresh interview questions for the chosen track/round/difficulty.
+   Explicitly asked to favor current, still-relevant tools and skip anything
+   outdated, so the question set evolves as the field does instead of being
+   frozen at whatever was written into a static list. Falls back to the
+   static bank below only if the AI call fails or returns something unusable,
+   so the trainer still works offline or if the backend is briefly down. */
+async function generateAIQuestions(track, round, difficulty) {
+  const roundLabel = round === "HR"
+    ? "HR / behavioral"
+    : round === "Technical"
+      ? "technical concepts"
+      : "hands-on coding / problem-solving";
+  const difficultyLine = round === "Coding" ? `Target difficulty: ${difficulty}.` : "";
+
+  const systemInstruction = `You are generating mock interview questions for a student practicing for a ${track} role, ${roundLabel} round. ${difficultyLine}
+Generate exactly 5 realistic interview questions this candidate could actually be asked today. Favor current, still-relevant tools, frameworks, and practices for ${track} right now, and skip anything outdated or deprecated unless it's still genuinely common in the field.
+For each question, include a short list of 6-8 keywords or concepts a strong answer should touch on — these are used afterward to fairly grade the answer's actual content, not just its length.
+Return ONLY a JSON array of exactly 5 objects shaped like:
+{"text": "<question>", "keywords": ["<concept1>", "<concept2>", "..."]}`;
+
+  return askAIJSON(
+    [{ role: "user", parts: [{ text: "Generate the questions now." }] }],
+    systemInstruction
+  );
+}
+
 async function getDynamicQuestions(track, round, difficulty) {
-  return getQuestions(track, round, difficulty);
+  try {
+    const questions = await generateAIQuestions(track, round, difficulty);
+    if (Array.isArray(questions) && questions.length > 0) return questions;
+    throw new Error("AI returned an empty or invalid question set");
+  } catch (err) {
+    console.warn("Falling back to static question bank:", err);
+    return getQuestions(track, round, difficulty);
+  }
 }
 
 const CODING_QUESTIONS = {
+  "Software Developer": {
+    Beginner: [
+      { text: "Describe how you'd write a function to check if two strings are anagrams of each other.",
+        keywords: ["anagram", "sort", "count", "character", "compare", "frequency", "string"] },
+      { text: "How would you find the largest number in an array?",
+        keywords: ["largest", "loop", "compare", "max", "array", "track"] },
+      { text: "Describe how you'd implement a basic stack using an array.",
+        keywords: ["stack", "push", "pop", "array", "lifo", "top"] },
+      { text: "How would you write a function that counts vowels in a string?",
+        keywords: ["vowel", "loop", "count", "string", "character", "condition"] },
+      { text: "Explain how you'd check if a number is even or odd without using the modulo operator.",
+        keywords: ["even", "odd", "bitwise", "divide", "remainder", "and operator"] }
+    ],
+    Intermediate: [
+      { text: "Describe how you'd design a simple in-memory key-value cache with expiration.",
+        keywords: ["cache", "key-value", "expire", "ttl", "map", "eviction", "timestamp"] },
+      { text: "How would you implement a basic rate limiter for function calls?",
+        keywords: ["rate limit", "throttle", "timestamp", "queue", "window", "token"] },
+      { text: "Walk through how you'd detect balanced parentheses in an expression.",
+        keywords: ["balanced", "parentheses", "stack", "push", "pop", "match", "bracket"] },
+      { text: "How would you design a simple event emitter/pub-sub system?",
+        keywords: ["event", "emitter", "subscribe", "publish", "listener", "callback", "pub-sub"] },
+      { text: "Describe how you'd implement binary search on a sorted array.",
+        keywords: ["binary search", "sorted", "midpoint", "divide", "log n", "pointer"] }
+    ]
+  },
   "Frontend Developer": {
     Beginner: [
       { text: "Describe how you'd write a function that reverses a string.",
@@ -116,30 +257,134 @@ const CODING_QUESTIONS = {
         keywords: ["queue", "retry", "backoff", "worker", "dead letter", "exponential", "job"] }
     ]
   },
-  "Data Analyst / ML": {
+  "Full Stack Developer": {
     Beginner: [
-      { text: "How would you calculate the mean, median, and mode of a dataset?",
-        keywords: ["mean", "median", "mode", "average", "sort", "frequency", "sum"] },
-      { text: "Describe how you'd write a query to find duplicate rows in a table.",
-        keywords: ["duplicate", "group by", "having", "count", "sql", "distinct"] },
-      { text: "How would you normalize a numeric feature before training a model?",
-        keywords: ["normalize", "scale", "min-max", "standardize", "z-score", "feature"] },
-      { text: "Explain how you'd handle a dataset with class imbalance.",
-        keywords: ["imbalance", "oversample", "undersample", "smote", "weight", "class"] },
-      { text: "How would you compute a rolling average over a time series?",
-        keywords: ["rolling", "window", "average", "time series", "moving", "smooth"] }
+      { text: "Describe how you'd build a simple REST endpoint that returns a list of items.",
+        keywords: ["rest", "endpoint", "get", "json", "route", "response", "list"] },
+      { text: "How would you validate a form's email field before submitting it?",
+        keywords: ["validate", "email", "regex", "form", "input", "client-side"] },
+      { text: "Describe how you'd fetch data from an API and display it on a page.",
+        keywords: ["fetch", "api", "async", "render", "display", "json", "loading"] },
+      { text: "How would you write a simple function to paginate an array of results?",
+        keywords: ["pagination", "array", "slice", "page", "limit", "offset"] },
+      { text: "Explain how you'd store and retrieve a user's session after login.",
+        keywords: ["session", "login", "cookie", "token", "store", "retrieve"] }
     ],
     Intermediate: [
-      { text: "Describe how you'd design a feature pipeline for a recommendation model.",
-        keywords: ["feature", "pipeline", "recommendation", "embedding", "batch", "real-time"] },
-      { text: "How would you detect data drift in a production ML model?",
-        keywords: ["drift", "distribution", "monitor", "baseline", "statistical", "alert"] },
-      { text: "Walk through how you'd design an experiment to test a new ranking algorithm.",
-        keywords: ["experiment", "ranking", "metric", "control", "hypothesis", "significance"] },
-      { text: "How would you optimize a slow SQL query joining several large tables?",
-        keywords: ["index", "join", "query plan", "optimize", "explain", "partition"] },
-      { text: "Describe how you'd build a pipeline to deduplicate near-identical records.",
-        keywords: ["dedupe", "fuzzy match", "similarity", "hash", "pipeline", "record"] }
+      { text: "Describe how you'd design a full-stack feature for real-time notifications.",
+        keywords: ["real-time", "websocket", "notification", "push", "subscribe", "backend", "frontend"] },
+      { text: "How would you implement optimistic UI updates when saving data to a backend?",
+        keywords: ["optimistic", "ui", "rollback", "update", "backend", "sync", "latency"] },
+      { text: "Walk through how you'd design file upload handling across frontend and backend.",
+        keywords: ["file upload", "multipart", "frontend", "backend", "storage", "validate", "size limit"] },
+      { text: "How would you architect a full-stack app to support offline usage?",
+        keywords: ["offline", "cache", "service worker", "sync", "local storage", "queue"] },
+      { text: "Describe how you'd design role-based access control across the stack.",
+        keywords: ["role", "access control", "permission", "authorization", "middleware", "frontend", "backend"] }
+    ]
+  },
+  "Data Scientist": {
+    Beginner: [
+      { text: "How would you calculate the correlation between two columns in a dataset?",
+        keywords: ["correlation", "columns", "dataset", "coefficient", "relationship", "pandas"] },
+      { text: "Describe how you'd remove duplicate rows from a dataset.",
+        keywords: ["duplicate", "rows", "dataset", "drop", "unique", "dataframe"] },
+      { text: "How would you group data by a category and compute an average?",
+        keywords: ["group by", "average", "category", "aggregate", "mean", "dataframe"] },
+      { text: "Explain how you'd visualize the distribution of a numeric column.",
+        keywords: ["distribution", "histogram", "visualize", "numeric", "plot", "column"] },
+      { text: "How would you handle missing values in a small dataset?",
+        keywords: ["missing", "null", "impute", "drop", "mean", "median"] }
+    ],
+    Intermediate: [
+      { text: "Describe how you'd design a pipeline to clean and preprocess raw data for modeling.",
+        keywords: ["pipeline", "clean", "preprocess", "feature", "raw data", "transform"] },
+      { text: "How would you evaluate whether a regression model is a good fit?",
+        keywords: ["regression", "r-squared", "residual", "error", "fit", "evaluate"] },
+      { text: "Walk through how you'd detect outliers in a dataset.",
+        keywords: ["outlier", "z-score", "iqr", "detect", "threshold", "distribution"] },
+      { text: "How would you design an A/B test to measure a change in user behavior?",
+        keywords: ["a/b test", "hypothesis", "control", "sample size", "significance", "metric"] },
+      { text: "Describe how you'd build a simple recommendation system from user behavior data.",
+        keywords: ["recommendation", "collaborative filtering", "behavior", "similarity", "rating", "user"] }
+    ]
+  },
+  "AI/ML Engineer": {
+    Beginner: [
+      { text: "How would you split a dataset into training and test sets in code?",
+        keywords: ["split", "training", "test", "dataset", "ratio", "random"] },
+      { text: "Describe how you'd normalize a numeric feature before feeding it to a model.",
+        keywords: ["normalize", "scale", "feature", "min-max", "standardize", "z-score"] },
+      { text: "How would you implement a simple k-nearest-neighbors classifier conceptually?",
+        keywords: ["k-nearest", "neighbors", "distance", "classify", "knn", "majority vote"] },
+      { text: "Explain how you'd calculate accuracy for a classification model's predictions.",
+        keywords: ["accuracy", "classification", "correct", "predictions", "evaluate", "metric"] },
+      { text: "How would you one-hot encode a categorical feature?",
+        keywords: ["one-hot", "encode", "categorical", "feature", "binary", "column"] }
+    ],
+    Intermediate: [
+      { text: "Describe how you'd design a training pipeline that can resume after a crash.",
+        keywords: ["pipeline", "checkpoint", "resume", "crash", "training", "save state"] },
+      { text: "How would you implement early stopping during model training?",
+        keywords: ["early stopping", "validation loss", "epoch", "patience", "overfitting", "training"] },
+      { text: "Walk through how you'd batch and shard a large dataset for distributed training.",
+        keywords: ["batch", "shard", "distributed", "training", "parallel", "dataset"] },
+      { text: "How would you design an inference API that serves a trained model efficiently?",
+        keywords: ["inference", "api", "serve", "latency", "model", "endpoint", "batch"] },
+      { text: "Describe how you'd version and track experiments across many model runs.",
+        keywords: ["versioning", "experiment tracking", "reproducibility", "metadata", "model", "runs"] }
+    ]
+  },
+  "Cybersecurity": {
+    Beginner: [
+      { text: "How would you write a function to check if a password meets basic strength requirements?",
+        keywords: ["password", "strength", "length", "character", "uppercase", "digit", "validate"] },
+      { text: "Describe how you'd detect a simple SQL injection pattern in user input.",
+        keywords: ["sql injection", "sanitize", "input", "escape", "query", "pattern"] },
+      { text: "How would you hash a password before storing it?",
+        keywords: ["hash", "password", "salt", "store", "encrypt", "bcrypt"] },
+      { text: "Explain how you'd validate that a URL is safe before redirecting a user to it.",
+        keywords: ["url", "validate", "redirect", "whitelist", "sanitize", "open redirect"] },
+      { text: "How would you write a basic function to detect suspicious repeated login attempts?",
+        keywords: ["login", "attempts", "rate limit", "lockout", "brute force", "threshold"] }
+    ],
+    Intermediate: [
+      { text: "Describe how you'd design a system to detect and block brute-force login attempts.",
+        keywords: ["brute force", "lockout", "rate limit", "ip", "threshold", "block"] },
+      { text: "How would you implement token-based session expiration securely?",
+        keywords: ["token", "expiration", "session", "refresh", "secure", "jwt"] },
+      { text: "Walk through how you'd design a secure file upload system to prevent malicious files.",
+        keywords: ["file upload", "malicious", "validate", "sanitize", "extension", "scan"] },
+      { text: "How would you design logging so it doesn't leak sensitive information?",
+        keywords: ["logging", "sensitive", "redact", "mask", "pii", "sanitize"] },
+      { text: "Describe how you'd design a system for encrypting data at rest and in transit.",
+        keywords: ["encryption", "at rest", "in transit", "tls", "key management", "data"] }
+    ]
+  },
+  "Cloud Engineering": {
+    Beginner: [
+      { text: "Describe how you'd write a basic script to automate spinning up a cloud server.",
+        keywords: ["script", "automate", "provision", "server", "cloud", "deploy"] },
+      { text: "How would you check if a cloud storage bucket is publicly accessible?",
+        keywords: ["bucket", "public", "access", "permission", "storage", "policy"] },
+      { text: "Explain how you'd write a simple health-check endpoint for a service.",
+        keywords: ["health check", "endpoint", "status", "monitor", "uptime", "response"] },
+      { text: "How would you configure environment variables for an app running in the cloud?",
+        keywords: ["environment variable", "config", "secret", "deploy", "cloud", "app"] },
+      { text: "Describe how you'd write a basic script to back up a database to cloud storage.",
+        keywords: ["backup", "database", "cloud storage", "script", "schedule", "automate"] }
+    ],
+    Intermediate: [
+      { text: "Describe how you'd design auto-scaling rules for a web service under variable traffic.",
+        keywords: ["auto-scaling", "traffic", "threshold", "instance", "metric", "capacity"] },
+      { text: "How would you implement a CI/CD pipeline for deploying to the cloud automatically?",
+        keywords: ["ci/cd", "pipeline", "deploy", "automate", "build", "test"] },
+      { text: "Walk through how you'd design a multi-region failover strategy.",
+        keywords: ["failover", "multi-region", "replication", "dns", "disaster recovery", "redundancy"] },
+      { text: "How would you design infrastructure as code for a reproducible cloud environment?",
+        keywords: ["infrastructure as code", "terraform", "reproducible", "template", "provision"] },
+      { text: "Describe how you'd secure a cloud environment against unauthorized access.",
+        keywords: ["secure", "unauthorized", "iam", "access control", "firewall", "policy"] }
     ]
   }
 };
@@ -298,6 +543,12 @@ async function initializeInterviewTrainer() {
 function speakQuestion(text) {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel(); // stop anything currently speaking
+
+  if (recognition && state.listening) {
+    manualStop = true;
+    recognition.abort(); // abort (not stop) so it cuts off instantly and can't catch the TTS audio
+  }
+
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.rate = 1;
   utterance.onstart = () => { speakingIndicator.textContent = "🔊 Reading question aloud..."; };
@@ -312,27 +563,33 @@ const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechReco
 let recognition = null;
 let manualStop = true; // true = user has not asked to listen / has asked to stop
 
+// Text already in the box before the CURRENT listening session began. Every
+// onresult event rebuilds the session's transcript from scratch (rather than
+// appending each "final" chunk on top of the last), because mobile browsers
+// frequently re-fire the same growing phrase as "final" multiple times —
+// appending each time caused runaway duplication like
+// "get me get me about get me about get me about yourself...".
+let sessionStartText = "";
+
 if (SpeechRecognitionAPI) {
   recognition = new SpeechRecognitionAPI();
-  recognition.continuous = true;
+  recognition.continuous = false;
   recognition.interimResults = true;
   recognition.lang = "en-US";
 
   recognition.onresult = (event) => {
-    let finalChunk = "";
-    let interimChunk = "";
-    for (let i = event.resultIndex; i < event.results.length; i++) {
+    let finalText = "";
+    let interimText = "";
+    for (let i = 0; i < event.results.length; i++) {
       const transcript = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
-        finalChunk += transcript + " ";
+        finalText += transcript + " ";
       } else {
-        interimChunk += transcript;
+        interimText += transcript;
       }
     }
-    if (finalChunk) {
-      state.baseAnswerText = (state.baseAnswerText + " " + finalChunk).trim() + " ";
-    }
-    answerBox.value = (state.baseAnswerText + interimChunk).trim();
+    state.baseAnswerText = (sessionStartText + " " + finalText).trim() + " ";
+    answerBox.value = (state.baseAnswerText + interimText).trim();
   };
 
   recognition.onerror = (event) => {
@@ -348,13 +605,20 @@ if (SpeechRecognitionAPI) {
   // Only restart automatically if the user has NOT pressed "Stop".
   recognition.onend = () => {
     if (!manualStop) {
-      try { recognition.start(); } catch (e) { /* already running */ }
+      beginRecognitionSession();
     } else {
       resetVoiceButtons();
     }
   };
 } else {
   voiceSupportHint.textContent = "Voice dictation isn't supported in this browser — you can still type your answers.";
+}
+
+// Starts (or restarts) a listening session, capturing whatever text is
+// already in the box right now as the fixed starting point for this session.
+function beginRecognitionSession() {
+  sessionStartText = answerBox.value.trim();
+  try { recognition.start(); } catch (e) { /* already running */ }
 }
 
 function resetVoiceButtons() {
@@ -367,20 +631,24 @@ function resetVoiceButtons() {
 
 startVoiceBtn.addEventListener("click", () => {
   if (!recognition || state.listening) return;
-  state.baseAnswerText = answerBox.value ? answerBox.value.trim() + " " : "";
+
+  // If the assistant is currently reading the question aloud, the user
+  // starting to speak should interrupt it immediately, not talk over it.
+  window.speechSynthesis.cancel();
+
   manualStop = false;
   state.listening = true;
   startVoiceBtn.disabled = true;
   startVoiceBtn.classList.add("active");
   stopVoiceBtn.disabled = false;
   speakingIndicator.textContent = "🎤 Listening...";
-  try { recognition.start(); } catch (e) { /* ignore double-start errors */ }
+  beginRecognitionSession();
 });
 
 stopVoiceBtn.addEventListener("click", () => {
   if (!recognition) return;
   manualStop = true;
-  recognition.stop(); // onend will call resetVoiceButtons()
+  recognition.abort(); // abort, not stop — cuts off instantly (important on mobile)
 });
 
 /* =========================================================
@@ -428,7 +696,7 @@ function loadQuestion() {
   // make sure any in-progress dictation from the previous question is stopped
   if (recognition && state.listening) {
     manualStop = true;
-    recognition.stop();
+    recognition.abort();
   }
 
   speakQuestion(q.text);
@@ -462,7 +730,7 @@ async function submitAnswer() {
   clearInterval(state.timerId);
   if (recognition && state.listening) {
     manualStop = true;
-    recognition.stop();
+    recognition.abort();
   }
   submitAnswerBtn.disabled = true;
 
@@ -505,7 +773,7 @@ function escapeHtml(str) {
 
 /* =========================================================
    GRADING
-   Tries the Claude API first (accurate, reads the actual
+   Tries the AI backend first (accurate, reads the actual
    answer content). Falls back to a keyword/structure-based
    heuristic grader if the API isn't reachable, so scoring
    always reflects what was actually said — not just length.
@@ -524,7 +792,43 @@ async function gradeAnswer(question, answer) {
     };
   }
 
-  return heuristicGrade(question, answer);
+  try {
+    return await aiGrade(question, answer);
+  } catch (err) {
+    console.warn("Falling back to heuristic grading:", err);
+    return heuristicGrade(question, answer);
+  }
+}
+
+/* Has the AI actually read and judge the answer's content — catching things
+   a fixed keyword list can't, like a correct answer phrased in unexpected
+   terms, or a fluent-sounding answer that's actually wrong. Only falls back
+   to the heuristic grader (below) if this call fails or returns something
+   unusable. */
+async function aiGrade(question, answer) {
+  const systemInstruction = `You are grading a candidate's mock interview answer.
+Question: "${question.text}"
+Evaluate the answer honestly based on its actual content — relevance, accuracy, and clarity — not just its length or whether it uses expected buzzwords.
+Return ONLY a JSON object shaped like:
+{"communication": <integer 1-5>, "technical": <integer 1-5>, "confidence": <integer 1-5>, "score": <integer 0-100 overall>, "verdict": "<good|ok|weak>", "feedback": "<1-2 sentence specific, honest feedback>", "missedKeywords": ["<up to 2 short concepts they could have mentioned>"]}`;
+
+  const result = await askAIJSON(
+    [{ role: "user", parts: [{ text: answer }] }],
+    systemInstruction
+  );
+
+  const score = Math.max(0, Math.min(100, Math.round(Number(result.score))));
+  if (isNaN(score)) throw new Error("AI grading result missing a valid score");
+
+  return {
+    communication: clamp(result.communication),
+    technical: clamp(result.technical),
+    confidence: clamp(result.confidence),
+    score,
+    verdict: ["good", "ok", "weak"].includes(result.verdict) ? result.verdict : scoreToVerdict(score),
+    feedback: typeof result.feedback === "string" && result.feedback.trim() ? result.feedback.trim() : "Solid effort — keep practicing.",
+    missedKeywords: Array.isArray(result.missedKeywords) ? result.missedKeywords.slice(0, 2) : []
+  };
 }
 
 function clamp(n) {

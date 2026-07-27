@@ -98,6 +98,7 @@ function toggleSpeak(text, btn, indicatorEl) {
   window.speechSynthesis.speak(utterance);
 }
 
+
 /**
  * Wires a single mic button to toggle dictation into a textarea.
  * Mirrors the start/stop pattern from interview.js, collapsed into
@@ -111,24 +112,31 @@ function attachVoiceInput(micBtn, textareaEl, indicatorEl, onListenStart) {
   }
 
   const recognition = new SpeechRecognitionAPI();
-  recognition.continuous = true;
+  recognition.continuous = false;
   recognition.interimResults = true;
   recognition.lang = "en-US";
 
   let listening = false;
   let manualStop = true;
-  let baseText = "";
+
+  // Text already in the textarea before the CURRENT listening session
+  // began. Every onresult event rebuilds the session's transcript from
+  // scratch instead of appending each "final" chunk on top of the last —
+  // mobile browsers frequently re-fire the same growing phrase as "final"
+  // more than once, and appending on top of that caused runaway duplicated
+  // text (e.g. "get me get me about get me about yourself...").
+  let sessionStartText = "";
 
   recognition.onresult = (event) => {
-    let finalChunk = "";
-    let interimChunk = "";
-    for (let i = event.resultIndex; i < event.results.length; i++) {
+    let finalText = "";
+    let interimText = "";
+    for (let i = 0; i < event.results.length; i++) {
       const transcript = event.results[i][0].transcript;
-      if (event.results[i].isFinal) finalChunk += transcript + " ";
-      else interimChunk += transcript;
+      if (event.results[i].isFinal) finalText += transcript + " ";
+      else interimText += transcript;
     }
-    if (finalChunk) baseText = (baseText + " " + finalChunk).trim() + " ";
-    textareaEl.value = (baseText + interimChunk).trim();
+    const combined = (sessionStartText + " " + finalText).trim() + " ";
+    textareaEl.value = (combined + interimText).trim();
   };
 
   recognition.onerror = (event) => {
@@ -142,11 +150,16 @@ function attachVoiceInput(micBtn, textareaEl, indicatorEl, onListenStart) {
 
   recognition.onend = () => {
     if (!manualStop) {
-      try { recognition.start(); } catch (e) { /* already running */ }
+      beginSession();
     } else {
       reset();
     }
   };
+
+  function beginSession() {
+    sessionStartText = textareaEl.value.trim();
+    try { recognition.start(); } catch (e) { /* already running */ }
+  }
 
   function reset() {
     listening = false;
@@ -155,21 +168,34 @@ function attachVoiceInput(micBtn, textareaEl, indicatorEl, onListenStart) {
     indicatorEl.textContent = "";
   }
 
+  // Force-closes the mic from outside (e.g. when the message is sent).
+  // Safe to call even if the mic isn't currently listening.
+  function stopListening() {
+    if (!listening) return;
+    manualStop = true;
+    recognition.abort(); // abort, not stop — cuts off instantly (important on mobile)
+  }
+
   micBtn.addEventListener("click", () => {
     if (!listening) {
-      baseText = textareaEl.value ? textareaEl.value.trim() + " " : "";
+      // User speaking should always interrupt any reply currently being
+      // read aloud, instead of letting the mic pick up the AI's own voice.
+      stopSpeaking();
+
       manualStop = false;
       listening = true;
       micBtn.classList.add("listening");
       micBtn.textContent = "⏹";
       indicatorEl.textContent = "🎤 Listening...";
       if (onListenStart) onListenStart();
-      try { recognition.start(); } catch (e) { /* ignore double-start */ }
+      beginSession();
     } else {
       manualStop = true;
-      recognition.stop();
+      recognition.abort(); // abort, not stop — cuts off instantly (important on mobile)
     }
   });
+
+  return { stopListening };
 }
 
 /* =========================================================
@@ -208,7 +234,7 @@ function createChatController({ windowEl, inputEl, micBtn, sendBtn, indicatorEl,
   // voice + manual edits correctly falls back to "text".
   let voiceComposedCurrentInput = false;
 
-  attachVoiceInput(micBtn, inputEl, indicatorEl, () => { voiceComposedCurrentInput = true; });
+  const voiceInput = attachVoiceInput(micBtn, inputEl, indicatorEl, () => { voiceComposedCurrentInput = true; });
   inputEl.addEventListener("input", () => { voiceComposedCurrentInput = false; });
 
   function renderMessage(role, text) {
@@ -265,6 +291,7 @@ function createChatController({ windowEl, inputEl, micBtn, sendBtn, indicatorEl,
     inputEl.style.height = "auto";
     sendBtn.disabled = true;
     micBtn.disabled = true;
+    if (voiceInput) voiceInput.stopListening(); // sending always closes the mic, even if still listening
     stopSpeaking(); // sending a new message always interrupts any reply currently talking
 
     renderMessage("user", text);

@@ -52,6 +52,8 @@
   .btn-ghost{background:var(--card);color:var(--ink-soft);border:1px solid var(--line);}
   .btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
   .btn-danger{background:var(--red-pale);color:#b91c1c;}
+  .btn:disabled{opacity:.55;cursor:not-allowed;}
+  .btn:disabled:hover{border-color:var(--line);color:var(--ink-soft);}
 
   .content{padding:36px 40px 90px;max-width:1320px;display:flex;gap:36px;align-items:flex-start;}
   .settings-nav{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:4px;position:sticky;top:100px;}
@@ -69,6 +71,7 @@
   .panel-head .eyebrow{font-size:11.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);font-weight:700;margin-bottom:6px;}
   .panel-head h2{font-size:23px;font-weight:600;}
   .panel-head .desc{color:var(--muted);font-size:13.5px;max-width:520px;margin-top:4px;}
+  .panel-head .caveat{color:var(--muted);font-size:12px;max-width:520px;margin-top:8px;font-style:italic;}
 
   .field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
   .field{display:flex;flex-direction:column;gap:7px;}
@@ -125,10 +128,19 @@
   <aside class="sidebar">
     <div class="brand"><div class="brand-mark">C</div><span>CareerCompass</span></div>
     <nav class="nav">
-      <a href="analytics.html"><span class="nav-dot"></span>Analytics</a>
-      <a href="assessment.html"><span class="nav-dot"></span>Assessment</a>
-      <a href="settings.html" class="active"><span class="nav-dot"></span>Settings</a>
-    </nav>
+
+  <a href="dashboard.html"><span class="nav-dot"></span>Dashboard</a>
+  <a href="career-quiz.html"><span class="nav-dot"></span>Career Quiz</a>
+  <a href="resume.html"><span class="nav-dot"></span>Resume Builder</a>
+  <a href="resume-analyzer.html"><span class="nav-dot"></span>Resume Analyzer</a>
+  <a href="github.html"><span class="nav-dot"></span>GitHub Analyzer</a>
+  <a href="roadmap.html"><span class="nav-dot"></span>Skill Roadmap</a>
+  <a href="learning-planner.html"><span class="nav-dot"></span>Learning Planner</a>
+  <a href="interview-trainer.html"><span class="nav-dot"></span>Interview Trainer</a>
+  <a href="ai-assistant.html"><span class="nav-dot"></span>AI Assistant</a>
+  <a href="internship.html"><span class="nav-dot"></span>Internship Tracker</a>
+  <a href="settings.html" class="active"><span class="nav-dot"></span>Settings</a>
+</nav>
     <div class="signal-widget">
       <span class="eyebrow">Account</span>
       <p>Signed in as <strong style="color:#fff;">Aarav Mehta</strong><br>Target role: Frontend Engineer</p>
@@ -159,72 +171,94 @@
       <div class="panels">
 
         <!-- PROFILE -->
-        <div class="panel active" id="panel-profile">
-          <div class="panel-head"><div class="eyebrow">Profile</div><h2>Who you are, and where you're headed</h2><div class="desc">This feeds your Career Readiness Score and skill-gap comparisons.</div></div>
-          <div class="card">
-        <div class="field-row">
-  <div class="field"><label>Full name</label><input type="text" id="settingsName"></div>
-  <div class="field"><label>Email</label><input type="email" id="settingsEmail" disabled></div>
+<div class="panel active" id="panel-profile">
+  <div class="panel-head"><div class="eyebrow">Profile</div><h2>Who you are, and where you're headed</h2><div class="desc">This feeds your Career Readiness Score and skill-gap comparisons.</div></div>
+
+  <div class="card">
+    <div class="field-row">
+      <div class="field"><label>Full name</label><input type="text" id="settingsName"></div>
+      <div class="field"><label>Email</label><input type="email" id="settingsEmail" disabled></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Course</label><input type="text" id="settingsCourse" placeholder="e.g. B.Tech Computer Science"></div>
+      <div class="field"><label>Education</label><input type="text" id="settingsEducation" placeholder="e.g. 3rd Year"></div>
+    </div>
+    <div class="field"><label>Semester</label><input type="text" id="settingsSemester" placeholder="e.g. 5th Semester"></div>
+  </div>
+
+  <div class="card">
+    <div class="row-item"><div><h4>Resume on file</h4><p>resume_aarav_v3.pdf · uploaded Jul 12, 2026</p></div><button class="btn btn-ghost">Replace</button></div>
+  </div>
 </div>
-<div class="field-row">
-  <div class="field"><label>Course</label><input type="text" id="settingsCourse" placeholder="e.g. B.Tech Computer Science"></div>
-  <div class="field"><label>Education</label><input type="text" id="settingsEducation" placeholder="e.g. 3rd Year"></div>
-</div>
-<div class="field"><label>Semester</label><input type="text" id="settingsSemester" placeholder="e.g. 5th Semester"></div>    </div>
-          <div class="card">
-            <div class="row-item"><div><h4>Resume on file</h4><p>resume_aarav_v3.pdf · uploaded Jul 12, 2026</p></div><button class="btn btn-ghost">Replace</button></div>
-          </div>
-        </div>
 
         <!-- PLANNER -->
         <div class="panel" id="panel-planner">
-          <div class="panel-head"><div class="eyebrow">Study Planner</div><h2>How and when you like to study</h2><div class="desc">Reminders and calendar sync follow these preferences.</div></div>
+          <div class="panel-head"><div class="eyebrow">Study Planner</div><h2>How and when you like to study</h2><div class="desc">These preferences are saved to your account and used by the Learning Planner.</div></div>
           <div class="card">
             <div class="field-row">
               <div class="field"><label>Preferred study days</label>
-                <select multiple size="5" style="height:auto;">
-                  <option selected>Monday</option><option selected>Tuesday</option><option>Wednesday</option><option selected>Thursday</option><option>Friday</option><option selected>Saturday</option><option>Sunday</option>
+                <select multiple size="5" id="studyDaysSelect" style="height:auto;">
+                  <option value="Monday">Monday</option>
+                  <option value="Tuesday">Tuesday</option>
+                  <option value="Wednesday">Wednesday</option>
+                  <option value="Thursday">Thursday</option>
+                  <option value="Friday">Friday</option>
+                  <option value="Saturday">Saturday</option>
+                  <option value="Sunday">Sunday</option>
                 </select>
               </div>
-              <div class="field"><label>Preferred time window</label><input type="text" value="7:00 PM – 9:30 PM"></div>
+              <div class="field"><label>Preferred time window</label><input type="text" id="timeWindowInput" placeholder="e.g. 7:00 PM – 9:30 PM"></div>
             </div>
-            <div class="field"><label>Reminder frequency</label><select><option>Daily</option><option selected>Every study day</option><option>Weekly summary only</option><option>Off</option></select></div>
+            <div class="field"><label>Reminder frequency</label>
+              <select id="reminderFrequencySelect">
+                <option value="Daily">Daily</option>
+                <option value="Every study day">Every study day</option>
+                <option value="Weekly summary only">Weekly summary only</option>
+                <option value="Off">Off</option>
+              </select>
+            </div>
           </div>
           <div class="card">
-            <div class="row-item"><div><h4>Google Calendar sync</h4><p>Adds study blocks and deadlines directly to your calendar.</p></div><div class="switch" data-toggle><i></i></div></div>
+            <div class="row-item">
+              <div><h4>Google Calendar sync</h4><p>Adds study blocks and deadlines directly to your calendar.</p></div>
+              <div class="switch" id="calendarSyncToggle" data-toggle><i></i></div>
+            </div>
+            <div class="panel-head" style="margin-bottom:0;">
+              <div class="caveat">Note: this saves your preference. Actual Google Calendar syncing isn't connected yet — see the Integrations tab.</div>
+            </div>
           </div>
         </div>
 
         <!-- NOTIFICATIONS -->
         <div class="panel" id="panel-notifications">
-          <div class="panel-head"><div class="eyebrow">Notifications</div><h2>What we should tell you, and when</h2></div>
+          <div class="panel-head"><div class="eyebrow">Notifications</div><h2>What we should tell you, and when</h2><div class="caveat">Note: these switches save your preference reliably. This project doesn't yet send real emails or push notifications — turning a switch on won't make an email or alert actually arrive.</div></div>
           <div class="card">
-            <div class="row-item"><div><h4>Daily study reminders</h4><p>A nudge at the start of your preferred time window.</p></div><div class="switch on" data-toggle><i></i></div></div>
-            <div class="row-item"><div><h4>Streak alerts</h4><p>Warn me before a login or study streak breaks.</p></div><div class="switch on" data-toggle><i></i></div></div>
-            <div class="row-item"><div><h4>Internship &amp; deadline alerts</h4><p>Applications closing soon for saved roles.</p></div><div class="switch" data-toggle><i></i></div></div>
-            <div class="row-item"><div><h4>Weekly progress email</h4><p>A Sunday summary of tests, hours and score changes.</p></div><div class="switch on" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Daily study reminders</h4><p>A nudge at the start of your preferred time window.</p></div><div class="switch on" id="dailyRemindersToggle" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Streak alerts</h4><p>Warn me before a login or study streak breaks.</p></div><div class="switch on" id="streakAlertsToggle" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Internship &amp; deadline alerts</h4><p>Applications closing soon for saved roles.</p></div><div class="switch" id="internshipAlertsToggle" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Weekly progress email</h4><p>A Sunday summary of tests, hours and score changes.</p></div><div class="switch on" id="weeklyEmailToggle" data-toggle><i></i></div></div>
           </div>
         </div>
 
         <!-- INTEGRATIONS -->
         <div class="panel" id="panel-integrations">
-          <div class="panel-head"><div class="eyebrow">Integrations</div><h2>Connected accounts</h2><div class="desc">These power the GitHub analyzer, calendar sync and job-portal tracking.</div></div>
+          <div class="panel-head"><div class="eyebrow">Integrations</div><h2>Connected accounts</h2><div class="desc">GitHub status below reflects your real GitHub Analyzer results. The others need OAuth setup with those companies, so they're marked Coming soon for now.</div></div>
           <div class="card">
             <div class="integration-row">
               <div class="integration-left"><div class="int-icon" style="background:#111827;">Gh</div><div><h4>GitHub</h4><p>Powers commit, repo and language analytics.</p></div></div>
-              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill connected" id="ghStatus">Connected</span><button class="btn btn-ghost" data-int="github">Disconnect</button></div>
+              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill off" id="ghStatus">Checking…</span></div>
             </div>
             <div class="integration-row">
               <div class="integration-left"><div class="int-icon" style="background:#0a66c2;">in</div><div><h4>LinkedIn</h4><p>Cross-post resume updates and endorsements.</p></div></div>
-              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill off" id="liStatus">Not connected</span><button class="btn btn-primary" data-int="linkedin">Connect</button></div>
+              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill off">Coming soon</span><button class="btn btn-ghost" disabled>Connect</button></div>
             </div>
             <div class="integration-row">
               <div class="integration-left"><div class="int-icon" style="background:#2563eb;">Cal</div><div><h4>Calendar sync</h4><p>Google Calendar — study blocks &amp; deadlines.</p></div></div>
-              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill off" id="calStatus">Not connected</span><button class="btn btn-primary" data-int="calendar">Connect</button></div>
+              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill off">Coming soon</span><button class="btn btn-ghost" disabled>Connect</button></div>
             </div>
             <div class="integration-row">
               <div class="integration-left"><div class="int-icon" style="background:#16a34a;">Jb</div><div><h4>Job portals</h4><p>Track applications sent through partner boards.</p></div></div>
-              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill off" id="jobStatus">Not connected</span><button class="btn btn-primary" data-int="jobs">Connect</button></div>
+              <div style="display:flex;align-items:center;gap:12px;"><span class="status-pill off">Coming soon</span><button class="btn btn-ghost" disabled>Connect</button></div>
             </div>
           </div>
         </div>
@@ -235,35 +269,35 @@
           <div class="card">
             <div class="field"><label>Profile visibility</label></div>
             <div class="visibility-radio" style="margin-top:10px;">
-              <label><input type="radio" name="vis" checked><div>Private<span>Only you can see your scores and analytics.</span></div></label>
-              <label><input type="radio" name="vis"><div>Anonymous leaderboard only<span>Your score appears on peer leaderboards without your name.</span></div></label>
-              <label><input type="radio" name="vis"><div>Public profile<span>Recruiters and peers can view your readiness score and resume.</span></div></label>
+              <label><input type="radio" name="profileVisibility" value="private" checked><div>Private<span>Only you can see your scores and analytics.</span></div></label>
+              <label><input type="radio" name="profileVisibility" value="anonymous"><div>Anonymous leaderboard only<span>Your score appears on peer leaderboards without your name.</span></div></label>
+              <label><input type="radio" name="profileVisibility" value="public"><div>Public profile<span>Recruiters and peers can view your readiness score and resume.</span></div></label>
             </div>
           </div>
           <div class="card">
-            <div class="row-item"><div><h4>Share analytics with recruiters</h4><p>Applies only if your profile is public.</p></div><div class="switch" data-toggle><i></i></div></div>
-            <div class="row-item"><div><h4>Include test scores in shared profile</h4><p>Hide individual test scores while keeping the overall trend.</p></div><div class="switch on" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Share analytics with recruiters</h4><p>Applies only if your profile is public.</p></div><div class="switch" id="shareAnalyticsToggle" data-toggle><i></i></div></div>
+            <div class="row-item"><div><h4>Include test scores in shared profile</h4><p>Hide individual test scores while keeping the overall trend.</p></div><div class="switch on" id="includeScoresToggle" data-toggle><i></i></div></div>
           </div>
         </div>
 
         <!-- SECURITY -->
-        <div class="panel" id="panel-security">
-          <div class="panel-head"><div class="eyebrow">Account &amp; Security</div><h2>Password and sign-in</h2></div>
-          <div class="card">
-            <div class="field-row">
-              <div class="field"><label>Current password</label><input type="password" placeholder="••••••••"></div>
-              <div class="field"><label>New password</label><input type="password" placeholder="••••••••"></div>
-            </div>
-            <button class="btn btn-primary" style="margin-top:6px;">Update password</button>
-          </div>
-          <div class="card">
-            <div class="row-item"><div><h4>Two-factor authentication</h4><p>Require a code from your phone at sign-in.</p></div><div class="switch" data-toggle><i></i></div></div>
-            <div class="row-item"><div><h4>Sign out of all other sessions</h4><p>Last active session: Chrome on Windows, today.</p></div><button class="btn btn-ghost">Sign out others</button></div>
-          </div>
-          <div class="card">
-            <div class="row-item"><div><h4>Delete account</h4><p>Permanently removes your profile, resume and history.</p></div><button class="btn btn-danger">Delete account</button></div>
-          </div>
-        </div>
+<div class="panel" id="panel-security">
+  <div class="panel-head"><div class="eyebrow">Account &amp; Security</div><h2>Password and sign-in</h2></div>
+  <div class="card">
+    <div class="field-row">
+      <div class="field"><label>Current password</label><input type="password" id="currentPasswordInput" placeholder="••••••••"></div>
+      <div class="field"><label>New password</label><input type="password" id="newPasswordInput" placeholder="••••••••"></div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:6px;" id="updatePasswordBtn">Update password</button>
+  </div>
+  <div class="card">
+    <div class="row-item"><div><h4>Two-factor authentication</h4><p>Require a code from your phone at sign-in.</p></div><span class="status-pill off">Coming soon</span></div>
+<div class="row-item"><div><h4>Sign out of all other sessions</h4><p>Last active session: Chrome on Windows, today.</p></div><span class="status-pill off">Coming soon</span></div>
+  </div>
+  <div class="card">
+    <div class="row-item"><div><h4>Delete account</h4><p>Permanently removes your profile, resume and history.</p></div><button class="btn btn-danger" id="deleteAccountBtn">Delete account</button></div>
+  </div>
+</div>  
 
         <!-- APPEARANCE -->
         <div class="panel" id="panel-appearance">
@@ -277,7 +311,7 @@
         </div>
 
         <div class="save-bar">
-          <button class="btn btn-ghost">Discard</button>
+          <button class="btn btn-ghost" id="discardBtn">Discard</button>
           <button class="btn btn-primary" id="saveBtn">Save changes</button>
         </div>
 
@@ -299,40 +333,30 @@ document.querySelectorAll('#settingsNav button').forEach(btn=>{
   });
 });
 
-/* Generic toggles */
+/* Generic toggles (visual click animation only — settings.js reads/sets .on for real state) */
 document.querySelectorAll('.switch[data-toggle]').forEach(sw=>{
   sw.addEventListener('click', ()=> sw.classList.toggle('on'));
 });
 
-/* Integrations connect/disconnect */
-const intMeta = {
-  github:{statusEl:'ghStatus'}, linkedin:{statusEl:'liStatus'}, calendar:{statusEl:'calStatus'}, jobs:{statusEl:'jobStatus'}
-};
-document.querySelectorAll('[data-int]').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const key = btn.dataset.int;
-    const statusEl = document.getElementById(intMeta[key].statusEl);
-    const isConnected = statusEl.classList.contains('connected');
-    if(isConnected){
-      statusEl.textContent='Not connected'; statusEl.classList.remove('connected'); statusEl.classList.add('off');
-      btn.textContent='Connect'; btn.classList.remove('btn-ghost'); btn.classList.add('btn-primary');
-    } else {
-      statusEl.textContent='Connected'; statusEl.classList.add('connected'); statusEl.classList.remove('off');
-      btn.textContent='Disconnect'; btn.classList.remove('btn-primary'); btn.classList.add('btn-ghost');
-    }
-    showToast(isConnected ? key+' disconnected.' : key+' connected.');
-  });
-});
+/* Theme picker — synced with dashboard's dark mode */
+function applyTheme(theme) {
+  document.querySelectorAll('.theme-opt').forEach(o => o.classList.remove('active'));
+  const matchingOpt = document.querySelector(`.theme-opt[data-theme="${theme}"]`);
+  if (matchingOpt) matchingOpt.classList.add('active');
+  document.documentElement.setAttribute('data-theme', theme);
+  document.body.classList.toggle('dark-mode', theme === 'dark');
+}
 
-/* Theme picker — live, in-memory only */
+const savedTheme = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+applyTheme(savedTheme);
+
 document.querySelectorAll('.theme-opt').forEach(opt=>{
   opt.addEventListener('click', ()=>{
-    document.querySelectorAll('.theme-opt').forEach(o=>o.classList.remove('active'));
-    opt.classList.add('active');
-    document.documentElement.setAttribute('data-theme', opt.dataset.theme);
+    const theme = opt.dataset.theme;
+    applyTheme(theme);
+    localStorage.setItem('theme', theme);
   });
 });
-
 /* Save */
 function showToast(msg){
   const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
@@ -340,17 +364,64 @@ function showToast(msg){
 }
 
 /* Export data */
-document.getElementById('exportDataBtn').addEventListener('click', ()=>{
-  const payload = {
-    generatedAt:new Date().toISOString(),
-    profile:{name:'Aarav Mehta', email:'aarav.mehta@example.com', targetRole:'Frontend Engineer', education:'B.Tech Computer Science, 3rd Year', skills:['JavaScript','React','CSS','Git','HTML','REST APIs']},
-    resume:{file:'resume_aarav_v3.pdf', uploaded:'2026-07-12'},
-    privacy:{visibility:'private'}
-  };
-  const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='careercompass-profile-data.json'; a.click();
-  showToast('Data export ready — check your downloads.');
-});
+/* ============================================================
+   Discard — reload saved values, discarding unsaved edits
+   ============================================================ */
+
+const discardBtn = document.getElementById("discardBtn");
+
+if (discardBtn) {
+    discardBtn.addEventListener("click", () => {
+        loadProfileIntoForm();
+        loadSettingsIntoForm();
+        showToast("Changes discarded.");
+    });
+}
+
+/* ============================================================
+   Export real user data
+   ============================================================ */
+
+const exportDataBtn = document.getElementById("exportDataBtn");
+
+if (exportDataBtn) {
+
+    exportDataBtn.addEventListener("click", async () => {
+
+        exportDataBtn.disabled = true;
+
+        try {
+
+            const [meResponse, settingsResponse] = await Promise.all([
+                fetch(`${API_BASE_URL}/api/me`, { credentials: "include" }),
+                fetch(`${API_BASE_URL}/api/settings`, { credentials: "include" })
+            ]);
+
+            const meResult = await meResponse.json();
+            const settingsResult = await settingsResponse.json();
+
+            const payload = {
+                generatedAt: new Date().toISOString(),
+                profile: meResult.user || {},
+                settings: settingsResult.settings || {}
+            };
+
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "careercompass-my-data.json";
+            a.click();
+
+            showToast("Data export ready — check your downloads.");
+
+        } catch (error) {
+            console.error("Export error:", error);
+            showToast("Could not export data. Check your connection.");
+        } finally {
+            exportDataBtn.disabled = false;
+        }
+    });
+}
 </script>
 <script src="../js/settings.js"></script>
 </body>

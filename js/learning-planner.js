@@ -1,11 +1,14 @@
 /* ============================================================
-   CareerCompass — Learning Planner (v2)
+   CareerCompass — Learning Planner (v2 + Settings connection)
    ------------------------------------------------------------
    New in this version:
    - Notification Center (overdue / due today / streak-at-risk)
    - XP + Level gamification (replaces plain streak-only view)
    - Focus Timer (Pomodoro-style) per task
    - "Today Only" view toggle
+   - Reads Study Planner preferences saved on the Settings page
+     (preferred days, time window, reminder frequency, calendar
+     sync note) and reflects them here.
    Storage keys: careerCompassPlanner, careerCompassStreak, careerCompassXP
    ============================================================ */
 
@@ -31,6 +34,15 @@ let currentView = "week";
 let focusTaskId = null;
 let focusMinutes = 25;
 let focusInterval = null;
+
+// Study Planner preferences from the Settings page. Defaults used
+// if the request fails or the user hasn't saved any yet.
+let plannerSettings = {
+  studyDays: [],
+  timeWindow: "",
+  reminderFrequency: "Every study day",
+  calendarSync: false
+};
 
 // today's real weekday, mapped to our Monday-first DAYS array
 const jsDay = new Date().getDay(); // 0 = Sunday
@@ -121,6 +133,33 @@ function schedulePlannerSave() {
   }, 400);
 }
 
+// Loads Study Planner preferences saved on the Settings page.
+// Non-fatal if this fails — the planner still works fine without it,
+// it just won't show the ⭐ preferred-day markers or time window line.
+async function loadPlannerSettings() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/settings`, {
+      method: "GET",
+      credentials: "include"
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.settings) {
+      console.warn("Could not load Settings preferences:", result.message);
+      return;
+    }
+
+    plannerSettings = {
+      studyDays: Array.isArray(result.settings.studyDays) ? result.settings.studyDays : [],
+      timeWindow: result.settings.timeWindow || "",
+      reminderFrequency: result.settings.reminderFrequency || "Every study day",
+      calendarSync: Boolean(result.settings.calendarSync)
+    };
+  } catch (error) {
+    console.warn("Could not load Settings preferences:", error);
+  }
+}
 
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, (character) => {
@@ -168,6 +207,11 @@ async function initializePlanner() {
     });
 
     const serverPlanner = await loadPlannerDataFromServer();
+
+    // Load Settings preferences alongside Planner data. Kept separate
+    // and non-fatal on failure so a Settings hiccup never breaks the
+    // Planner itself.
+    await loadPlannerSettings();
 
     const serverTasks = Array.isArray(serverPlanner.tasks)
       ? serverPlanner.tasks
@@ -278,9 +322,43 @@ function renderHero() {
 
   const todayTasks = tasks.filter(t => t.day === todayName);
   const todayDone = todayTasks.filter(t => t.done).length;
-  document.getElementById("todaySummary").textContent = todayTasks.length
+
+  let summaryText = todayTasks.length
     ? `${todayName}: ${todayDone} of ${todayTasks.length} tasks done`
     : `${todayName}: no tasks planned yet — add one below`;
+
+  if (plannerSettings.timeWindow) {
+    summaryText += ` · Preferred window: ${plannerSettings.timeWindow}`;
+  }
+
+  document.getElementById("todaySummary").textContent = summaryText;
+
+  renderCalendarSyncNote();
+}
+
+// Shows an honest note (not a fake working sync) reflecting the
+// Calendar sync preference saved on the Settings page.
+function renderCalendarSyncNote() {
+  const heroLeft = document.querySelector(".hero-left");
+  if (!heroLeft) return;
+
+  let noteEl = document.getElementById("calendarSyncNote");
+
+  if (!plannerSettings.calendarSync) {
+    if (noteEl) noteEl.remove();
+    return;
+  }
+
+  if (!noteEl) {
+    noteEl = document.createElement("p");
+    noteEl.id = "calendarSyncNote";
+    noteEl.className = "hero-sub";
+    noteEl.style.opacity = "0.75";
+    noteEl.style.fontSize = "0.85em";
+    heroLeft.appendChild(noteEl);
+  }
+
+  noteEl.textContent = "📅 Calendar sync preference: On (real Google Calendar syncing isn't connected yet — see Settings → Integrations)";
 }
 
 // ============================================================
@@ -371,10 +449,12 @@ function renderBoard() {
   dayBoard.innerHTML = daysToShow.map(day => {
     const dayTasks = tasks.filter(t => t.day === day);
     const isToday = day === todayName;
+    const isPreferred = plannerSettings.studyDays.includes(day);
+
     return `
-      <div class="day-column ${isToday ? "is-today" : ""}">
+      <div class="day-column ${isToday ? "is-today" : ""}" ${isPreferred ? 'style="box-shadow: inset 3px 0 0 #f59e0b;"' : ""}>
         <div class="day-column-title">
-          <span>${day}${isToday ? " · Today" : ""}</span>
+          <span>${day}${isToday ? " · Today" : ""}${isPreferred ? ' <span title="Preferred study day (set in Settings)" style="color:#f59e0b;">★</span>' : ""}</span>
           <span class="day-count">${dayTasks.filter(t=>t.done).length}/${dayTasks.length}</span>
         </div>
         ${dayTasks.length ? dayTasks.map(taskCard).join("") : `<p class="day-empty">No tasks</p>`}
@@ -531,10 +611,13 @@ function buildNotifications() {
     }
   });
 
-  // streak-at-risk: evening, nothing completed today yet
+  // streak-at-risk: evening, nothing completed today yet.
+  // Skipped entirely if the user turned reminders Off in Settings.
   const hour = new Date().getHours();
   const doneToday = tasks.some(t => t.day === todayName && t.done);
-  if (hour >= 18 && !doneToday && tasks.some(t => t.day === todayName)) {
+  const remindersOff = plannerSettings.reminderFrequency === "Off";
+
+  if (!remindersOff && hour >= 18 && !doneToday && tasks.some(t => t.day === todayName)) {
     notifs.push({ type: "streak", text: "Your streak is at risk — complete a task today to keep it alive." });
   }
 
