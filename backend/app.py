@@ -195,6 +195,11 @@ class CareerProfile(db.Model):
         nullable=True
     )
 
+    settings_prefs = db.Column(
+        db.JSON,
+        nullable=True
+    )
+
     onboarding_step = db.Column(
         db.String(100),
         default="career-assessment",
@@ -564,6 +569,115 @@ def validate_roadmap_payload(payload):
     clean_data = {
         "allProgress": clean_all_progress,
         "summary": clean_summary
+    }
+
+    return clean_data, None
+
+
+# ==========================================
+# Settings Preferences Validation
+# ==========================================
+
+VALID_REMINDER_FREQUENCIES = {
+    "Daily",
+    "Every study day",
+    "Weekly summary only",
+    "Off"
+}
+
+VALID_PROFILE_VISIBILITY = {
+    "private",
+    "anonymous",
+    "public"
+}
+
+DEFAULT_SETTINGS_PREFS = {
+    "studyDays": ["Monday", "Tuesday", "Thursday", "Saturday"],
+    "timeWindow": "7:00 PM - 9:30 PM",
+    "reminderFrequency": "Every study day",
+    "calendarSync": False,
+    "notifications": {
+        "dailyStudyReminders": True,
+        "streakAlerts": True,
+        "internshipDeadlineAlerts": False,
+        "weeklyProgressEmail": True
+    },
+    "privacy": {
+        "profileVisibility": "private",
+        "shareAnalyticsWithRecruiters": False,
+        "includeTestScores": True
+    }
+}
+
+
+def validate_settings_payload(payload):
+    """Validate and clean Settings preferences before storing them.
+
+    Follows the same whitelist-keys / clamp-values pattern as
+    validate_planner_payload and validate_roadmap_payload above:
+    nothing from the request body is trusted or stored as-is.
+    """
+
+    if not isinstance(payload, dict):
+        return None, "Settings data must be a JSON object."
+
+    # --- Study Planner prefs ---
+
+    raw_study_days = payload.get("studyDays", [])
+
+    if not isinstance(raw_study_days, list):
+        raw_study_days = []
+
+    clean_study_days = []
+    for day in raw_study_days:
+        day_str = str(day).strip()
+        if day_str in VALID_PLANNER_DAYS and day_str not in clean_study_days:
+            clean_study_days.append(day_str)
+
+    time_window = str(payload.get("timeWindow", "")).strip()[:60]
+
+    reminder_frequency = str(payload.get("reminderFrequency", "")).strip()
+    if reminder_frequency not in VALID_REMINDER_FREQUENCIES:
+        reminder_frequency = "Every study day"
+
+    calendar_sync = bool(payload.get("calendarSync", False))
+
+    # --- Notifications prefs ---
+
+    raw_notifications = payload.get("notifications", {})
+    if not isinstance(raw_notifications, dict):
+        raw_notifications = {}
+
+    clean_notifications = {
+        "dailyStudyReminders": bool(raw_notifications.get("dailyStudyReminders", False)),
+        "streakAlerts": bool(raw_notifications.get("streakAlerts", False)),
+        "internshipDeadlineAlerts": bool(raw_notifications.get("internshipDeadlineAlerts", False)),
+        "weeklyProgressEmail": bool(raw_notifications.get("weeklyProgressEmail", False))
+    }
+
+    # --- Privacy prefs ---
+
+    raw_privacy = payload.get("privacy", {})
+    if not isinstance(raw_privacy, dict):
+        raw_privacy = {}
+
+    profile_visibility = str(raw_privacy.get("profileVisibility", "")).strip()
+    if profile_visibility not in VALID_PROFILE_VISIBILITY:
+        profile_visibility = "private"
+
+    clean_privacy = {
+        "profileVisibility": profile_visibility,
+        "shareAnalyticsWithRecruiters": bool(raw_privacy.get("shareAnalyticsWithRecruiters", False)),
+        "includeTestScores": bool(raw_privacy.get("includeTestScores", False))
+    }
+
+    clean_data = {
+        "studyDays": clean_study_days,
+        "timeWindow": time_window,
+        "reminderFrequency": reminder_frequency,
+        "calendarSync": calendar_sync,
+        "notifications": clean_notifications,
+        "privacy": clean_privacy
     }
 
     return clean_data, None
@@ -1064,6 +1178,75 @@ def update_profile():
     }), 200
 
 
+@app.route("/api/change-password", methods=["PUT"])
+@login_required
+def change_password():
+
+    data = get_json_body()
+
+    current_password = str(data.get("currentPassword", ""))
+    new_password = str(data.get("newPassword", ""))
+
+    if not check_password_hash(current_user.password_hash, current_password):
+        return jsonify({
+            "status": "error",
+            "message": "Current password is incorrect."
+        }), 400
+
+    if len(new_password) < 8:
+        return jsonify({
+            "status": "error",
+            "message": "New password must be at least 8 characters."
+        }), 400
+
+    if len(new_password) > 128:
+        return jsonify({
+            "status": "error",
+            "message": "New password is too long."
+        }), 400
+
+    current_user.password_hash = generate_password_hash(new_password)
+
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Unable to change password")
+        return jsonify({
+            "status": "error",
+            "message": "Unable to update password."
+        }), 500
+
+    return jsonify({
+        "status": "success",
+        "message": "Password updated successfully."
+    }), 200
+
+
+@app.route("/api/account", methods=["DELETE"])
+@login_required
+def delete_account():
+
+    user = current_user._get_current_object()
+
+    try:
+        logout_user()
+        db.session.delete(user)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Unable to delete account")
+        return jsonify({
+            "status": "error",
+            "message": "Unable to delete account."
+        }), 500
+
+    return jsonify({
+        "status": "success",
+        "message": "Account deleted successfully.",
+        "redirect": "/"
+    }), 200
+
      
 
 # ==========================================
@@ -1291,6 +1474,104 @@ def update_roadmap():
         return jsonify({
             "status": "error",
             "message": "Unable to save Roadmap data."
+        }), 500
+
+
+# ==========================================
+# Settings Preferences Routes
+# ==========================================
+
+@app.route("/api/settings", methods=["GET"])
+@login_required
+def get_settings():
+    try:
+        profile = get_or_create_career_profile(current_user.id)
+
+        settings_prefs = {
+            "studyDays": list(DEFAULT_SETTINGS_PREFS["studyDays"]),
+            "timeWindow": DEFAULT_SETTINGS_PREFS["timeWindow"],
+            "reminderFrequency": DEFAULT_SETTINGS_PREFS["reminderFrequency"],
+            "calendarSync": DEFAULT_SETTINGS_PREFS["calendarSync"],
+            "notifications": dict(DEFAULT_SETTINGS_PREFS["notifications"]),
+            "privacy": dict(DEFAULT_SETTINGS_PREFS["privacy"])
+        }
+
+        if profile.settings_prefs:
+            stored_data = profile.settings_prefs
+
+            # Backward compatibility, same pattern as planner/roadmap above.
+            if isinstance(stored_data, str):
+                try:
+                    stored_data = json.loads(stored_data)
+                except (json.JSONDecodeError, TypeError):
+                    stored_data = {}
+                    app.logger.warning(
+                        "Invalid settings data for user %s",
+                        current_user.id
+                    )
+
+            if isinstance(stored_data, dict):
+                settings_prefs.update(stored_data)
+
+                if isinstance(stored_data.get("notifications"), dict):
+                    settings_prefs["notifications"].update(stored_data["notifications"])
+
+                if isinstance(stored_data.get("privacy"), dict):
+                    settings_prefs["privacy"].update(stored_data["privacy"])
+
+        # GitHub connection status is computed from real data, not stored here.
+        settings_prefs["githubConnected"] = profile.github_score is not None
+
+        return jsonify({
+            "status": "success",
+            "settings": settings_prefs
+        }), 200
+
+    except Exception:
+        app.logger.exception("Unable to load Settings data")
+
+        return jsonify({
+            "status": "error",
+            "message": "Unable to load Settings data."
+        }), 500
+
+
+@app.route("/api/settings", methods=["PUT"])
+@login_required
+def update_settings():
+    payload = request.get_json(silent=True)
+
+    clean_data, validation_error = validate_settings_payload(payload)
+
+    if validation_error:
+        return jsonify({
+            "status": "error",
+            "message": validation_error
+        }), 400
+
+    try:
+        profile = get_or_create_career_profile(current_user.id)
+
+        profile.settings_prefs = clean_data
+        profile.updated_at = datetime.now(timezone.utc)
+
+        db.session.commit()
+
+        clean_data["githubConnected"] = profile.github_score is not None
+
+        return jsonify({
+            "status": "success",
+            "message": "Settings saved successfully.",
+            "settings": clean_data
+        }), 200
+
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Unable to save Settings data")
+
+        return jsonify({
+            "status": "error",
+            "message": "Unable to save Settings data."
         }), 500
 
 
