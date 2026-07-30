@@ -104,6 +104,27 @@ if (
 loadDashboardUser();
 
 
+
+function renderMLPredictionCard(dashboardData) {
+
+    const card = document.getElementById("mlPredictionCard");
+    if (!card) return;
+
+    const result = dashboardData.careerResult;
+
+    if (result && result.source === "github-ml" && result.prediction) {
+        card.innerHTML = `
+            <h2>🎯 Your Predicted Career Match</h2>
+            <p class="ml-career-name">${result.prediction}</p>
+            <p class="hint">${result.confidence}% confidence — based on your GitHub Analyzer results</p>
+        `;
+    } else {
+        card.innerHTML = `
+            <h2>🎯 Your Predicted Career Match</h2>
+            <p class="hint">Run the GitHub Analyzer to see your ML career prediction here.</p>
+        `;
+    }
+}
 /* =====================================================
    STATS CARDS (Placement Readiness, Resume, GitHub)
    ===================================================== */
@@ -465,6 +486,7 @@ async function loadDashboardData() {
 
     renderStatsCards(dashboardData);
     renderSkillProgress(dashboardData);
+    renderMLPredictionCard(dashboardData);
     renderRecentActivity(dashboardData, plannerTasks);
     renderUpcomingDeadlines(plannerTasks);
     renderUpcomingGoals(plannerTasks);
