@@ -1184,21 +1184,51 @@ function getCareerMatch(careerKey) {
    RENDER CAREER SUMMARY
    ===================================================== */
 
+ 
 function renderCareerSummary() {
-
+ 
     const career =
         careerRoadmaps[selectedCareerKey];
-
+ 
     careerIcon.textContent = career.icon;
     careerName.textContent = career.name;
     careerDescription.textContent =
         career.description;
-
+ 
     careerMatch.textContent =
         `${getCareerMatch(selectedCareerKey)}%`;
-
+ 
     careerSelector.value =
         selectedCareerKey;
+ 
+    const existingBadge = document.getElementById("roadmapMlBadge");
+    if (existingBadge) existingBadge.remove();
+ 
+    const isMatchingQuizCareer =
+        quizResult && quizResult.primaryCareer?.key === selectedCareerKey;
+ 
+    if (isMatchingQuizCareer) {
+        const badge = document.createElement("div");
+        badge.id = "roadmapMlBadge";
+        badge.style.display = "inline-block";
+        badge.style.padding = "6px 14px";
+        badge.style.borderRadius = "999px";
+        badge.style.fontSize = "13px";
+        badge.style.fontWeight = "700";
+        badge.style.marginBottom = "12px";
+ 
+        if (quizResult.usedML) {
+            badge.textContent = "🧠 This roadmap follows your ML-predicted career";
+            badge.style.background = "#dcfce7";
+            badge.style.color = "#166534";
+        } else {
+            badge.textContent = "📋 This roadmap follows your quiz-based top match";
+            badge.style.background = "#fef3c7";
+            badge.style.color = "#92400e";
+        }
+ 
+        careerDescription.parentNode.insertBefore(badge, careerDescription);
+    }
 }
 
 /* =====================================================

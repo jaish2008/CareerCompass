@@ -1,7 +1,11 @@
 let internships = [];
 let activeTab = "all";
 let searchTerm = "";
- 
+const mlToRoleTypeTab = {
+    frontend: "frontend", backend: "backend", fullstack: "fullstack", aiml: "aiml"
+    // devops and analyst have no exact matching tab, so left out on purpose
+};
+
 async function loadInternships() {
     try {
       const response = await fetch(
@@ -191,5 +195,53 @@ document.getElementById("searchInput").addEventListener("input",e=>{
  
 });
  
+const mlResult = JSON.parse(localStorage.getItem("careerCompassMLPrediction") || "null");
+const mlTab = mlResult && mlToRoleTypeTab[mlResult.key];
+
+if (mlTab) {
+    const matchingTabEl = document.querySelector(`.tab[data-tab="${mlTab}"]`);
+    if (matchingTabEl) {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        matchingTabEl.classList.add("active");
+        activeTab = mlTab;
+    }
+}
+
+const mlResult = JSON.parse(localStorage.getItem("careerCompassMLPrediction") || "null");
+const mlTab = mlResult && mlToRoleTypeTab[mlResult.key];
+
+if (mlTab) {
+    const matchingTabEl = document.querySelector(`.tab[data-tab="${mlTab}"]`);
+    if (matchingTabEl) {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        matchingTabEl.classList.add("active");
+        activeTab = mlTab;
+    }
+}
+
+const mlResult = JSON.parse(localStorage.getItem("careerCompassMLPrediction") || "null");
+const mlTab = mlResult && mlToRoleTypeTab[mlResult.key];
+
+if (mlTab) {
+    const matchingTabEl = document.querySelector(`.tab[data-tab="${mlTab}"]`);
+    if (matchingTabEl) {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        matchingTabEl.classList.add("active");
+        activeTab = mlTab;
+    }
+}
+
+const mlResult = JSON.parse(localStorage.getItem("careerCompassMLPrediction") || "null");
+const mlTab = mlResult && mlToRoleTypeTab[mlResult.key];
+
+if (mlTab) {
+    const matchingTabEl = document.querySelector(`.tab[data-tab="${mlTab}"]`);
+    if (matchingTabEl) {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        matchingTabEl.classList.add("active");
+        activeTab = mlTab;
+    }
+}
+
 loadInternships();
  

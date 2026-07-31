@@ -130,6 +130,46 @@
     analysis: null,
     running: false
   };
+  
+  const RESUME_ML_SKILLS = ["python","java","javascript","html_css","sql","react","angular","vue","nodejs",
+    "express","django","flask","mysql","postgresql","mongodb","docker","aws","azure","kubernetes"];
+
+
+  async function predictCareerFromResume(text) {
+    const lower = text.toLowerCase();
+    const features = {};
+    RESUME_ML_SKILLS.forEach(skill => {
+      const term = skill.replace("_", ".");
+      features[skill] = lower.includes(term) || lower.includes(skill) ? 1 : 0;
+    });
+    features.language_count = ["python","java","javascript","html_css","sql"].reduce((n,k)=>n+features[k],0);
+    features.framework_count = ["react","angular","vue","nodejs","express","django","flask"].reduce((n,k)=>n+features[k],0);
+    features.database_count = ["mysql","postgresql","mongodb"].reduce((n,k)=>n+features[k],0);
+    features.platform_count = ["docker","aws","azure","kubernetes"].reduce((n,k)=>n+features[k],0);
+ 
+    try {
+      const CAREER_API_URL = ["127.0.0.1","localhost"].includes(window.location.hostname) ? "http://127.0.0.1:5000/predict" : `${window.location.origin}/predict`;
+      const res = await fetch(CAREER_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ features: features })
+      });
+      if (!res.ok) {
+        console.error("Resume ML prediction request failed with status", res.status);
+        return;
+      }
+      const data = await res.json();
+      console.log("✅ RESUME ML PREDICTION:", data);
+      const card = document.getElementById("mlResumeCard");
+      const text2 = document.getElementById("mlResumeText");
+      if (card && text2) {
+        const confidencePct = Math.round((data.confidence || 0) * 100);
+        text2.textContent = `${data.primaryCareer} — ${confidencePct}% confidence`;
+        card.style.display = "block";
+      }
+    } catch (e) { console.error("Resume ML prediction failed:", e); }
+  }
+ 
 
   // ------- Utilities -------
   const formatSize = (bytes) => {
@@ -306,6 +346,7 @@
       state.analysis = analysis;
 
       renderResults(analysis);
+      predictCareerFromResume(text);
 
       setStep(7, "Resume analysis completed successfully.");
       els.results.classList.remove("hidden");

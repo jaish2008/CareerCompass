@@ -7,6 +7,7 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
+from flask_cors import CORS
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
@@ -41,6 +42,7 @@ load_dotenv()
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 app = Flask(__name__)
+CORS(app)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
     "DATABASE_URL",
@@ -76,6 +78,12 @@ login_manager = LoginManager(app)
 app.register_blueprint(ai_bp, url_prefix="/api/ai")
 app.register_blueprint(internship_bp, url_prefix="/api/internships")
 
+
+from predict_routes import predict_bp
+app.register_blueprint(predict_bp)
+
+from score_routes import score_bp
+app.register_blueprint(score_bp)
 # ==========================================
 # Database Models
 # ==========================================
@@ -293,11 +301,15 @@ class InterviewAttempt(db.Model):
         nullable=False
     )
 
-
 VALID_INTERVIEW_TRACKS = {
+    "Software Developer",
     "Frontend Developer",
     "Backend Developer",
-    "Data Analyst / ML"
+    "Full Stack Developer",
+    "Data Scientist",
+    "AI/ML Engineer",
+    "Cybersecurity",
+    "Cloud Engineering"
 }
 
 VALID_INTERVIEW_ROUNDS = {

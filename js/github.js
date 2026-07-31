@@ -1985,8 +1985,25 @@ async function predictCareerUsingML() {
 
 }
 
-function updateMLPrediction(result){
+const mlToRoadmapKey = {
+    "Full Stack Developer": "fullstack",
+    "Backend Developer": "backend",
+    "Frontend Developer": "frontend",
+    "DevOps Engineer": "devops",
+    "AI/ML Engineer": "aiml",
+    "Data Analyst": "analyst"
+};
 
+function updateMLPrediction(result){
+    const mlKey = mlToRoadmapKey[result.prediction];
+    if (mlKey) {
+        localStorage.setItem("careerCompassMLPrediction", JSON.stringify({
+            prediction: result.prediction,
+            confidence: result.confidence,
+            key: mlKey
+        }));
+    }
+    
     const career =
         document.getElementById("careerSuggestion");
 

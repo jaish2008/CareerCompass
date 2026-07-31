@@ -12,6 +12,43 @@
    Storage keys: careerCompassPlanner, careerCompassStreak, careerCompassXP
    ============================================================ */
 
+   const mlSuggestedSkills = {
+    frontend: ["React", "Responsive Design", "JavaScript DOM"],
+    backend: ["Flask APIs", "SQL Databases", "Authentication"],
+    fullstack: ["React", "Flask APIs", "Database Design"],
+    devops: ["Docker", "CI/CD Pipelines", "Linux Basics"],
+    aiml: ["Pandas", "Scikit-learn", "Model Evaluation"],
+    analyst: ["SQL Queries", "Power BI", "Data Cleaning"]
+};
+
+ 
+function suggestTasksFromML() {
+    if (tasks.length > 0) return; // only for a fresh planner
+    const careerResult = JSON.parse(localStorage.getItem("careerCompassCareerResult") || "null");
+    const careerKey = careerResult?.primaryCareer?.key;
+    if (!careerKey || !mlSuggestedSkills[careerKey]) return;
+ 
+    const sourceLabel = careerResult.usedML
+        ? "ML-predicted"
+        : "quiz-based";
+ 
+    mlSuggestedSkills[careerKey].forEach(skill => {
+        tasks.push({
+            id: Date.now() + Math.random(),
+            title: `Learn ${skill}`,
+            category: "Learning",
+            day: "Monday",
+            priority: "Medium",
+            done: false
+        });
+    });
+ 
+    console.log(`Planner: suggested ${mlSuggestedSkills[careerKey].length} tasks based on your ${sourceLabel} career match (${careerKey}).`);
+ 
+    saveTasks();
+}
+ 
+
 const API_BASE_URL =
   ["127.0.0.1", "localhost"].includes(window.location.hostname) &&
   window.location.port !== "5000"
@@ -212,6 +249,8 @@ async function initializePlanner() {
     // and non-fatal on failure so a Settings hiccup never breaks the
     // Planner itself.
     await loadPlannerSettings();
+
+    suggestTasksFromML();
 
     const serverTasks = Array.isArray(serverPlanner.tasks)
       ? serverPlanner.tasks

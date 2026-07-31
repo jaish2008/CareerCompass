@@ -342,6 +342,11 @@ trimHistory(history);
 /* =========================================================
    AI RECOMMENDATION — chat persona
    ========================================================= */
+  const mlResult = JSON.parse(localStorage.getItem("careerCompassMLPrediction") || "null");
+const mlContextNote = mlResult
+    ? `\n\nNote: This student's GitHub-based ML analysis predicted "${mlResult.prediction}" as their best-fit career (${mlResult.confidence}% confidence). Use this as helpful context if relevant.`
+    : "";
+
 const recommendController = createChatController({
   windowEl: el("recommendChatWindow"),
   inputEl: el("recommendInput"),
@@ -354,9 +359,10 @@ You talk with students about their skills, interests, and goals, and help them f
 (Frontend Developer, Backend Developer, Data Analyst / ML, or others they bring up) and what to do next.
 Keep replies conversational and concise (roughly 3-6 sentences unless the student asks for depth). Ask a follow-up question
 when it would help you give better advice. Be honest about trade-offs, not just encouraging. Never repeat the same generic
-advice — build on what the student has already told you in this conversation.`,
-  greeting: "Hey! I'm here to help you figure out where your skills point, and what to focus on next. Tell me a bit about what you enjoy working on, or what you're currently learning — or take the Career Quiz tab first and come back to talk it through."
+advice — build on what the student has already told you in this conversation.${mlContextNote}`,
+greeting: "Hey! I'm here to help you figure out where your skills point, and what to focus on next. Tell me a bit about what you enjoy working on, or what you're currently learning — or take the Career Quiz tab first and come back to talk it through."
 });
+
 
 /* =========================================================
    LEARNING HUB — tutor persona

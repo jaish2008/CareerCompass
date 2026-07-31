@@ -1408,85 +1408,161 @@ function calculateMaximumScores() {
 /* =========================================================
    CALCULATE RESULTS
    ========================================================= */
+/* =========================================================
+   PATCH for career-quiz.js — replaces calculateResults() and
+   showResults(), and adds two new helper functions above them.
 
-function calculateResults() {
+   Paste this block in place of the existing
+   "CALCULATE RESULTS" and "DISPLAY RESULTS" sections.
+   ========================================================= */
+
+
+/* =========================================================
+   ML FEATURE MAPPING
+   Only these 6 quiz careers are covered by the trained model.
+   Skill lists match exactly what career_model_v4.pkl was
+   trained on (see train_model.py / generate_dataset.py).
+   ========================================================= */
+
+const ML_SUPPORTED_CAREERS = {
+    frontend:  { label: "Frontend Developer",     skills: ["html_css", "javascript", "typescript", "react", "angular", "vue"] },
+    backend:   { label: "Backend Developer",      skills: ["python", "java", "csharp", "go", "nodejs", "express", "django", "flask", "spring_boot", "aspnet"] },
+    fullstack: { label: "Full Stack Developer",   skills: ["html_css", "javascript", "react", "nodejs", "express", "python", "mongodb", "mysql"] },
+    devops:    { label: "DevOps Engineer",        skills: ["docker", "aws", "azure", "gcp", "kubernetes", "terraform"] },
+    aiml:      { label: "AI/ML Engineer",         skills: ["python", "r_language", "postgresql", "mongodb"] },
+    analyst:   { label: "Data Analyst",           skills: ["sql", "mysql", "postgresql", "microsoft_sql_server", "r_language", "sqlite"] }
+};
+
+const LANGUAGE_FEATURES  = ["html_css", "javascript", "typescript", "python", "java", "sql", "csharp", "cpp", "php", "go", "rust", "r_language"];
+const FRAMEWORK_FEATURES = ["react", "angular", "vue", "nodejs", "express", "django", "flask", "spring_boot", "aspnet"];
+const DATABASE_FEATURES  = ["mysql", "postgresql", "mongodb", "sqlite", "redis", "microsoft_sql_server"];
+const PLATFORM_FEATURES  = ["docker", "aws", "azure", "gcp", "kubernetes", "terraform"];
+
+
+/* =========================================================
+   BUILD FEATURE VECTOR FROM QUIZ SCORES
+   Turns the quiz's per-career point scores into the skill-flag
+   feature vector the shared model expects, by activating the
+   signature skills of whichever ML-supported careers scored
+   highest (mirrors how the model's own training data was built).
+   ========================================================= */
+
+function buildMLFeaturesFromQuizScores(scores, maximumScores) {
+
+    const features = {};
+
+    [...LANGUAGE_FEATURES, ...FRAMEWORK_FEATURES, ...DATABASE_FEATURES, ...PLATFORM_FEATURES]
+        .forEach(function (name) { features[name] = 0; });
+
+    const supportedPercentages = Object.keys(ML_SUPPORTED_CAREERS)
+        .map(function (key) {
+            const max = maximumScores[key] || 0;
+            const pct = max > 0 ? (scores[key] / max) * 100 : 0;
+            return { key: key, pct: pct };
+        })
+        .sort(function (a, b) { return b.pct - a.pct; });
+
+    const topPct = supportedPercentages[0] ? supportedPercentages[0].pct : 0;
+
+    // Activate signature skills for the top career, and any other
+    // ML-supported career scoring within 20 points of it (close second).
+    supportedPercentages.forEach(function (entry) {
+        if (entry.pct >= topPct - 20 && entry.pct > 0) {
+            ML_SUPPORTED_CAREERS[entry.key].skills.forEach(function (skill) {
+                features[skill] = 1;
+            });
+        }
+    });
+
+    features.language_count  = LANGUAGE_FEATURES.reduce(function (s, f) { return s + features[f]; }, 0);
+    features.framework_count = FRAMEWORK_FEATURES.reduce(function (s, f) { return s + features[f]; }, 0);
+    features.database_count  = DATABASE_FEATURES.reduce(function (s, f) { return s + features[f]; }, 0);
+    features.platform_count  = PLATFORM_FEATURES.reduce(function (s, f) { return s + features[f]; }, 0);
+
+    return features;
+}
+
+
+/* =========================================================
+   CALL THE SHARED /predict MODEL
+   ========================================================= */
+
+ 
+async function getMLPrediction(features) {
+ 
+    console.log("Sending features to /predict:", features);
+ 
+    try {
+        const response = await fetch("http://127.0.0.1:5000/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ features: features })
+        });
+ 
+        console.log("Response status:", response.status);
+ 
+        if (!response.ok) {
+            console.error("Predict call failed with status", response.status);
+            return null;
+        }
+ 
+        const data = await response.json();
+ 
+        console.log("ML prediction result:", data);
+ 
+        return data;
+ 
+    } catch (err) {
+        console.error("ML prediction FAILED with error:", err);
+        return null;
+    }
+}
+ 
+
+/* =========================================================
+   CALCULATE RESULTS  (now async — calls the real ML model)
+   ========================================================= */
+
+async function calculateResults() {
 
     const scores = {};
 
-    Object.keys(careerData).forEach(
-        function (careerKey) {
+    Object.keys(careerData).forEach(function (careerKey) {
+        scores[careerKey] = 0;
+    });
 
-            scores[careerKey] = 0;
-        }
-    );
+    answers.forEach(function (answerIndex, questionIndex) {
+        const selectedOption = questions[questionIndex].options[answerIndex];
+        Object.entries(selectedOption.scores).forEach(function ([careerKey, value]) {
+            scores[careerKey] += value;
+        });
+    });
 
-    answers.forEach(
-        function (answerIndex, questionIndex) {
+    const maximumScores = calculateMaximumScores();
 
-            const selectedOption =
-                questions[questionIndex]
-                    .options[answerIndex];
+    finalCareerResults = Object.keys(careerData)
+        .map(function (careerKey) {
+            const rawScore = scores[careerKey];
+            const maximum = maximumScores[careerKey];
+            const percentage = maximum > 0 ? Math.round((rawScore / maximum) * 100) : 0;
+            return {
+                key: careerKey,
+                rawScore: rawScore,
+                percentage: Math.min(100, percentage),
+                ...careerData[careerKey]
+            };
+        })
+        .sort(function (a, b) {
+            if (b.percentage === a.percentage) { return b.rawScore - a.rawScore; }
+            return b.percentage - a.percentage;
+        });
 
-            Object.entries(
-                selectedOption.scores
-            ).forEach(
-                function ([careerKey, value]) {
+    // Real ML call — only meaningful if the quiz's top pick is one of
+    // the 6 careers the model was trained on.
+    const mlFeatures = buildMLFeaturesFromQuizScores(scores, maximumScores);
+    const mlResult = await getMLPrediction(mlFeatures);
 
-                    scores[careerKey] += value;
-                }
-            );
-        }
-    );
-
-    const maximumScores =
-        calculateMaximumScores();
-
-    finalCareerResults =
-        Object.keys(careerData)
-            .map(function (careerKey) {
-
-                const rawScore =
-                    scores[careerKey];
-
-                const maximum =
-                    maximumScores[careerKey];
-
-                const percentage =
-                    maximum > 0
-                        ? Math.round(
-                            (rawScore / maximum) *
-                            100
-                        )
-                        : 0;
-
-                return {
-                    key: careerKey,
-                    rawScore: rawScore,
-                    percentage:
-                        Math.min(
-                            100,
-                            percentage
-                        ),
-                    ...careerData[careerKey]
-                };
-            })
-            .sort(function (a, b) {
-
-                if (
-                    b.percentage ===
-                    a.percentage
-                ) {
-                    return (
-                        b.rawScore -
-                        a.rawScore
-                    );
-                }
-
-                return (
-                    b.percentage -
-                    a.percentage
-                );
-            });
+    window._quizMLResult = mlResult; // read by showResults()
 
     showResults();
 }
@@ -1499,74 +1575,101 @@ function calculateResults() {
 function showResults() {
 
     quizSection.classList.add("hidden");
-
     resultsSection.classList.remove("hidden");
 
-    const topThree =
-        finalCareerResults.slice(0, 3);
+    const topThree = finalCareerResults.slice(0, 3);
 
-    const primaryCareer =
-        topThree[0];
+    const mlResult = window._quizMLResult;
+    let primaryCareer = topThree[0];
+    let usedML = false;
 
-        localStorage.setItem(
-    "careerCompassCareerResult",
-    JSON.stringify({
-        primaryCareer: {
-            key: primaryCareer.key,
-            name: primaryCareer.name,
-            percentage: primaryCareer.percentage,
-            description: primaryCareer.description,
-            skills: primaryCareer.skills,
-            roadmap: primaryCareer.roadmap
-        },
+    // Only trust the ML result if it maps to a real careerData key
+    // AND that key is one the quiz's top pick agrees is plausible
+    // (i.e. don't let ML override a strongly non-ML career like
+    // Cybersecurity Analyst, which the model was never trained on).
+    if (mlResult && mlResult.primaryCareer) {
+        const mappedKey = Object.keys(ML_SUPPORTED_CAREERS).find(function (key) {
+            return ML_SUPPORTED_CAREERS[key].label === mlResult.primaryCareer;
+        });
 
-        topThree: topThree.map(function (career) {
-            return {
-                key: career.key,
-                name: career.name,
-                percentage: career.percentage
+        if (mappedKey && careerData[mappedKey]) {
+            primaryCareer = {
+                key: mappedKey,
+                percentage: Math.round(mlResult.confidence * 100),
+                ...careerData[mappedKey]
             };
+            usedML = true;
+        }
+    }
+
+    localStorage.setItem(
+        "careerCompassCareerResult",
+        JSON.stringify({
+            primaryCareer: {
+                key: primaryCareer.key,
+                name: primaryCareer.name,
+                percentage: primaryCareer.percentage,
+                description: primaryCareer.description,
+                skills: primaryCareer.skills,
+                roadmap: primaryCareer.roadmap
+            },
+            topThree: topThree.map(function (career) {
+                return { key: career.key, name: career.name, percentage: career.percentage };
+            }),
+            usedML: usedML
         })
-    })
-);
-
-    primaryCareerIcon.textContent =
-        primaryCareer.icon;
-
-    primaryCareerName.textContent =
-        primaryCareer.name;
-
-    primaryMatchScore.textContent =
-        `${primaryCareer.percentage}%`;
-
-    primaryCareerDescription.textContent =
-        primaryCareer.description;
-
-    primaryMatchBar.style.width = "0%";
-
-    setTimeout(function () {
-
-        primaryMatchBar.style.width =
-            `${primaryCareer.percentage}%`;
-
-    }, 150);
-
-
-    renderSecondaryResults(
-        topThree.slice(1)
     );
 
+    primaryCareerIcon.textContent = primaryCareer.icon;
+    primaryCareerName.textContent = primaryCareer.name;
+    primaryMatchScore.textContent = `${primaryCareer.percentage}%`;
+    primaryCareerDescription.textContent = primaryCareer.description;
+ 
+    
+    // Remove any badge left over from a previous quiz attempt
+    const existingBadge = document.getElementById("mlSourceBadge");
+    if (existingBadge) {
+        existingBadge.remove();
+    }
+ 
+    const badge = document.createElement("div");
+    badge.id = "mlSourceBadge";
+    badge.style.display = "inline-block";
+    badge.style.padding = "6px 14px";
+    badge.style.borderRadius = "999px";
+    badge.style.fontSize = "13px";
+    badge.style.fontWeight = "700";
+    badge.style.marginBottom = "12px";
+ 
+    if (usedML) {
+        badge.textContent = "🧠 ML MODEL PREDICTION — " + Math.round(mlResult.confidence * 100) + "% confidence";
+        badge.style.background = "#dcfce7";
+        badge.style.color = "#166534";
+    } else {
+        badge.textContent = "📋 Quiz-based estimate (ML model unavailable or career outside its 6 trained classes)";
+        badge.style.background = "#fef3c7";
+        badge.style.color = "#92400e";
+    }
+ 
+    primaryCareerDescription.parentNode.insertBefore(badge, primaryCareerDescription);
+
+    primaryMatchBar.style.width = "0%";
+    setTimeout(function () {
+        primaryMatchBar.style.width = `${primaryCareer.percentage}%`;
+    }, 150);
+
+    renderSecondaryResults(topThree.slice(1));
     renderSkills(primaryCareer.skills);
-
     renderReasons(primaryCareer.reasons);
-
     renderRoadmap(primaryCareer.roadmap);
 
-    resultsSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
+
+
+/* =========================================================
+   DISPLAY RESULTS
+   ========================================================= */
 
 
 /* =========================================================

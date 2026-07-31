@@ -4,6 +4,14 @@
    should touch on. These are used to actually check the
    content of the answer, not just its length.
    ========================================================= */
+  const mlToInterviewTrack = {
+    frontend: "Frontend Developer",
+    backend: "Backend Developer",
+    fullstack: "Full Stack Developer",
+    aiml: "AI/ML Engineer"
+    // devops and analyst have no exact matching option, so they're left out on purpose
+};
+
    const HR_QUESTIONS = [
   { text: "Tell me about yourself and why you're interested in this role.",
     keywords: ["experience", "background", "skills", "role", "interested", "passion", "goal", "team"] },
@@ -519,6 +527,11 @@ async function initializeInterviewTrainer() {
     startBtn.textContent = "Start Interview";
 
     renderHistory();
+    const mlResult = JSON.parse(localStorage.getItem("careerCompassMLPrediction") || "null");
+    const mappedTrack = mlResult && mlToInterviewTrack[mlResult.key];
+    if (mappedTrack) {
+        careerSelect.value = mappedTrack;
+    }
   } catch (error) {
     console.error(
       "Interview Trainer initialization failed:",
@@ -774,9 +787,9 @@ function escapeHtml(str) {
 /* =========================================================
    GRADING
    Tries the AI backend first (accurate, reads the actual
-   answer content). Falls back to a keyword/structure-based
-   heuristic grader if the API isn't reachable, so scoring
-   always reflects what was actually said — not just length.
+   answer content). Falls back to a real trained ML scoring
+   model if the API isn't reachable, so scoring always
+   reflects what was actually said — not just length.
    ========================================================= */
 async function gradeAnswer(question, answer) {
   if (!answer) {
@@ -795,15 +808,15 @@ async function gradeAnswer(question, answer) {
   try {
     return await aiGrade(question, answer);
   } catch (err) {
-    console.warn("Falling back to heuristic grading:", err);
-    return heuristicGrade(question, answer);
+    console.warn("Falling back to ML scoring model:", err);
+    return await heuristicGrade(question, answer);
   }
 }
 
 /* Has the AI actually read and judge the answer's content — catching things
    a fixed keyword list can't, like a correct answer phrased in unexpected
    terms, or a fluent-sounding answer that's actually wrong. Only falls back
-   to the heuristic grader (below) if this call fails or returns something
+   to the ML scoring model (below) if this call fails or returns something
    unusable. */
 async function aiGrade(question, answer) {
   const systemInstruction = `You are grading a candidate's mock interview answer.
@@ -843,14 +856,15 @@ function scoreToVerdict(score) {
   return "weak";
 }
 
-/* ---- Offline fallback grader ----
-   Actually checks the answer's content against the question's
-   expected concepts, plus structure and hedging. This grader
-   is intentionally generous: it uses fuzzy, word-level matching
-   (so paraphrasing counts, not just exact keyword phrases),
-   starts from a fair baseline, and only marks an answer down
-   hard when it's genuinely empty, off-topic, or very short. */
-function heuristicGrade(question, answer) {
+/* ---- Offline / fallback grader (now backed by a real trained model) ----
+   Actually checks the answer's content against the question's expected
+   concepts, plus structure and hedging, exactly as before — but the FINAL
+   score/verdict now comes from a trained RandomForestRegressor
+   (interview_score_model.pkl) called via /score-answer, instead of a
+   hand-written weighted formula. If that call fails too (e.g. Flask itself
+   is down), it falls back one more level to the original formula so the
+   trainer still works completely offline. */
+async function heuristicGrade(question, answer) {
   const lowerAnswer = answer.toLowerCase();
   const words = lowerAnswer.split(/\s+/).filter(Boolean);
   const wordCount = words.length;
@@ -874,6 +888,7 @@ function heuristicGrade(question, answer) {
     "situation", "task", "action", "result", "led to", "because", "which meant", "instance"];
   const structureHits = structureSignals.filter(s => lowerAnswer.includes(s)).length;
   const hasNumbers = /\d/.test(answer);
+  const structureScore = Math.min(1, (structureHits + (hasNumbers ? 1 : 0)) / 2);
 
   // --- Hedging / low-confidence language (light touch — a little hedging is normal) ---
   const hedgeWords = ["i'm not sure", "i am not sure", "i guess", "i don't know", "no idea", "not confident"];
@@ -881,8 +896,9 @@ function heuristicGrade(question, answer) {
 
   // --- Length signal (a floor, not the main driver) — saturates quickly ---
   const lengthScore = Math.min(1, wordCount / 35);
+  const wordCountNorm = Math.min(1, wordCount / 100);
 
-  // Empty or near-empty answers still score honestly low.
+  // Empty or near-empty answers still score honestly low, no model call needed.
   if (wordCount < 4) {
     return {
       communication: 1, technical: 1, confidence: 1, score: 5,
@@ -892,23 +908,41 @@ function heuristicGrade(question, answer) {
     };
   }
 
-  // Generous weighted overall (0-1), starting from a fair baseline so a
-  // reasonable, on-topic answer lands comfortably in the 60-85% range.
-  const baseline = 0.40;
-  const overall = baseline
-    + coverage * 0.32
-    + lengthScore * 0.18
-    + Math.min(1, (structureHits + (hasNumbers ? 1 : 0)) / 2) * 0.10
-    - (hedgeHits * 0.05);
+  // --- Real trained ML model call ---
+  let score, verdict;
+  try {
+    const response = await fetch(`${API_BASE_URL}/score-answer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        features: {
+          coverage: coverage,
+          length_score: lengthScore,
+          structure_score: structureScore,
+          hedge_count: hedgeHits,
+          word_count_norm: wordCountNorm
+        }
+      })
+    });
+    console.log("score-answer response status:", response.status);
+    if (!response.ok) throw new Error("score-answer request failed");
+    const result = await response.json();
+    score = result.score;
+    verdict = result.verdict;
+    console.log("✅ ML SCORING MODEL USED — score:", score, "verdict:", verdict);
+  } catch (err) {
+    console.warn("ML scoring unavailable, using formula fallback:", err);
+    const baseline = 0.40;
+    const overall = Math.max(0.05, Math.min(1,
+      baseline + coverage * 0.32 + lengthScore * 0.18 + structureScore * 0.10 - (hedgeHits * 0.05)
+    ));
+    score = Math.round(overall * 100);
+    verdict = scoreToVerdict(score);
+  }
 
-  const clampedOverall = Math.max(0.05, Math.min(1, overall));
-  const score = Math.round(clampedOverall * 100);
-
-  const technical = clamp(1 + (baseline + coverage * 0.6) * 4);
-  const communication = clamp(1 + (baseline + Math.min(1, (structureHits / 2) + lengthScore * 0.6)) * 4 / 1.4);
-  const confidence = clamp(1 + Math.max(0, (baseline + 0.6 - hedgeHits * 0.2)) * 4);
-
-  const verdict = scoreToVerdict(score);
+  const technical = clamp(1 + (0.40 + coverage * 0.6) * 4);
+  const communication = clamp(1 + (0.40 + Math.min(1, (structureHits / 2) + lengthScore * 0.6)) * 4 / 1.4);
+  const confidence = clamp(1 + Math.max(0, (0.40 + 0.6 - hedgeHits * 0.2)) * 4);
 
   let feedback;
   if (coverage === 0 && keywords.length) {
