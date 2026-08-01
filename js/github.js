@@ -377,7 +377,7 @@ catch(error){
    Professional Score
 ================================*/
 
-function calculateProfessionalScore(profile){
+async function calculateProfessionalScore(profile){
 
     let score = 0;
 
@@ -398,13 +398,19 @@ function calculateProfessionalScore(profile){
     }
 
     // Save the GitHub score to the backend so the Dashboard can show it later.
-    fetch(`${API_BASE_URL}/api/profile/score`, {
+    // Save the GitHub score to the backend so the Dashboard can show it later.
+try {
+    const res = await fetch(`${API_BASE_URL}/api/profile/score`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
+        keepalive: true,
         body: JSON.stringify({ githubScore: score })
-    }).catch(err => console.error("Could not save GitHub score:", err));
-
+    });
+    if (!res.ok) console.error("Score save failed:", res.status);
+} catch (err) {
+    console.error("Could not save GitHub score:", err);
+}
     document.getElementById("professionalScore").textContent =
         score + "%";
 
