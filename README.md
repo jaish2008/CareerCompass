@@ -75,7 +75,7 @@ python app.py
 ## Contributors
 
 - Kiranpreet Kaur
--  jaish
+-  Jaish
 ## License
 
 This project is developed for educational purposes.
