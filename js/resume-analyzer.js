@@ -522,6 +522,7 @@
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
+      keepalive: true,
       body: JSON.stringify({ resumeScore: a.score })
     }).catch(err => console.error("Could not save resume score:", err));
     

@@ -103,6 +103,14 @@ if (
 
 loadDashboardUser();
 
+// Re-fetch dashboard data when the page is restored from the back-forward cache.
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+        loadDashboardUser();
+        loadDashboardData();
+    }
+});
+
 
 
 function renderMLPredictionCard(dashboardData) {
