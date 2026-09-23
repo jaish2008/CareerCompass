@@ -343,10 +343,10 @@
       setStep(6, "Generating smart suggestions…"); await wait(300);
 
       const analysis = analyzeResume(text, els.targetRole.value);
-      state.analysis = analysis;
+state.analysis = analysis;
 
-      renderResults(analysis);
-      predictCareerFromResume(text);
+await renderResults(analysis);
+predictCareerFromResume(text);
 
       setStep(7, "Resume analysis completed successfully.");
       els.results.classList.remove("hidden");
@@ -514,17 +514,20 @@
   }
 
   // ------- Rendering -------
-  function renderResults(a) {
+  async function renderResults(a) {
     // ATS score circle
     animateScore(a.score);
 
-    fetch(`${API_BASE_URL}/api/profile/score`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      keepalive: true,
-      body: JSON.stringify({ resumeScore: a.score })
-    }).catch(err => console.error("Could not save resume score:", err));
+  try {
+  await fetch(`${API_BASE_URL}/api/profile/score`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ resumeScore: a.score })
+  });
+} catch (err) {
+  console.error("Could not save resume score:", err);
+}
     
   els.scoreLabel.textContent = a.label;
     els.atsBadge.textContent = a.badge;

@@ -260,7 +260,7 @@ try{
 }catch(e){console.error("❌ updateLanguageSection",e);}
 
 try{
-    calculateProfessionalScore(profile);
+    await calculateProfessionalScore(profile);
    console.log("✅ calculateProfessionalScore");
 
 }catch(e){

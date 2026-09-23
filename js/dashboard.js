@@ -461,10 +461,10 @@ async function loadDashboardData() {
 
     try {
 
-        const dashboardResponse = await fetch(
-            `${API_BASE_URL}/api/dashboard`,
-            { credentials: "include" }
-        );
+    const dashboardResponse = await fetch(
+    `${API_BASE_URL}/api/dashboard`,
+    { credentials: "include", cache: "no-store" }
+);    
 
         if (dashboardResponse.ok) {
             dashboardData = await dashboardResponse.json();
