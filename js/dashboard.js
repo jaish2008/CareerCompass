@@ -1,4 +1,5 @@
 "use strict";
+console.log("DASHBOARD JS VERSION: TEST123"); 
 
 const API_BASE_URL =
   ["127.0.0.1", "localhost"].includes(window.location.hostname) &&
