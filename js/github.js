@@ -1961,7 +1961,7 @@ async function predictCareerUsingML() {
                     "Content-Type":"application/json"
                 },
 
-                body:JSON.stringify(featureData)
+                body: JSON.stringify({ features: featureData })
             }
         );
 
@@ -2001,10 +2001,10 @@ const mlToRoadmapKey = {
 };
 
 function updateMLPrediction(result){
-    const mlKey = mlToRoadmapKey[result.prediction];
+    const mlKey = mlToRoadmapKey[result.primaryCareer];
     if (mlKey) {
         localStorage.setItem("careerCompassMLPrediction", JSON.stringify({
-            prediction: result.prediction,
+            prediction: result.primaryCareer,
             confidence: result.confidence,
             key: mlKey
         }));
@@ -2019,7 +2019,7 @@ function updateMLPrediction(result){
     if(career){
 
         career.textContent =
-            result.prediction;
+            result.primaryCareer;
 
     }
 
@@ -2146,7 +2146,7 @@ if(explanation){
 
         });
 
-        updateCareerRoadmap(result.prediction);
+        updateCareerRoadmap(result.primaryCareer);
 
         updateAssessment(result.received_features);
 
