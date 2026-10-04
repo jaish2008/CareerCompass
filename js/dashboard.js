@@ -448,6 +448,35 @@ function renderWeeklyProgressChart(tasks) {
    LOAD ALL DYNAMIC DASHBOARD DATA
    ===================================================== */
 
+async function fetchWithRetry(url, options, retries = 1, delayMs = 4000) {
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok && retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            return fetchWithRetry(url, options, retries - 1, delayMs);
+        }
+        return response;
+    } catch (error) {
+        if (retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            return fetchWithRetry(url, options, retries - 1, delayMs);
+        }
+        throw error;
+    }
+}
+
+function setDashboardLoadingState(isLoading) {
+    const cardValues = document.querySelectorAll(".stats .stat-card h2");
+    cardValues.forEach(el => {
+        if (isLoading) {
+            el.dataset.originalText = el.textContent;
+            el.textContent = "Loading...";
+        } else if (el.dataset.originalText !== undefined) {
+            delete el.dataset.originalText;
+        }
+    });
+}
+
 async function loadDashboardData() {
 
     let dashboardData = {
@@ -460,12 +489,16 @@ async function loadDashboardData() {
 
     let plannerTasks = [];
 
+    setDashboardLoadingState(true);
+
     try {
 
-    const dashboardResponse = await fetch(
-    `${API_BASE_URL}/api/dashboard`,
-    { credentials: "include", cache: "no-store" }
-);    
+    const dashboardResponse = await fetchWithRetry(
+        `${API_BASE_URL}/api/dashboard`,
+        { credentials: "include", cache: "no-store" },
+        1,
+        4000
+    );
 
         if (dashboardResponse.ok) {
             dashboardData = await dashboardResponse.json();
@@ -473,6 +506,8 @@ async function loadDashboardData() {
 
     } catch (error) {
         console.error("Could not load dashboard stats:", error);
+    } finally {
+        setDashboardLoadingState(false);
     }
 
     try {
