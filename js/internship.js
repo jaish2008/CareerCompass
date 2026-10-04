@@ -6,10 +6,17 @@ const mlToRoleTypeTab = {
     // devops and analyst have no exact matching tab, so left out on purpose
 };
 
+const API_BASE_URL =
+  ["127.0.0.1", "localhost"].includes(window.location.hostname) &&
+  window.location.port !== "5000"
+    ? "http://127.0.0.1:5000"
+    : window.location.origin;
+
 async function loadInternships() {
     try {
       const response = await fetch(
-    `https://careercompass-s0jp.onrender.com/api/internships?roleType=${activeTab}&skills=React,JavaScript`
+    `${API_BASE_URL}/api/internships?roleType=${activeTab}&skills=React,JavaScript`,
+    { credentials: "include" }
 );
  
         if (!response.ok) {
@@ -244,4 +251,3 @@ if (mlTab) {
 }
 
 loadInternships();
- 
