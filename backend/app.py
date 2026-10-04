@@ -51,6 +51,16 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+# Prevent "SSL error: decryption failed or bad record mac" / stale connection
+# crashes after the free Render instance sleeps and wakes up. pool_pre_ping
+# tests each connection before using it and transparently reconnects if it
+# has gone bad; pool_recycle forces connections to refresh periodically so
+# they never sit idle long enough to go stale in the first place.
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,
+    "pool_recycle": 280,
+}
+
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["REMEMBER_COOKIE_HTTPONLY"] = True
