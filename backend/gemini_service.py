@@ -23,7 +23,7 @@ def ask_groq(prompt):
                 "Authorization": f"Bearer {GROQ_API_KEY}"
             },
             json={
-                "model": "openai/gpt-oss-120b",
+                "model": "llama-3.3-70b-versatile",
                 "messages": [{"role": "user", "content": prompt}]
             }
         )
@@ -139,7 +139,7 @@ def chat_reply(history, system_instruction):
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {GROQ_API_KEY}"
             },
-            json={"model": "openai/gpt-oss-120b", "messages": messages}
+            json={"model": "llama-3.3-70b-versatile", "messages": messages}
         )
         response.raise_for_status()
         data = response.json()

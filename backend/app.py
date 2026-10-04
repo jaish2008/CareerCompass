@@ -761,7 +761,7 @@ with app.app_context():
 
     print("CareerCompass database tables ready.")
 
-    start_scheduled_sync()
+    start_scheduled_sync(app)
 
 # ==========================================
 # File Paths

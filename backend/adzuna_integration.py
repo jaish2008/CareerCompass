@@ -147,9 +147,29 @@ def get_matched_internships_for_student(student_skills, role_type=None):
     return sorted(results, key=lambda x: x["matchScore"], reverse=True)
 
 
-def start_scheduled_sync():
+def start_scheduled_sync(app=None):
+    import threading
     from apscheduler.schedulers.background import BackgroundScheduler
+
+    # Run once immediately in the background so the database is populated
+    # right after every server start/wake-up, instead of waiting for the
+    # next fixed cron hour (which may never arrive on a free instance that
+    # keeps sleeping and restarting). Needs its own app context since it
+    # runs on a separate thread.
+    if app is not None:
+        def _run_initial_sync():
+            with app.app_context():
+                sync_all_internships()
+        threading.Thread(target=_run_initial_sync, daemon=True).start()
+
+    def _run_scheduled_sync():
+        if app is not None:
+            with app.app_context():
+                sync_all_internships()
+        else:
+            sync_all_internships()
+
     scheduler = BackgroundScheduler()
-    scheduler.add_job(lambda: sync_all_internships(), "cron", hour="*/6", minute=0)
+    scheduler.add_job(_run_scheduled_sync, "cron", hour="*/6", minute=0)
     scheduler.start()
-    print("[Adzuna Sync] Scheduled job registered — runs every 6 hours.")
+    print("[Adzuna Sync] Scheduled job registered — runs every 6 hours (plus once now on startup).")
