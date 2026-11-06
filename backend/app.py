@@ -42,7 +42,7 @@ load_dotenv()
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 app = Flask(__name__)
-CORS(app)
+
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
     "DATABASE_URL",
@@ -71,15 +71,18 @@ if not app.config["SECRET_KEY"]:
         "SECRET_KEY is missing from the .env file."
     )
 
-CORS(app,
+CORS(
+    app,
     supports_credentials=True,
     origins=[
+        "http://127.0.0.1:5501",
+        "http://localhost:5501",
         "http://127.0.0.1:5500",
         "http://localhost:5500",
         "http://127.0.0.1:5000",
         "http://localhost:5000"
     ]
-    )
+)
 
 db.init_app(app)
 
