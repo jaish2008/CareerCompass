@@ -214,40 +214,4 @@ if (mlTab) {
     }
 }
 
-const mlResult = JSON.parse(localStorage.getItem("careerCompassMLPrediction") || "null");
-const mlTab = mlResult && mlToRoleTypeTab[mlResult.key];
-
-if (mlTab) {
-    const matchingTabEl = document.querySelector(`.tab[data-tab="${mlTab}"]`);
-    if (matchingTabEl) {
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        matchingTabEl.classList.add("active");
-        activeTab = mlTab;
-    }
-}
-
-const mlResult = JSON.parse(localStorage.getItem("careerCompassMLPrediction") || "null");
-const mlTab = mlResult && mlToRoleTypeTab[mlResult.key];
-
-if (mlTab) {
-    const matchingTabEl = document.querySelector(`.tab[data-tab="${mlTab}"]`);
-    if (matchingTabEl) {
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        matchingTabEl.classList.add("active");
-        activeTab = mlTab;
-    }
-}
-
-const mlResult = JSON.parse(localStorage.getItem("careerCompassMLPrediction") || "null");
-const mlTab = mlResult && mlToRoleTypeTab[mlResult.key];
-
-if (mlTab) {
-    const matchingTabEl = document.querySelector(`.tab[data-tab="${mlTab}"]`);
-    if (matchingTabEl) {
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        matchingTabEl.classList.add("active");
-        activeTab = mlTab;
-    }
-}
-
 loadInternships();
