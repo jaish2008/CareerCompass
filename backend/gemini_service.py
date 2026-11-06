@@ -23,7 +23,7 @@ def ask_groq(prompt):
                 "Authorization": f"Bearer {GROQ_API_KEY}"
             },
             json={
-                "model": "llama-3.3-70b-versatile",
+                "model": "openai/gpt-oss-120b",
                 "messages": [{"role": "user", "content": prompt}]
             }
         )
