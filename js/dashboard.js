@@ -491,42 +491,48 @@ async function loadDashboardData() {
 
     setDashboardLoadingState(true);
 
-    try {
-
-    const dashboardResponse = await fetchWithRetry(
+    const dashboardRequest = fetchWithRetry(
         `${API_BASE_URL}/api/dashboard`,
         { credentials: "include", cache: "no-store" },
         1,
         4000
-    );
-
-        if (dashboardResponse.ok) {
-            dashboardData = await dashboardResponse.json();
+    ).then(async response => {
+        if (!response.ok) {
+            throw new Error(`Dashboard API error: ${response.status}`);
         }
+        return response.json();
+    });
 
-    } catch (error) {
-        console.error("Could not load dashboard stats:", error);
-    } finally {
-        setDashboardLoadingState(false);
+    const plannerRequest = fetch(
+        `${API_BASE_URL}/api/planner`,
+        { credentials: "include" }
+    ).then(async response => {
+        if (!response.ok) {
+            throw new Error(`Planner API error: ${response.status}`);
+        }
+        return response.json();
+    });
+
+    const [dashboardResult, plannerResult] = await Promise.allSettled([
+        dashboardRequest,
+        plannerRequest
+    ]);
+
+    if (dashboardResult.status === "fulfilled") {
+        dashboardData = dashboardResult.value;
+    } else {
+        console.error("Could not load dashboard stats:", dashboardResult.reason);
     }
 
-    try {
-
-        const plannerResponse = await fetch(
-            `${API_BASE_URL}/api/planner`,
-            { credentials: "include" }
-        );
-
-        if (plannerResponse.ok) {
-            const plannerResult = await plannerResponse.json();
-            plannerTasks = Array.isArray(plannerResult.planner?.tasks)
-                ? plannerResult.planner.tasks
-                : [];
-        }
-
-    } catch (error) {
-        console.error("Could not load planner data:", error);
+    if (plannerResult.status === "fulfilled") {
+        plannerTasks = Array.isArray(plannerResult.value.planner?.tasks)
+            ? plannerResult.value.planner.tasks
+            : [];
+    } else {
+        console.error("Could not load planner data:", plannerResult.reason);
     }
+
+    setDashboardLoadingState(false);
 
     renderStatsCards(dashboardData);
     renderSkillProgress(dashboardData);
@@ -536,6 +542,7 @@ async function loadDashboardData() {
     renderUpcomingGoals(plannerTasks);
     renderWeeklyProgressChart(plannerTasks);
     renderNotifications(dashboardData);
+
 }
 
 
