@@ -1,6 +1,10 @@
 # CareerCompass
 
-CareerCompass is an AI-powered career guidance platform designed to help students and job seekers prepare for their careers through personalized learning, assessments, and skill development.
+**CareerCompass** is an AI-powered career guidance and placement preparation platform built to help students, fresh graduates, and job seekers plan and manage their career development.
+
+It brings essential career preparation tools together in one place, helping users assess their skills, explore learning paths, prepare for interviews, analyze their resumes, and track internship opportunities.
+
+The goal is to make career planning more structured, accessible, and personalized.
 
 ## Features
 
@@ -20,15 +24,22 @@ CareerCompass is an AI-powered career guidance platform designed to help student
 - HTML
 - CSS
 - JavaScript
+- Chart.js
+- Font Awesome
 
 ### Backend
 - Python
 - Flask
+- SQLAlchemy
 
-### Machine Learning
+### AI and Machine Learning
+- Groq API
 - Scikit-learn
 - Pandas
 - NumPy
+
+### Additional Tools
+- jsPDF
 
 ## Project Structure
 
