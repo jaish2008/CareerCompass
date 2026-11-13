@@ -43,18 +43,33 @@ The goal is to make career planning more structured, accessible, and personalize
 
 ## Project Structure
 
-```
+```text
 CareerCompass/
 │
 ├── backend/
+│   ├── app.py
+│   ├── models.py
+│   ├── extensions.py
+│   ├── ai_routes.py
+│   ├── internship_routes.py
+│   ├── predict_routes.py
+│   ├── score_routes.py
+│   ├── gemini_service.py
+│   ├── adzuna_integration.py
+│   ├── requirements.txt
+│   └── runtime.txt
+│
 ├── css/
 ├── datasets/
 ├── docs/
 ├── js/
 ├── models/
 ├── pages/
-├── README.md
-└── index.html
+│
+├── .gitignore
+├── requirements.txt
+├── index.html
+└── README.md
 ```
 
 ## Installation
