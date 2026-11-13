@@ -88,8 +88,12 @@ cd CareerCompass
 
 ### 3. Install dependencies
 
+### 3. Install dependencies
+
+```bash
 pip install -r backend/requirements.txt
 pip install -r requirements.txt
+```
 
 ### 4. Configure environment variables
 
