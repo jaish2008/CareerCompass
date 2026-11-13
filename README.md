@@ -74,29 +74,41 @@ CareerCompass/
 
 ## Installation
 
-1. Clone the repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/jaish2008/CareerCompass.git
 ```
 
-2. Navigate to the project
+### 2. Navigate to the project folder
 
 ```bash
 cd CareerCompass
 ```
 
-3. Install dependencies
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Start the application
+### 4. Configure environment variables
+
+Create a `.env` file in the project root and add:
+
+```env
+SECRET_KEY=your_secret_key_here
+```
+
+Replace the placeholder with a secure secret key. Keep your `.env` file private and never commit it to GitHub.
+
+### 5. Start the application
 
 ```bash
-python app.py
+python backend/app.py
 ```
+
+The Flask application runs locally on port 5000.
 
 ## Contributors
 
