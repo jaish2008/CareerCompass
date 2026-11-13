@@ -76,6 +76,13 @@ python app.py
 
 - Kiranpreet Kaur
 -  Jaish
+
+## 🌐 Live Demo
+
+[Visit CareerCompass](https://careercompass-preview.onrender.com)
+
+
 ## License
 
 This project is developed for educational purposes.
+
