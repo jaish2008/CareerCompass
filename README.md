@@ -86,7 +86,6 @@ git clone https://github.com/jaish2008/CareerCompass.git
 cd CareerCompass
 ```
 
-### 3. Install dependencies
 
 ### 3. Install dependencies
 
@@ -97,13 +96,26 @@ pip install -r requirements.txt
 
 ### 4. Configure environment variables
 
-Create a `.env` file in the project root and add:
+Create a `.env` file in the project root and add the following variables:
 
 ```env
-SECRET_KEY=your_secret_key_here
+SECRET_KEY=your_secret_key
+GROQ_API_KEY=your_groq_api_key
+ADZUNA_APP_ID=your_adzuna_app_id
+ADZUNA_APP_KEY=your_adzuna_app_key
 ```
 
-Replace the placeholder with a secure secret key. Keep your `.env` file private and never commit it to GitHub.
+**Optional:**
+```env
+DATABASE_URL=your_database_url
+```
+
+- `SECRET_KEY` is required to run the Flask application.
+- `GROQ_API_KEY` enables AI-powered features.
+- `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` are used for internship data integration.
+- `DATABASE_URL` is optional; SQLite is used by default.
+
+Keep your `.env` file private. Never upload actual API keys or secret values to GitHub.
 
 ### 5. Start the application
 
