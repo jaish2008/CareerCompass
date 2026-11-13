@@ -18,6 +18,14 @@ The goal is to make career planning more structured, accessible, and personalize
 - User authentication
 - Dashboard with progress tracking
 
+## Screenshots
+
+### Homepage
+![CareerCompass Homepage](docs/screenshots/home-page.png.png)
+
+### Dashboard
+![CareerCompass Dashboard](docs/screenshots/dashboard.png.png)
+
 ## Technologies Used
 
 ### Frontend
