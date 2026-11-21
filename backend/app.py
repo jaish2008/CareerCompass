@@ -937,6 +937,23 @@ def signup():
         data.get("semester", "")
     ).strip()
 
+    
+    # Enforce signup field length limits
+    field_limits = {
+        "Full name": (name, 100),
+        "Email": (email, 255),
+        "Education": (education, 100),
+        "Course / branch": (course, 100),
+        "Semester / year": (semester, 50)
+    }
+
+    for field_name, (field_value, max_length) in field_limits.items():
+        if len(field_value) > max_length:
+            return jsonify({
+                "status": "error",
+                "message": f"{field_name} must be {max_length} characters or fewer."
+            }), 400
+
 
     if not name:
         return jsonify({
