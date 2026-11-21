@@ -1091,10 +1091,27 @@ def login():
         data.get("password", "")
     )
 
-    remember = bool(
-        data.get("remember", True)
-    )
+       remember_value = data.get("remember", True)
 
+    if not isinstance(remember_value, bool):
+        return jsonify({
+            "status": "error",
+            "message": "Remember me must be true or false."
+        }), 400
+
+    remember = remember_value
+
+    if len(email) > 255:
+        return jsonify({
+            "status": "error",
+            "message": "Email is too long."
+        }), 400
+
+    if len(password) > 128:
+        return jsonify({
+            "status": "error",
+            "message": "Password is too long."
+        }), 400
 
     if not email or not password:
         return jsonify({
