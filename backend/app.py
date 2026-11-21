@@ -1091,7 +1091,7 @@ def login():
         data.get("password", "")
     )
 
-       remember_value = data.get("remember", True)
+    remember_value = data.get("remember", True)
 
     if not isinstance(remember_value, bool):
         return jsonify({
